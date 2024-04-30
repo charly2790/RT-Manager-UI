@@ -1,13 +1,26 @@
-import React, { useEffect, useState } from 'react'
-import Axios from 'axios';
-import { SimpleTable } from '../components/SimpleTable';
+import { SimpleTable } from '../../components/SimpleTable';
+import { useFetch } from '../../hooks/useFetch';
+import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMessage';
 
 
 
 export const Alumnos = () => {
-
-  const [alumnos, setAlumnos] = useState([]);
-
+  
+  const token = localStorage.getItem('token');
+  const idEquipo = 1; 
+  let alumnosData = [];
+  
+  let settings = {
+    method: 'get',
+    url: 'http://localhost:3003/usuarios',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`
+    },
+    params: {
+      'idEquipo': idEquipo
+    }
+  }
   const columns = [
     {
       header: "email",
@@ -21,60 +34,30 @@ export const Alumnos = () => {
       header: "ID Equipo",
       accessorKey: "idEquipo",      
     },
-  ]
+  ] 
 
-  const useFetch = async () => {
+  const { data, hasError, isLoading } = useFetch( settings );  
+  
+  if(data){
 
-    const token = localStorage.getItem('token');
-    // const idEquipo = localStorage.getItem('idEquipo');
-    const idEquipo = 1;
+    let { usuarios:alumnos}  = data;
 
-    let config = {
-      method: 'get',
-      url: 'http://localhost:3003/usuarios',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`
-      },
-      params: {
-        'idEquipo': idEquipo
+    alumnosData = alumnos.map(alumno => {             
+      return {
+        email: alumno.email,
+        idSuscripcion: alumno.Suscripcions[0].idSuscripcion,
+        idEquipo: alumno.Suscripcions[0].idEquipo
       }
-    }
-
-    let response = undefined;
-
-    try {
-      response = await Axios.request(config);
-      let { data:{usuarios:alumnos} } = response;       
-      let parseData = alumnos.map(alumno => {             
-        return {
-          email: alumno.email,
-          idSuscripcion: alumno.Suscripcions[0].idSuscripcion,
-          idEquipo: alumno.Suscripcions[0].idEquipo
-        }
-      })      
-      setAlumnos(parseData);
-    } catch (error) {
-      console.log(error.message);
-      throw new Error(error.message);
-    }
-
-  }
-
-  useEffect(() => {
-    useFetch();
-  }, [])
-
-  const buttonStyles = {
-    fontSize: 20,
-    fontWeight: 700,
-    backgroundColor: 'red'
+    })    
   }
 
   return (
     <>
-      <SimpleTable columns={columns} data={alumnos} />
-
+       {
+       isLoading
+        ? <LoadingMessage/>
+        :<SimpleTable columns={columns} data={alumnosData} />
+      }
       
     </>
   )

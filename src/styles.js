@@ -1,6 +1,6 @@
 const drawerWidth = 220;
 
-export const navbarStyles = {
+export const Styles = {
     drawer: {
         width: drawerWidth,
         flexShrink: 0,

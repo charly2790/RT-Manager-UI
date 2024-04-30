@@ -10,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import MailIcon from '@mui/icons-material/Mail';
 import Toolbar from '@mui/material/Toolbar';
 import { navbarItems } from './consts/navbarItems';
-import { navbarStyles } from '../styles';
+import { Styles } from '../../styles.js';
 import { useNavigate} from "react-router-dom";
 
 export const Navbar = () => {
@@ -19,7 +19,7 @@ export const Navbar = () => {
     
     return (
         <Drawer
-            sx={navbarStyles.drawer}
+            sx={Styles.drawer}
             variant="permanent"
             anchor="left"
         >
@@ -34,11 +34,11 @@ export const Navbar = () => {
                     disablePadding>
                         <ListItemButton>
                             <ListItemIcon
-                            sx={navbarStyles.icons}>
+                            sx={Styles.icons}>
                                 {text.icon}
                             </ListItemIcon>
                             <ListItemText 
-                            sx={navbarStyles.text}
+                            sx={Styles.text}
                             primary={text.label} />
                         </ListItemButton>
                     </ListItem>

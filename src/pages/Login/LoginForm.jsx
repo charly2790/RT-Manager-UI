@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -12,17 +12,18 @@ import Link from '@mui/material/Link';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@emotion/react';
 import { mainTheme } from '../../themes/mainTheme';
+import { useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 import qs from 'qs';
 
-const useLogin = async (loginParams) => {
+const useLogin = async (loginParams, setIsLogged) => {
 
-  const { email, password } = loginParams;
+  const { email, password, idEquipo } = loginParams;
 
   let params = qs.stringify({
     'email': email,
     'password': password,
-    'idEquipo': 1
+    'idEquipo': idEquipo
   });
 
   let config = {
@@ -36,7 +37,8 @@ const useLogin = async (loginParams) => {
 
   try {
     const { data:{token} } = await Axios.request(config);
-    localStorage.setItem('token', token);    
+    localStorage.setItem('token', token);
+    setIsLogged(true);        
   } catch (error) {
     console.error(error.message);
     throw new Error(error.message);
@@ -44,11 +46,21 @@ const useLogin = async (loginParams) => {
 }
 
 export const LoginForm = () => {
-
+  
   const [formState, setFormState] = useState({
     email: '',
-    password: ''
+    password: '',
+    idEquipo: 1, //Recuperar de localStorage
   })
+
+  const [isLogged, setIsLogged] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    isLogged? navigate("/"):null
+  }, [isLogged])
+  
 
   const onInputChange = ({ target }) => {
     const { name, value } = target;
@@ -60,8 +72,7 @@ export const LoginForm = () => {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    useLogin(formState);
-
+    useLogin(formState,setIsLogged);
   }
 
   return (
