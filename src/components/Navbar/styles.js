@@ -1,4 +1,4 @@
-const drawerWidth = 220;
+const drawerWidth = 240;
 
 export const Styles = {
     drawer: {
@@ -7,7 +7,7 @@ export const Styles = {
         '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
-            backgroundColor: '#101F33',
+            backgroundColor: '#29303A',
             color: 'rgba(255,255,255,0.7)'
         },
         '& .Mui-selected': {

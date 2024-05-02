@@ -1,0 +1,22 @@
+.flex-drow-jccenter {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;        
+}
+.flex-dcol-aicenter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;        
+}
+
+.width-25 {
+    width: 25%;
+}
+
+.width-100 {
+    width: 100%;
+}
+
+.width-75 {
+    width: 75%;
+}
