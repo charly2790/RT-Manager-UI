@@ -1,11 +1,7 @@
-const drawerWidth = 240;
-
 export const Styles = {
-    drawer: {
-        width: drawerWidth,
+    drawer: {        
         flexShrink: 0,
-        '& .MuiDrawer-paper': {
-            width: drawerWidth,
+        '& .MuiDrawer-paper': {            
             boxSizing: 'border-box',
             backgroundColor: '#29303A',
             color: 'rgba(255,255,255,0.7)'
@@ -17,7 +13,7 @@ export const Styles = {
     },
     icons: {
         color: 'rgba(255,255,255,0.7)',
-        marginLeft:'20px'
+        marginLeft:'10%'
     },
     text: {
         '& span': {
