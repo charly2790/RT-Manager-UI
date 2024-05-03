@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+// import Box from '@mui/material';
 
 import {
     useReactTable,
@@ -11,6 +15,17 @@ import {
 } from '@tanstack/react-table'
 // import dayjs from 'dayjs'
 
+// const buttons = [
+//     <Button key="first" onClick={() => table.setPageIndex(0)}>Primera</Button>,
+//     <Button key="previous" onClick={() => table.previousPage()}>Anterior</Button>,
+//     <Button key="follow" onClick={() => table.nextPage()}>Siguiente</Button>,
+//     <Button key="last" onClick={() => table.setPageIndex(table.getPageCount() - 1)}>Última</Button>,
+// ];
+
+{/* <button onClick={() => table.setPageIndex(0)}>Primer Página</button>
+            <button onClick={() => table.previousPage()}>Anterior</button>
+            <button onClick={() => table.nextPage()}>Siguiente</button>
+            <button onClick={() => table.setPageIndex(table.getPageCount() - 1)}>Última Página</button> */}
 
 export const SimpleTable = ({ columns, data }) => {
 
@@ -36,11 +51,26 @@ export const SimpleTable = ({ columns, data }) => {
             onGlobalFilterChange: setFiltering,
         });
 
+    const buttons = [
+        <Button key="first" variant="contained" onClick={() => table.setPageIndex(0)}>Primera</Button>,
+        <Button key="previous" variant="contained" onClick={() => table.previousPage()}>Anterior</Button>,
+        <Button key="follow" variant="contained" onClick={() => table.nextPage()}>Siguiente</Button>,
+        <Button key="last" variant="contained" onClick={() => table.setPageIndex(table.getPageCount() - 1)}>Última</Button>,
+    ];
+
     return (
         <div>
-            <input
+            {/* <input
                 type="text"
                 value={filtering}
+                onChange={(e) => setFiltering(e.target.value)}
+            /> */}
+            <TextField
+                id="standard-basic"
+                label="Buscar"
+                variant="standard"
+                value={filtering}
+                sx={{ width: '50%', mb: 3 }}
                 onChange={(e) => setFiltering(e.target.value)}
             />
             <TableContainer component={Paper}>
@@ -95,10 +125,12 @@ export const SimpleTable = ({ columns, data }) => {
                     </tfoot> */}
                 </Table>
             </TableContainer>
-            <button onClick={() => table.setPageIndex(0)}>Primer Página</button>
-            <button onClick={() => table.previousPage()}>Anterior</button>
-            <button onClick={() => table.nextPage()}>Siguiente</button>
-            <button onClick={() => table.setPageIndex(table.getPageCount() - 1)}>Última Página</button>
+
+            <ButtonGroup color="primary" aria-label="Medium-sized button group" sx={{mt: 1}}>
+                {buttons}
+            </ButtonGroup>
+
+
 
         </div>
     )

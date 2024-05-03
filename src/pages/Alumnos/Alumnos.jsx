@@ -1,6 +1,7 @@
 import { SimpleTable } from '../../components/SimpleTable';
 import { useFetch } from '../../hooks/useFetch';
 import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMessage';
+import "../../styles.css";
 
 
 
@@ -51,14 +52,16 @@ export const Alumnos = () => {
     })    
   }
 
+  console.log(`Renderizando componente!`);
   return (
-    <>
+    <div className="flex-drow-jccenter m-open width-100">
        {
        isLoading
         ? <LoadingMessage/>
         :<SimpleTable columns={columns} data={alumnosData} />
+      // <LoadingMessage/>
       }
       
-    </>
+    </div>
   )
 }
