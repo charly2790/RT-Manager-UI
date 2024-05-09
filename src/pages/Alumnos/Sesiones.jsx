@@ -3,7 +3,7 @@ import { useFetch } from '../../hooks/useFetch'
 import { useLocation } from 'react-router-dom'
 import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMessage'
 import { SimpleTable } from '../../components/SimpleTable'
-
+import dayjs from 'dayjs'
 export const Sesiones = () => {
 
   const { state: { alumno, token } } = useLocation();
@@ -22,7 +22,7 @@ export const Sesiones = () => {
   const columns = [
     {
       header: "Fecha",
-      accessorKey: "fechaSesion",
+      accessorKey: "fechaSesion",      
     },
     {
       header: "Objetivo",
@@ -43,9 +43,10 @@ export const Sesiones = () => {
 
   if (data) {
 
-    sesiones = data.map(sesion => {
+
+    sesiones = data.map(sesion => {      
       return {
-        fechasesion: sesion.fechaSesion,
+        fechaSesion: dayjs(sesion.fechaSesion).format("DD-MM-YYYY"),
         Objetivo: sesion.Objetivo,
         idTipoSesion: sesion.idTipoSesion,
         completado: sesion.Completado? "Si" : "No",
