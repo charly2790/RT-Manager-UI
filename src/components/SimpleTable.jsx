@@ -5,14 +5,12 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
-// import Box from '@mui/material';
 
 import {
     useReactTable,
@@ -22,24 +20,13 @@ import {
     getSortedRowModel,
     getFilteredRowModel,
 } from '@tanstack/react-table'
-// import dayjs from 'dayjs'
+import { useNavigate } from 'react-router-dom';
 
-// const buttons = [
-//     <Button key="first" onClick={() => table.setPageIndex(0)}>Primera</Button>,
-//     <Button key="previous" onClick={() => table.previousPage()}>Anterior</Button>,
-//     <Button key="follow" onClick={() => table.nextPage()}>Siguiente</Button>,
-//     <Button key="last" onClick={() => table.setPageIndex(table.getPageCount() - 1)}>Última</Button>,
-// ];
-
-{/* <button onClick={() => table.setPageIndex(0)}>Primer Página</button>
-            <button onClick={() => table.previousPage()}>Anterior</button>
-            <button onClick={() => table.nextPage()}>Siguiente</button>
-            <button onClick={() => table.setPageIndex(table.getPageCount() - 1)}>Última Página</button> */}
-
-export const SimpleTable = ({ columns, data }) => {
+export const SimpleTable = ({ columns, data, createForm }) => {
 
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
+    const navigate = useNavigate();
 
 
     const table = useReactTable(
@@ -95,7 +82,11 @@ export const SimpleTable = ({ columns, data }) => {
                             />
                         </Grid>
                         <Grid item>
-                            <Button variant='contained' sx={{ mr: 1 }}>
+                            <Button 
+                                variant='contained' 
+                                sx={{ mr: 1 }} 
+                                onClick={() => navigate(createForm)}
+                                >
                                 Agregar Usuario
                             </Button>
                             <Tooltip title="Reload">

@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom'
 import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMessage'
 import { SimpleTable } from '../../components/SimpleTable'
 import dayjs from 'dayjs'
+import { CreateSesionForm } from './CreateSesionForm'
 export const Sesiones = () => {
 
   const { state: { alumno, token } } = useLocation();
@@ -36,7 +37,7 @@ export const Sesiones = () => {
       header: "Completado?",
       accessorKey: "completado",
     }
-  ]
+  ]  
 
   const { data, hasError, isLoading } = useFetch(settings);
   let sesiones = [];
@@ -59,7 +60,7 @@ export const Sesiones = () => {
       {
         isLoading
           ? <LoadingMessage />
-          : <SimpleTable columns={columns} data={sesiones} />        
+          : <SimpleTable columns={columns} data={sesiones} createForm={"/createSesion"}/>
       }
     </div>
   )

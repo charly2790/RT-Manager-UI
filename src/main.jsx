@@ -8,8 +8,9 @@ import { Alumnos } from './pages/Alumnos/Alumnos'
 import { Ajustes } from './pages/Ajustes/Ajustes'
 import { Carreras } from './pages/Carreras/Carreras'
 import { LoginForm } from './pages/Login/LoginForm'
-import { Sesiones } from './pages/Alumnos/Sesiones';
+import { Sesiones } from './pages/Sesiones/Sesiones';
 import { Dashboard } from './components/Dashboard';
+import { CreateSesionForm } from './pages/Sesiones/CreateSesionForm';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: "sesiones",
         element: <Sesiones/>,            
+      },
+      {
+        path: "createSesion",
+        element: <CreateSesionForm/>
       }
     ]
   },
