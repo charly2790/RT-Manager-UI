@@ -5,13 +5,14 @@ import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import "../../styles.css";
 import { IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import { constants } from '../../utils/constants.js'
 
 
 
 
 export const Alumnos = () => {
   
+  const { url } = constants;
   const token = localStorage.getItem('token');
   const idEquipo = 1; 
   const navigate = useNavigate();  
@@ -19,7 +20,7 @@ export const Alumnos = () => {
   
   let settings = {
     method: 'get',
-    url: 'http://localhost:3003/usuarios',
+    url: `${url}/usuarios`,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`

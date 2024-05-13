@@ -5,12 +5,16 @@ import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMe
 import { SimpleTable } from '../../components/SimpleTable'
 import dayjs from 'dayjs'
 import { CreateSesionForm } from './CreateSesionForm'
+import { constants } from '../../utils/constants'
+
 export const Sesiones = () => {
 
   const { state: { alumno, token } } = useLocation();
+  const { url } = constants;
+
   const settings = {
     method: 'get',
-    url: 'http://localhost:3003/sesionesEntrenamiento',
+    url:`${url}/sesionesEntrenamiento`,    
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`

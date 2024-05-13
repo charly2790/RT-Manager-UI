@@ -13,8 +13,10 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@emotion/react';
 import { mainTheme } from '../../themes/mainTheme';
 import { useNavigate } from 'react-router-dom';
+
 import Axios from 'axios';
 import qs from 'qs';
+import { constants } from '../../utils/constants';
 
 const useLogin = async (loginParams, setIsLogged) => {
 
@@ -26,9 +28,11 @@ const useLogin = async (loginParams, setIsLogged) => {
     'idEquipo': idEquipo
   });
 
+  let { url } = constants;
+
   let config = {
     method: 'post',
-    url: 'http://localhost:3003/login',
+    url: `${url}/login`,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },

@@ -17,6 +17,7 @@
     "@mui/material": "^5.15.10",
     "@tanstack/react-table": "^8.16.0",
     "axios": "^1.6.8",
+    "dayjs": "^1.11.11",
     "qs": "^6.12.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
