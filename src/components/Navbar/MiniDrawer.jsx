@@ -89,18 +89,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-export const MiniDrawer = () => {
-    const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
+export const MiniDrawer = ({handleDrawerClose, handleDrawerOpen, open}) => {
+    const theme = useTheme();    
     const navigate = useNavigate();
-
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
-
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
 
     return (
         <ThemeProvider theme={mainTheme}>

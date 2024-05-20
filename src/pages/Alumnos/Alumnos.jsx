@@ -16,7 +16,7 @@ export const Alumnos = () => {
   const token = localStorage.getItem('token');
   const idEquipo = 1; 
   const navigate = useNavigate();  
-  let alumnosData = [];
+  let alumnosData = [];  
   
   let settings = {
     method: 'get',
@@ -72,8 +72,7 @@ export const Alumnos = () => {
        {
        isLoading
         ? <LoadingMessage/>
-        :<SimpleTable columns={columns} data={alumnosData} />
-      // <LoadingMessage/>
+        :<SimpleTable columns={columns} data={alumnosData} />      
       }            
     </div>
   )

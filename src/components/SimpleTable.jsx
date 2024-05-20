@@ -72,8 +72,7 @@ export const SimpleTable = ({ columns, data, createForm }) => {
                                 fullWidth
                                 placeholder='Buscar por email, número telefónico o id usuario'
                                 id="standard-basic"
-                                inputProps={{
-                                    disableUnderline: true,
+                                inputProps={{                                    
                                     sx: { fontSize: 'default' },
                                 }}
                                 variant="standard"
@@ -123,8 +122,8 @@ export const SimpleTable = ({ columns, data, createForm }) => {
                     <TableBody>
                         {table.getRowModel().rows.map((row) => (
                             <TableRow key={row.id}>
-                                {row.getVisibleCells().map((cell) => (
-                                    <TableCell>
+                                {row.getVisibleCells().map((cell,index) => (
+                                    <TableCell key={`${row.id}-${index}`}>
                                         {/* {console.log(`cell`, cell)} */}
                                         {/* {flexRender(cell.column.columnDef.cell, cell.getContext())}*/}
                                         {cell.renderValue('cell')}
