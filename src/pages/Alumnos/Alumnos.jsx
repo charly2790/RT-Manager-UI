@@ -68,7 +68,7 @@ export const Alumnos = () => {
   }
 
   return (
-    <div className="flex-drow-jccenter m-open width-100">
+    <div className="flex-drow-jccenter">
        {
        isLoading
         ? <LoadingMessage/>
