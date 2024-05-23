@@ -22,7 +22,7 @@ import {
 } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom';
 
-export const SimpleTable = ({ columns, data, createForm }) => {
+export const SimpleTable = ({ columns, data, formParams }) => {
 
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
@@ -72,7 +72,7 @@ export const SimpleTable = ({ columns, data, createForm }) => {
                                 fullWidth
                                 placeholder='Buscar por email, número telefónico o id usuario'
                                 id="standard-basic"
-                                inputProps={{                                    
+                                inputProps={{
                                     sx: { fontSize: 'default' },
                                 }}
                                 variant="standard"
@@ -81,11 +81,11 @@ export const SimpleTable = ({ columns, data, createForm }) => {
                             />
                         </Grid>
                         <Grid item>
-                            <Button 
-                                variant='contained' 
-                                sx={{ mr: 1 }} 
-                                onClick={() => navigate(createForm)}
-                                >
+                            <Button
+                                variant='contained'
+                                sx={{ mr: 1 }}
+                                onClick={() => navigate(formParams.route, formParams.params ? { state: { ...formParams.params } } : {})}
+                            >
                                 Agregar Usuario
                             </Button>
                             <Tooltip title="Reload">
@@ -122,7 +122,7 @@ export const SimpleTable = ({ columns, data, createForm }) => {
                     <TableBody>
                         {table.getRowModel().rows.map((row) => (
                             <TableRow key={row.id}>
-                                {row.getVisibleCells().map((cell,index) => (
+                                {row.getVisibleCells().map((cell, index) => (
                                     <TableCell key={`${row.id}-${index}`}>
                                         {/* {console.log(`cell`, cell)} */}
                                         {/* {flexRender(cell.column.columnDef.cell, cell.getContext())}*/}

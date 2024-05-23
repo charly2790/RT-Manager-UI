@@ -4,10 +4,13 @@ import { useFetch } from '../../hooks/useFetch';
 import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMessage';
 import { Box, Grid, Typography, CssBaseline, TextField, Select, MenuItem, Container, InputLabel, FormControl, Button, ThemeProvider } from '@mui/material'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { useLocation } from 'react-router-dom';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { constants } from '../../utils/constants';
 import { mainTheme } from '../../themes/mainTheme';
+import { useForm, Controller } from "react-hook-form";
+import _ from 'lodash';
 import dayjs from 'dayjs';
 import '../../styles.css';
 
@@ -16,10 +19,21 @@ import '../../styles.css';
 
 export const CreateSesionForm = () => {
 
-  const [fechaSesion, setFechaSesion] = useState(dayjs('1990-05-27'));
-  const [tipoSesion, setTipoSesion] = useState('');
   const { url } = constants;
   const token = localStorage.getItem('token');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control
+  } = useForm({
+    defaultValues: {
+      fechaSesion: dayjs(),      
+    }
+  });
+  const { state } = useLocation();
+
+  console.log(`state: ${JSON.stringify(state)}`);
 
   let settings = {
     method: 'get',
@@ -30,13 +44,37 @@ export const CreateSesionForm = () => {
     }
   }
 
+  let createSettings = (params) => ({
+    method: 'post',
+    url: `${url}/tiposSesion`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${token}`
+    },
+    data: {
+      ...params
+    }
+  })
+
   const { data, hasError, isLoading } = useFetch(settings);
 
-  const handleChange = (event) => {
-    setTipoSesion(event.target.value);
-  };
-
   let tiposSesion = data ? data.tiposSesion : [];
+
+  const onSubmit = handleSubmit((data) => {
+    
+    let { idTipoSesion, objetivo, fechaSesion } = data;
+    let createSesionSettings = createSettings({
+      idSuscripcion: state.idSuscripcion,
+      ...data
+    });
+    
+    if(_.isEmpty(errors)){
+      const { data, hasError, isLoading } = useFetch(settings);
+
+      console.log(`data: ${JSON.stringify(data)}`);
+    }
+    
+  })
 
   return (
     <>
@@ -58,25 +96,33 @@ export const CreateSesionForm = () => {
             </Typography>
             {
               isLoading ? <LoadingMessage />
-                : <Box component="form" noValidate sx={{ mt: 3 }}>
+                : <Box
+                  component="form"
+                  noValidate
+                  sx={{ mt: 3 }}
+                  onSubmit={onSubmit}
+                >
                   <Grid container spacing={2} >
                     <Grid item xs={12} sm={6}>
-                      <FormControl fullWidth>
+                      <FormControl
+                        fullWidth
+                        error={errors.tipoSesion ? true : false}
+                      >
                         <InputLabel
                           id="select-tipo-sesion"
                           sx={{ mt: 1 }}
                         >Tipo Sesión</InputLabel>
                         <Select
-                          labelId="select-tipo-sesion"
-                          id="select-tipo-sesion"
-                          value={tipoSesion}
                           label="Tipo Sesión"
-                          onChange={handleChange}
+                          {...register("idTipoSesion")}
+                          defaultValue={tiposSesion.length > 0 && tiposSesion ? tiposSesion[0].idTipoSesion : ""}
+                          labelId="tipoSesion"
+                          id="tipoSesion"
                           sx={{ mt: 1 }}
                         >
                           {
                             tiposSesion.map((tipo) => {
-                              return <MenuItem value={tipo.idTipoSesion}>{tipo.descripcion}</MenuItem>
+                              return <MenuItem value={tipo.idTipoSesion} key={tipo.idTipoSesion}>{tipo.descripcion}</MenuItem>
                             })
                           }
                         </Select>
@@ -84,34 +130,71 @@ export const CreateSesionForm = () => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <LocalizationProvider dateAdapter={AdapterDayjs} >
-                        <DemoContainer components={['DatePicker']} >
-                          <DatePicker
-                            label="Fecha de la sesión"
-                            value={fechaSesion}
-                            onChange={(newValue) => {
-                              setFechaSesion(newValue);
-                            }}                            
-                            sx={{ width: '100%' }}
-                          />
-                        </DemoContainer>
+                        <Controller
+                          control={control}
+                          name="fechaSesion"
+                          rules={{ required: 'La fecha es requerida'}}                          
+                          render={({ field: { onChange, value, defaultValue }, fieldState: { error } }) => (                            
+                            <DatePicker
+                              label="Fecha de la sesión"
+                              disablePast
+                              value={value}
+                              onChange={onChange}
+                              sx={{ width: '100%', mt: 1 }}                                                        
+                              renderInput={(params) =>                                
+                                <TextField
+                                {...params}
+                                fullWidth                                  
+                                />}
+                            />
+                          )}
+                        />
                       </LocalizationProvider>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={12}>
                       <TextField
+                        error={errors.objetivo ? true : false}
+                        multiline
                         required
                         fullWidth
+                        rows={2}
                         id="objetivo"
                         label="Objetivo"
                         name="objetivo"
                         autoComplete="family-name"
+                        {...register("objetivo", {
+                          required:{
+                            value: true,
+                            message: 'El objetivo es requerido'
+                          },
+                          minLength: {
+                            value: 3,
+                            message: 'Debe contener al menos 3 caracteres'
+                          }
+                        })}
+                        helperText={errors.objetivo ? errors.objetivo.message : null}
                       />
+                      <Grid item xs={12} sm={12}>
+                        <TextField                          
+                          multiline
+                          rows={2}
+                          required
+                          fullWidth
+                          id="comentarios"
+                          label="Comentarios"
+                          name="comentarios"
+                          autoComplete="family-name"
+                          sx={{ mt: 2 }}
+                          {...register("comentarios")}
+                        />
+                      </Grid>
                     </Grid>
                   </Grid>
                   <Button
                     type="submit"
                     fullWidth
                     variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
+                    sx={{ mt: 2, mb: 2 }}
                   >
                     Guardar
                   </Button>

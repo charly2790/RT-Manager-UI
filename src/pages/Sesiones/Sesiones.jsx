@@ -10,7 +10,7 @@ import { constants } from '../../utils/constants'
 export const Sesiones = () => {
 
   const { state: { alumno, token } } = useLocation();
-  const { url } = constants;
+  const { url } = constants;  
 
   const settings = {
     method: 'get',
@@ -59,12 +59,19 @@ export const Sesiones = () => {
     })
   }
 
+  const formParams = {
+    route: "/createSesion",
+    params: {
+      idSuscripcion: alumno.Suscripcions[0].idSuscripcion
+    }
+  }
+
   return (
     <div className="flex-drow-jccenter">
       {
         isLoading
           ? <LoadingMessage />
-          : <SimpleTable columns={columns} data={sesiones} createForm={"/createSesion"}/>
+          : <SimpleTable columns={columns} data={sesiones} formParams={formParams}/>
       }
     </div>
   )
