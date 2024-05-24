@@ -9,8 +9,9 @@ import { constants } from '../../utils/constants'
 
 export const Sesiones = () => {
 
-  const { state: { alumno, token } } = useLocation();
-  const { url } = constants;  
+  const token = localStorage.getItem('token');
+  const { state: { alumno } } = useLocation();
+  const { url } = constants;
 
   const settings = {
     method: 'get',
@@ -62,7 +63,8 @@ export const Sesiones = () => {
   const formParams = {
     route: "/createSesion",
     params: {
-      idSuscripcion: alumno.Suscripcions[0].idSuscripcion
+      // idSuscripcion: alumno.Suscripcions[0].idSuscripcion
+      alumno,
     }
   }
 

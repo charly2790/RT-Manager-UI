@@ -1,26 +1,28 @@
-import React from 'react'
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import { useFetch } from '../../hooks/useFetch';
 import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMessage';
 import { Box, Grid, Typography, CssBaseline, TextField, Select, MenuItem, Container, InputLabel, FormControl, Button, ThemeProvider } from '@mui/material'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { useLocation } from 'react-router-dom';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { constants } from '../../utils/constants';
 import { mainTheme } from '../../themes/mainTheme';
 import { useForm, Controller } from "react-hook-form";
 import _ from 'lodash';
 import dayjs from 'dayjs';
+import qs from 'qs';
 import '../../styles.css';
-
-
+import Axios from 'axios';
 
 
 export const CreateSesionForm = () => {
 
   const { url } = constants;
+  const { state:{ alumno } } = useLocation();
   const token = localStorage.getItem('token');
+  const [isCreated, setIsCreated] = useState(false);
+  const navigate = useNavigate();
+  
   const {
     register,
     handleSubmit,
@@ -31,9 +33,6 @@ export const CreateSesionForm = () => {
       fechaSesion: dayjs(),      
     }
   });
-  const { state } = useLocation();
-
-  console.log(`state: ${JSON.stringify(state)}`);
 
   let settings = {
     method: 'get',
@@ -44,37 +43,52 @@ export const CreateSesionForm = () => {
     }
   }
 
-  let createSettings = (params) => ({
+  let createSettings = (params) => ({        
     method: 'post',
-    url: `${url}/tiposSesion`,
+    url: `${url}/sesionesEntrenamiento`,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Authorization': `Bearer ${token}`
     },
-    data: {
-      ...params
-    }
+    data: qs.stringify(params)
   })
 
   const { data, hasError, isLoading } = useFetch(settings);
 
   let tiposSesion = data ? data.tiposSesion : [];
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     
-    let { idTipoSesion, objetivo, fechaSesion } = data;
+    let { idTipoSesion, Objetivo, fechaSesion } = data;
+    
+    const { Suscripcions } = alumno;
+    const idSuscripcion = Suscripcions[0].idSuscripcion;
+
+    fechaSesion = dayjs(fechaSesion).format('YYYY-MM-DD');
+
     let createSesionSettings = createSettings({
-      idSuscripcion: state.idSuscripcion,
-      ...data
+      idSuscripcion,
+      idTipoSesion,
+      Objetivo,
+      fechaSesion
     });
     
-    if(_.isEmpty(errors)){
-      const { data, hasError, isLoading } = useFetch(settings);
-
-      console.log(`data: ${JSON.stringify(data)}`);
+    if(_.isEmpty(errors)){      
+      try {
+        const res = await Axios.request(createSesionSettings);
+        setIsCreated(true);
+      } catch (error) {
+        console.error(error.message);
+        throw new Error(error.message);
+      }      
     }
     
   })
+
+  useEffect(() => {
+    if(isCreated) navigate("/sesiones", {state: { alumno }});      
+  }, [isCreated])
+  
 
   return (
     <>
@@ -162,7 +176,7 @@ export const CreateSesionForm = () => {
                         label="Objetivo"
                         name="objetivo"
                         autoComplete="family-name"
-                        {...register("objetivo", {
+                        {...register("Objetivo", {
                           required:{
                             value: true,
                             message: 'El objetivo es requerido'
@@ -172,7 +186,7 @@ export const CreateSesionForm = () => {
                             message: 'Debe contener al menos 3 caracteres'
                           }
                         })}
-                        helperText={errors.objetivo ? errors.objetivo.message : null}
+                        helperText={errors.Objetivo ? errors.Objetivo.message : null}
                       />
                       <Grid item xs={12} sm={12}>
                         <TextField                          

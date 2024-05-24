@@ -60,7 +60,7 @@ export const Alumnos = () => {
         idSuscripcion: alumno.Suscripcions[0].idSuscripcion,
         idEquipo: alumno.Suscripcions[0].idEquipo,        
         Acciones: 
-          (<IconButton aria-label="delete" onClick={() => navigate("/sesiones", {state: { alumno, token }})}>
+          (<IconButton aria-label="delete" onClick={() => navigate("/sesiones", {state: { alumno }})}>
             <DirectionsRunIcon/>
           </IconButton>)
       }

@@ -14,8 +14,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 import {
     useReactTable,
-    getCoreRowModel,
-    flexRender,
+    getCoreRowModel,    
     getPaginationRowModel,
     getSortedRowModel,
     getFilteredRowModel,
@@ -84,7 +83,7 @@ export const SimpleTable = ({ columns, data, formParams }) => {
                             <Button
                                 variant='contained'
                                 sx={{ mr: 1 }}
-                                onClick={() => navigate(formParams.route, formParams.params ? { state: { ...formParams.params } } : {})}
+                                onClick={() => navigate(formParams.route, formParams.params ? { state: { ...formParams.params} } : {})}
                             >
                                 Agregar Usuario
                             </Button>
