@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom'
 import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMessage'
 import { SimpleTable } from '../../components/SimpleTable'
 import dayjs from 'dayjs'
-import { CreateSesionForm } from './CreateSesionForm'
 import { constants } from '../../utils/constants'
 
 export const Sesiones = () => {

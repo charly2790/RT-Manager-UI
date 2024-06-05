@@ -10,7 +10,7 @@ import { Ajustes } from './pages/Ajustes/Ajustes'
 import { Carreras } from './pages/Carreras/Carreras'
 import { LoginForm } from './pages/Login/LoginForm'
 import { Dashboard } from './components/Dashboard';
-import { CreateSesionForm } from './pages/Sesiones/CreateSesionForm';
+import { SesionesAdmin } from './pages/Sesiones/SesionesAdmin';
 
 const router = createBrowserRouter([
   {
@@ -35,7 +35,7 @@ const router = createBrowserRouter([
       },
       {
         path: "createSesion",
-        element: <CreateSesionForm/>
+        element: <SesionesAdmin/>
       }
     ]
   },
