@@ -1,44 +1,40 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { Box, Typography, CssBaseline, Container, ThemeProvider } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Typography, CssBaseline, Container, ThemeProvider, IconButton } from '@mui/material'
 import { useLocation } from 'react-router-dom';
 import { sesionesReducer } from './sesionesReducer';
 import { mainTheme } from '../../themes/mainTheme';
 import { SesionForm } from './SesionForm';
-import { NakedTable } from '../../components/NakedTable';
+import { SesionesTable } from './SesionesTable';
 import { constants } from '../../utils/constants';
+
 import qs from 'qs';
 import '../../styles.css';
 
-
-const columns = [
-  {
-    header: "Fecha",
-    accessorKey: "fechaSesion",
-  },
-  {
-    header: "Objetivo",
-    accessorKey: "Objetivo",
-  },
-  {
-    header: "Tipo de Sesion",
-    accessorKey: "idTipoSesion",
-  },
-  {
-    header: "Acciones",
-    accessorKey: "acciones",
-  }
-]
 
 const init = () => {
   return JSON.parse(localStorage.getItem('sesiones')) || [];
 }
 
+const appendButton = ( sesiones, handleMethod ) => {
+  return sesiones.map((sesion) => (
+    {
+      ...sesion,
+      acciones: (
+        <IconButton aria-label='delete' onClick={() => handleMethod(sesion.id)}>
+          <DeleteIcon />
+        </IconButton>
+      )
+    }
+  ))
+}
+
 
 export const SesionesAdmin = () => {
-
+  
   const { url } = constants;
   const { state: { alumno } } = useLocation();
-  const token = localStorage.getItem('token');  
+  const token = localStorage.getItem('token');
 
   let createSettings = (params) => ({
     method: 'post',
@@ -49,21 +45,21 @@ export const SesionesAdmin = () => {
     },
     data: qs.stringify(params)
   })
-  
-  const [ sesiones, dispatch ] = useReducer( sesionesReducer, [], init);
 
-  const handleAddSesion = ( sesion ) => {
-    dispatch({ type: '[SESIONES] Add Sesion', payload: sesion})
+  const [sesiones, dispatch] = useReducer(sesionesReducer, [], init);
+
+  const handleAddSesion = (sesion) => {
+    dispatch({ type: '[SESIONES] Add Sesion', payload: sesion })
   }
 
-  const handleDeleteSesion = ( id ) => {
-    dispatch({ type: '[SESIONES] Delete Sesion', payload: id})
+  const handleDeleteSesion = (id) => {
+    dispatch({ type: '[SESIONES] Delete Sesion', payload: id })
   }
 
   useEffect(() => {
     localStorage.setItem('sesiones', JSON.stringify(sesiones))
   }, [sesiones])
-  
+
   return (
     <>
       <ThemeProvider theme={mainTheme}>
@@ -83,7 +79,7 @@ export const SesionesAdmin = () => {
             <SesionForm
               idSuscripcion={alumno.Suscripcions[0].idSuscripcion}
               handleAddSesion={handleAddSesion}
-              handleDeleteSesion={handleDeleteSesion}/>
+              handleDeleteSesion={handleDeleteSesion} />
             <Box
               sx={{
                 // border: '3px solid yellow',
@@ -95,7 +91,7 @@ export const SesionesAdmin = () => {
               }}
             >
               <Typography component="h1" variant="h5">Nuevas sesiones</Typography>
-              <NakedTable columns={columns} data={sesiones} />
+              <SesionesTable data={ appendButton(sesiones, handleDeleteSesion) } handleDeleteSesion={handleDeleteSesion} />
             </Box>
           </Box>
 

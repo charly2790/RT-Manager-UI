@@ -1,6 +1,5 @@
 import React from 'react'
 import dayjs from 'dayjs';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { constants } from '../../utils/constants';
 import { useFetch } from '../../hooks/useFetch';
 import { useForm, Controller } from "react-hook-form";
@@ -52,10 +51,7 @@ export const SesionForm = ({ idSuscripcion, handleAddSesion, handleDeleteSesion 
             idSuscripcion,
             idTipoSesion,
             Objetivo,
-            fechaSesion,
-            acciones: (<IconButton aria-label='delete' onClick={() => handleDeleteSesion(id)}>
-                <DeleteIcon />
-            </IconButton>)
+            fechaSesion,            
         }
 
         handleAddSesion(newSesion);
