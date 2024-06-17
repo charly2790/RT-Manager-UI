@@ -27,7 +27,7 @@ export const SesionesTable = ({ data, handleDeleteSesion }) => {
     const table = useTable({ columns, data });
 
         return (
-            <Paper sx={{ maxWidth: 936, margin: 'auto', overflow: 'hidden' }}>
+            <Paper sx={{ width:'90%', margin: 'auto', overflow: 'hidden' }}>
                 <TableContainer component={Paper} >
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>

@@ -8,6 +8,9 @@ export const sesionesReducer = ( state, action ) => {
         case '[SESIONES] Delete Sesion':{
             return state.filter( sesion => sesion.id !== action.payload )
         }
+        case '[SESIONES] Clear Sesiones':{
+            return [];
+        }
     
     }
 }
