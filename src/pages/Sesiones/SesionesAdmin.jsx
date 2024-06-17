@@ -4,18 +4,16 @@ import { Box, Typography, CssBaseline, Container, ThemeProvider, IconButton, But
 import { useLocation, useNavigate } from 'react-router-dom';
 import { sesionesReducer } from './sesionesReducer';
 import { mainTheme } from '../../themes/mainTheme';
-import { SesionForm } from './SesionForm';
-import { SesionesTable } from './SesionesTable';
+import { SesionForm } from './components/SesionForm';
+import { SesionesTable } from './components/SesionesTable';
 import { constants } from '../../utils/constants';
-
+import { useSesionesEntrenamiento } from '../../hooks/useSesiones';
 import qs from 'qs';
 import '../../styles.css';
 import Axios from 'axios';
 
 
-const init = () => {
-  return JSON.parse(localStorage.getItem('sesiones')) || [];
-}
+
 
 const appendButton = (sesiones, handleMethod) => {
   return sesiones.map((sesion) => (
@@ -38,6 +36,8 @@ export const SesionesAdmin = () => {
   const navigate = useNavigate(); 
   const token = localStorage.getItem('token');
 
+  const { sesiones, handleAddSesion, handleDeleteSesion, handleClearSesiones } = useSesionesEntrenamiento();
+
   let createSettings = (params) => ({
     method: 'post',
     url: `${url}/sesionesEntrenamiento`,
@@ -47,23 +47,6 @@ export const SesionesAdmin = () => {
     },
     data: qs.stringify(params)
   })  
-
-  const [sesiones, dispatch] = useReducer(sesionesReducer, [], init);
-
-  const handleAddSesion = (sesion) => {
-    dispatch({ type: '[SESIONES] Add Sesion', payload: sesion })
-  }
-
-  const handleDeleteSesion = (id) => {
-    dispatch({ type: '[SESIONES] Delete Sesion', payload: id })
-  }
-  
-  const handleClearSesiones = () => {
-    dispatch({ type: '[SESIONES] Clear Sesiones' })
-  }
-  useEffect(() => {
-    localStorage.setItem('sesiones', JSON.stringify(sesiones))
-  }, [sesiones])
 
   const handleSubmit = async () => {    
     

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useTable } from '../../hooks/useTable';
+import { useTable } from '../../../hooks/useTable';
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
