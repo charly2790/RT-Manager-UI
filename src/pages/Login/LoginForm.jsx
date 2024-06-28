@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -18,66 +18,70 @@ import Axios from 'axios';
 import qs from 'qs';
 import { constants } from '../../utils/constants';
 
-const useLogin = async (loginParams, setIsLogged) => {
+import { useForm } from 'react-hook-form';
+import { UserContext } from '../Context/UserContext';
 
-  const { email, password, idEquipo } = loginParams;
-
-  let params = qs.stringify({
-    'email': email,
-    'password': password,
-    'idEquipo': idEquipo
-  });
-
-  let { url } = constants;
-
-  let config = {
-    method: 'post',
-    url: `${url}/login`,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    data: params
-  };
-
-  try {
-    const { data:{token} } = await Axios.request(config);
-    localStorage.setItem('token', token);
-    setIsLogged(true);        
-  } catch (error) {
-    console.error(error.message);
-    throw new Error(error.message);
-  }
-}
 
 export const LoginForm = () => {
+
+  let { url } = constants;
   
-  const [formState, setFormState] = useState({
-    email: '',
-    password: '',
-    idEquipo: 1, //Recuperar de localStorage
+  const navigate = useNavigate();
+  const { setUserToken } = useContext( UserContext );
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control
+  } = useForm()
+
+  const [formState, setFormState] = useState({    
+    isLoading: false,
+    success: false,
+    hasError: false,
+    errorMessage: '',
+  });
+
+  
+  const onSubmit = handleSubmit(async (data) => {
+
+    let { email, password } = data;
+    let idEquipo = 1;
+
+    let settings = {
+      method: 'post',
+      url: `${url}/login`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data: qs.stringify({ idEquipo, email, password })
+    }
+
+    setFormState({
+      ...formState,      
+      isLoading: true,
+    });
+
+    await new Promise( resolve => setTimeout(resolve, 1500) );
+
+    try {
+      const { data: { token } } = await Axios.request(settings);
+      setUserToken(token);
+      setFormState({
+        ...formState,
+        isLoading: false,
+        success: true
+      })
+    } catch (error) {
+      console.error(error.message);
+    }
+    
   })
 
-  const [isLogged, setIsLogged] = useState(false);
-
-  const navigate = useNavigate();
-
   useEffect(() => {
-    isLogged? navigate("/"):null
-  }, [isLogged])
-  
-
-  const onInputChange = ({ target }) => {
-    const { name, value } = target;
-    setFormState({
-      ...formState,
-      [name]: value,
-    });
-  }
-
-  const onSubmit = (event) => {
-    event.preventDefault();
-    useLogin(formState,setIsLogged);
-  }
+    formState.success? navigate("/"):null
+  }, [formState.success])
 
   return (
     <ThemeProvider theme={mainTheme}>
@@ -122,6 +126,7 @@ export const LoginForm = () => {
               component="form"
               /*utilizar biblioteca de validación de formularios*/
               sx={{ mt: 1, width: '100%' }}
+              onSubmit={onSubmit}
             >
               <TextField
                 margin="normal"
@@ -131,7 +136,14 @@ export const LoginForm = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                onChange={onInputChange}
+                {
+                ...register("email", {
+                  required: {
+                    value: true,
+                    message: "El campo email es requerido"
+                  },
+                })
+                }
                 autoFocus
               />
               <TextField
@@ -142,23 +154,41 @@ export const LoginForm = () => {
                 label="Password"
                 type="password"
                 id="password"
-                onChange={onInputChange}
+                {
+                ...register("password", {
+                  required: {
+                    value: true,
+                    message: 'El campo contraseña es requerido'
+                  }
+                })
+                }
                 autoComplete='current-password'
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                onClick={onSubmit}
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Acceder
-              </Button>
+              {
+                formState.isLoading ?
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="outlined"
+                    onClick={onSubmit}
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    Accediendo...
+                  </Button> :
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    onClick={onSubmit}
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    Acceder
+                  </Button>
+              }
               <Grid container>
                 <Grid item xs>
                   <Link href="#" variant="body2">

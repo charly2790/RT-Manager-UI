@@ -1,10 +1,12 @@
 import { SimpleTable } from '../../components/SimpleTable';
 import { useFetch } from '../../hooks/useFetch';
+import { useContext } from 'react';
 import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMessage';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import { IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { constants } from '../../utils/constants.js'
+import { UserContext } from '../Context/UserContext.jsx';
 import "../../styles.css";
 
 
@@ -13,8 +15,8 @@ import "../../styles.css";
 export const Alumnos = () => {
   
   const { url } = constants;
-  const token = localStorage.getItem('token');
-  const idEquipo = 1; 
+  const { getUserToken, idEquipo } = useContext( UserContext );
+  const token = getUserToken();  
   const navigate = useNavigate();  
   let alumnosData = [];  
   
