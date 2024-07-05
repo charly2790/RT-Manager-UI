@@ -27,7 +27,7 @@ export const LoginForm = () => {
   let { url } = constants;
   
   const navigate = useNavigate();
-  const { setUserToken } = useContext( UserContext );
+  const { setUserLogged } = useContext( UserContext );
   
   const {
     register,
@@ -66,8 +66,8 @@ export const LoginForm = () => {
     await new Promise( resolve => setTimeout(resolve, 1500) );
 
     try {
-      const { data: { token } } = await Axios.request(settings);
-      setUserToken(token);
+      const { data: { userLogged } } = await Axios.request(settings);      
+      setUserLogged( userLogged );
       setFormState({
         ...formState,
         isLoading: false,

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useContext, useEffect, useReducer, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Typography, CssBaseline, Container, ThemeProvider, IconButton, Button } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { useSesionesEntrenamiento } from '../../hooks/useSesiones';
 import qs from 'qs';
 import '../../styles.css';
 import Axios from 'axios';
+import { UserContext } from '../Context/UserContext';
 
 
 
@@ -32,10 +33,10 @@ const appendButton = (sesiones, handleMethod) => {
 export const SesionesAdmin = () => {
 
   const { url } = constants;
+  
   const { state: { alumno } } = useLocation();
+  const { userLogged } = useContext(UserContext);  
   const navigate = useNavigate(); 
-  const token = localStorage.getItem('token');
-
   const { sesiones, handleAddSesion, handleDeleteSesion, handleClearSesiones } = useSesionesEntrenamiento();
 
   let createSettings = (params) => ({
@@ -43,7 +44,7 @@ export const SesionesAdmin = () => {
     url: `${url}/sesionesEntrenamiento`,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${userLogged.token}`
     },
     data: qs.stringify(params)
   })  

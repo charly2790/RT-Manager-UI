@@ -1,6 +1,7 @@
 import PeopleIcon from '@mui/icons-material/People';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import SettingsIcon from '@mui/icons-material/Settings';
+import WatchIcon from '@mui/icons-material/Watch';
 
 export const navbarItems = [{
     id:0,
@@ -20,4 +21,10 @@ export const navbarItems = [{
     label:'Ajustes',
     route: 'ajustes'
 },
+{
+    id:3,
+    icon:<WatchIcon/>,
+    label:'Planificación',
+    route: 'sesiones'
+}
 ]

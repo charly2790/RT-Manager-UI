@@ -15,8 +15,7 @@ import "../../styles.css";
 export const Alumnos = () => {
   
   const { url } = constants;
-  const { getUserToken, idEquipo } = useContext( UserContext );
-  const token = getUserToken();  
+  const { userLogged } = useContext( UserContext );    
   const navigate = useNavigate();  
   let alumnosData = [];  
   
@@ -25,12 +24,13 @@ export const Alumnos = () => {
     url: `${url}/usuarios`,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${ userLogged.token }`
     },
     params: {
-      'idEquipo': idEquipo
+      'idEquipo': userLogged.idEquipo
     }
   }
+
   const columns = [
     {
       header: "email",
@@ -56,13 +56,13 @@ export const Alumnos = () => {
 
     let { usuarios:alumnos}  = data;
 
-    alumnosData = alumnos.map(alumno => {             
+    alumnosData = alumnos.map( alumno => {      
       return {
         email: alumno.email,
         idSuscripcion: alumno.Suscripcions[0].idSuscripcion,
         idEquipo: alumno.Suscripcions[0].idEquipo,        
         Acciones: 
-          (<IconButton aria-label="delete" onClick={() => navigate("/sesiones", {state: { alumno }})}>
+          (<IconButton aria-label="delete" onClick={() => navigate("/sesiones", { state : { alumno }})}>          
             <DirectionsRunIcon/>
           </IconButton>)
       }

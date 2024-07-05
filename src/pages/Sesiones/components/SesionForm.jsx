@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import dayjs from 'dayjs';
 import { constants } from '../../../utils/constants';
 import { useFetch } from '../../../hooks/useFetch';
@@ -7,18 +7,19 @@ import { LoadingMessage } from '../../../components/Shared/LoadingMessage/Loadin
 import { Box, Grid, Typography, TextField, Select, MenuItem, InputLabel, FormControl, Button, IconButton } from '@mui/material'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { UserContext } from '../../Context/UserContext';
 
 export const SesionForm = ({ idSuscripcion, handleAddSesion, handleDeleteSesion }) => {
 
     const { url } = constants;
-    const token = localStorage.getItem('token');
+    const { userLogged } = useContext(UserContext);        
 
     let settings = {
         method: 'get',
         url: `${url}/tiposSesion`,
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${userLogged.token}`
         }
     }    
 

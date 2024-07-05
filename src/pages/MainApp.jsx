@@ -23,6 +23,10 @@ import {
           element: <Ajustes />,
         },
         {
+          path:"Planificación",
+          element: <Sesiones/>
+        },
+        {
           path: "sesiones",
           element: <Sesiones/>,            
         },

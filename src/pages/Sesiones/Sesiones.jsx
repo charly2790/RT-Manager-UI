@@ -1,33 +1,39 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useFetch } from '../../hooks/useFetch'
 import { useLocation } from 'react-router-dom'
 import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMessage'
 import { SimpleTable } from '../../components/SimpleTable'
 import dayjs from 'dayjs'
 import { constants } from '../../utils/constants'
+import { UserContext } from '../Context/UserContext'
 
 export const Sesiones = () => {
 
-  const token = localStorage.getItem('token');
-  const { state: { alumno } } = useLocation();
+  const { userLogged } = useContext(UserContext);  
+  const { state } = useLocation();
   const { url } = constants;
 
-  const settings = {
-    method: 'get',
-    url:`${url}/sesionesEntrenamiento`,    
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Bearer ${token}`
-    },
-    params: {
-      'idSuscripcion': alumno.Suscripcions[0].idSuscripcion
-    }
+  const settings = () => {  
+    
+    const alumno = state ? state.alumno : undefined;  
+
+    return {
+      method: 'get',
+      url: `${url}/sesionesEntrenamiento`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Bearer ${userLogged.token}`
+      },
+      params: {
+        'idSuscripcion': alumno ? alumno.Suscripcions[0].idSuscripcion : userLogged.idSuscripcion
+      }
+    };
   }
 
   const columns = [
     {
       header: "Fecha",
-      accessorKey: "fechaSesion",      
+      accessorKey: "fechaSesion",
     },
     {
       header: "Objetivo",
@@ -41,29 +47,27 @@ export const Sesiones = () => {
       header: "Completado?",
       accessorKey: "completado",
     }
-  ]  
+  ]
 
-  const { data, hasError, isLoading } = useFetch(settings);
+  const { data, hasError, isLoading } = useFetch(settings());
+
   let sesiones = [];
 
   if (data) {
-
-
-    sesiones = data.map(sesion => {      
+    sesiones = data.map(sesion => {
       return {
         fechaSesion: dayjs(sesion.fechaSesion).format("DD-MM-YYYY"),
         Objetivo: sesion.Objetivo,
         idTipoSesion: sesion.idTipoSesion,
-        completado: sesion.Completado? "Si" : "No",
+        completado: sesion.Completado ? "Si" : "No",
       }
     })
   }
 
   const formParams = {
     route: "/createSesion",
-    params: {
-      // idSuscripcion: alumno.Suscripcions[0].idSuscripcion
-      alumno,
+    params: {      
+      alumno: state ? state.alumno : undefined
     }
   }
 
@@ -72,7 +76,7 @@ export const Sesiones = () => {
       {
         isLoading
           ? <LoadingMessage />
-          : <SimpleTable columns={columns} data={sesiones} formParams={formParams}/>
+          : <SimpleTable columns={columns} data={sesiones} formParams={formParams} />
       }
     </div>
   )
