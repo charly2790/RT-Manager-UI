@@ -1,6 +1,8 @@
 import React from 'react'
-import { Dashboard, LoginForm } from '../pages'
+import { Dashboard } from '../pages'
 import { Route, Routes } from 'react-router-dom'
+import { LoginForm } from '../auth/pages/LoginForm'
+
 
 export const AppRouter = () => {
   return (
