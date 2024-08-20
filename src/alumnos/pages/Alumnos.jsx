@@ -32,26 +32,14 @@ const columns = [
     }
 ]
 export const Alumnos = () => {
-
-    //   const { url } = constants;
-    const { userLogged } = useContext( AuthContext );
+    
+    const { userLogged:{ idEquipo, token } } = useContext( AuthContext );
     const navigate = useNavigate();
     let alumnosData = [];
+    
+    const reqConfigs = buildRequest( subdir.usuarios, methods.get, { idEquipo }, token );    
 
-    //   let settings = {
-    //     method: 'get',
-    //     url: `${url}/usuarios`,
-    //     headers: {
-    //       'Content-Type': 'application/x-www-form-urlencoded',
-    //       'Authorization': `Bearer ${ userLogged.token }`
-    //     },
-    //     params: {
-    //       'idEquipo': userLogged.idEquipo
-    //     }
-    //   }
-    const reqConfigs = buildRequest(subdir.usuarios, methods.get, userLogged.idEquipo)
-
-    const { data, hasError, isLoading } = useFetch(reqConfigs);
+    const { data, hasError, isLoading } = useFetch( reqConfigs );
 
     if (data) {
 
