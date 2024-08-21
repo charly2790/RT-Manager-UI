@@ -3,6 +3,8 @@ import { Dashboard } from '../pages'
 import { Route, Routes } from 'react-router-dom'
 import { LoginForm } from '../auth/pages/LoginForm'
 import { Alumnos } from '../alumnos/pages/Alumnos'
+import { PrivateRoutes } from './PrivateRoutes'
+import { PublicRoutes } from './PublicRoutes'
 
 
 export const AppRouter = () => {
@@ -10,9 +12,15 @@ export const AppRouter = () => {
     <>
       <Routes>
         <Route path="/login" element={
-          <LoginForm />
+          <PublicRoutes>
+            <LoginForm />
+          </PublicRoutes>
         } />
-        <Route path="/" element={<Dashboard />}>                    
+        <Route path="/" element={
+          <PrivateRoutes>
+            <Dashboard/>
+          </PrivateRoutes>
+        }>                    
           <Route path="alumnos" element={
             <Alumnos />}
           />

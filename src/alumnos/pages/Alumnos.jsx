@@ -5,7 +5,7 @@ import "../../styles.css";
 import { AuthContext } from "../../auth/context/AuthContext.jsx";
 import { buildRequest } from '../../helpers';
 import { IconButton, Typography } from '@mui/material';
-import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMessage';
+import { LoadingMessage, SimpleTable } from "../../components";
 import { methods } from "../../types";
 import { subdir } from "../types";
 import { useContext } from 'react';
@@ -60,11 +60,10 @@ export const Alumnos = () => {
 
     return (
         <div className="flex-drow-jccenter">
-            {
-                <Typography> Hello ! </Typography>
-                // isLoading
-                //     ? <LoadingMessage />
-                //     : <SimpleTable columns={columns} data={alumnosData} />
+            {                
+                isLoading
+                    ? <LoadingMessage />
+                    : <SimpleTable columns={columns} data={alumnosData} />
             }
         </div>
     )
