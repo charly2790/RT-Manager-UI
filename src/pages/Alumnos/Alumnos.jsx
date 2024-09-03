@@ -1,7 +1,7 @@
 import { SimpleTable } from '../../components/SimpleTable';
 import { useFetch } from '../../hooks/useFetch';
 import { useContext } from 'react';
-import { LoadingMessage } from '../../components/Shared/LoadingMessage/LoadingMessage';
+import { LoadingMessage } from '../../components/LoadingMessage.jsx';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import { IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
