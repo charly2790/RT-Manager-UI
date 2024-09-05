@@ -1,3 +1,5 @@
 export const subDir = {
-    sesionesEntrenamiento: 'sesionesEntrenamiento'
+    sesionesAdmin: 'sesionesAdmin',
+    sesionesEntrenamiento: 'sesionesEntrenamiento',
+    tiposSesion: 'tiposSesion'
 }

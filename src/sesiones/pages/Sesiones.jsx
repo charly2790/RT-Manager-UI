@@ -1,5 +1,6 @@
 import { AuthContext } from '../../auth/context/AuthContext';
 import { buildRequest } from '../../helpers';
+import { Grid, Typography } from '@mui/material';
 import { LoadingMessage, SimpleTable } from '../../components';
 import { methods } from '../../types';
 import { subDir, columns } from '../types';
@@ -7,7 +8,6 @@ import { useContext } from 'react'
 import { useFetch } from '../../hooks';
 import { useLocation } from 'react-router-dom'
 import dayjs from 'dayjs';
-import { Grid, Typography } from '@mui/material';
 
 
 export const Sesiones = () => {
@@ -22,10 +22,7 @@ export const Sesiones = () => {
   const reqConfigs = buildRequest(subDir.sesionesEntrenamiento, methods.get, { idSuscripcion }, userLogged.token);
 
   const { data, hasError, isLoading } = useFetch(reqConfigs);
-
-  console.log('alumno: ', alumno);
-
-
+  
   let sesiones = [];
 
   if (data) {
@@ -40,7 +37,7 @@ export const Sesiones = () => {
   }
 
   const formParams = {
-    route: "/createSesion",
+    route: "/sesiones/sesionesAdmin",
     params: {
       alumno: state ? state.alumno : undefined
     }
@@ -48,7 +45,7 @@ export const Sesiones = () => {
 
 
   return (
-    <Grid container xs={12}>
+    <Grid container>
         <Grid item xs={12} sx={{ mb: 2 }}>
           <Typography variant='h4'>{ alumno? `Sesiones de entrenamiento de ${alumno.email}`: `Mis sesiones de entrenamiento`}</Typography>
         </Grid>

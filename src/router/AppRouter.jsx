@@ -4,8 +4,9 @@ import { LoginForm } from '../auth/pages/LoginForm'
 import { PrivateRoutes } from './PrivateRoutes'
 import { PublicRoutes } from './PublicRoutes'
 import { Route, Routes } from 'react-router-dom'
-import { Sesiones } from '../sesiones/pages'
+import { Sesiones, SesionesAdmin } from '../sesiones/pages'
 import React from 'react'
+import { SesionesPrueba } from '../sesiones/pages/SesionesPrueba'
 
 
 export const AppRouter = () => {
@@ -28,11 +29,14 @@ export const AppRouter = () => {
           <Route path="sesiones" element={
             <Sesiones
             />}>
-
+            <Route path="/sesionesAdmin" element={
+              // <SesionesAdmin/>
+              <SesionesPrueba/>
+              }>
+            </Route>
           </Route>
-        </Route>
-
-      </Routes>
+        </Route>      
+    </Routes >
     </>
   )
 }

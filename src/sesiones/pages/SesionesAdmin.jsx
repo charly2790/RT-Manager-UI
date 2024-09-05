@@ -1,18 +1,17 @@
-import React, { useContext } from 'react'
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, Typography, CssBaseline, Container, ThemeProvider, IconButton, Button } from '@mui/material'
-import { useLocation, useNavigate } from 'react-router-dom';
-import { mainTheme } from '../../themes/mainTheme';
-import { SesionForm } from './components';
-import { SesionesTable } from './components';
-import { constants } from '../../utils/constants';
-import { useSesionesEntrenamiento } from '../../hooks/useSesiones';
-import qs from 'qs';
 import '../../styles.css';
+import { AuthContext } from '../../auth';
+import { Box, Typography, CssBaseline, Container, ThemeProvider, IconButton, Button } from '@mui/material'
+import { buildRequest } from '../../helpers';
+import { mainTheme } from '../../themes/mainTheme';
+import { methods } from '../../types';
+import { SesionesTable } from '../components';
+import { SesionForm } from '../components';
+import { subDir } from '../types';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useSesionesEntrenamiento } from '../../hooks/useSesiones';
 import Axios from 'axios';
-import { AuthContext } from '../../auth/context';
-
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useContext } from 'react'
 
 
 const appendButton = (sesiones, handleMethod) => {
@@ -30,23 +29,11 @@ const appendButton = (sesiones, handleMethod) => {
 
 
 export const SesionesAdmin = () => {
-
-  const { url } = constants;
   
   const { state: { alumno } } = useLocation();
   const { userLogged } = useContext(AuthContext);  
   const navigate = useNavigate(); 
   const { sesiones, handleAddSesion, handleDeleteSesion, handleClearSesiones } = useSesionesEntrenamiento();
-
-  let createSettings = (params) => ({
-    method: 'post',
-    url: `${url}/sesionesEntrenamiento`,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Bearer ${userLogged.token}`
-    },
-    data: qs.stringify(params)
-  })  
 
   const handleSubmit = async () => {    
     
@@ -59,7 +46,8 @@ export const SesionesAdmin = () => {
     })
 
     try{
-      const { result } = await Axios.request(createSettings({'sesiones': nuevasSesiones}));
+      const reqSettings = buildRequest( subDir.sesionesAdmin, methods.post, {'sesiones': nuevasSesiones}, userLogged.token ); 
+      const { result } = await Axios.request(reqSettings);
       localStorage.removeItem('sesiones');
       navigate("/sesiones", {state: { alumno }})
       console.log(result);
@@ -74,8 +62,7 @@ export const SesionesAdmin = () => {
       <ThemeProvider theme={mainTheme}>
         <Container component="main" maxWidth="xl"
           sx={{
-            width: '100%',
-            // ml: '15%'
+            width: '100%',            
           }}>
           <CssBaseline />
           <Box
@@ -90,8 +77,7 @@ export const SesionesAdmin = () => {
               handleAddSesion={handleAddSesion}
               handleDeleteSesion={handleDeleteSesion} />
             <Box
-              sx={{
-                // border: '3px solid yellow',
+              sx={{                
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',

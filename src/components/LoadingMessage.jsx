@@ -11,7 +11,7 @@ export const LoadingMessage = () => {
     //   <CircularProgress size={100}/>
     //   <Typography variant="h5" sx={{ mt: 2, ml: 1 }}>Cargando...</Typography>
     // </Box>
-    <Grid container xs={12} direction={'row'} justifyContent={'center'} sx={{ border: '1px dotted red'}}>
+    <Grid container direction={'row'} justifyContent={'center'} sx={{ border: '1px dotted red'}}>
       <CircularProgress size={100} />
       <Typography variant="h5" sx={{ mt: 2, ml: 1 }}>Cargando...</Typography>
     </Grid>
