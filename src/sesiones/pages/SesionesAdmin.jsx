@@ -46,7 +46,7 @@ export const SesionesAdmin = () => {
     })
 
     try{
-      const reqSettings = buildRequest( subDir.sesionesAdmin, methods.post, {'sesiones': nuevasSesiones}, userLogged.token ); 
+      const reqSettings = buildRequest( subDir.sesionesEntrenamiento, methods.post, {'sesiones': nuevasSesiones}, userLogged.token );      
       const { result } = await Axios.request(reqSettings);
       localStorage.removeItem('sesiones');
       navigate("/sesiones", {state: { alumno }})

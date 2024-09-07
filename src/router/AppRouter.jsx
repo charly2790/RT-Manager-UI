@@ -1,12 +1,13 @@
 import { Alumnos } from '../alumnos/pages/Alumnos'
-import { Dashboard } from '../pages'
+import { Carreras } from '../carreras'
+import { Settings } from '../ajustes'
+import { Dashboard } from '../components'
 import { LoginForm } from '../auth/pages/LoginForm'
 import { PrivateRoutes } from './PrivateRoutes'
 import { PublicRoutes } from './PublicRoutes'
 import { Route, Routes } from 'react-router-dom'
-import { Sesiones, SesionesAdmin } from '../sesiones/pages'
+import { Sesiones, SesionesAdmin } from '../sesiones'
 import React from 'react'
-import { SesionesPrueba } from '../sesiones/pages/SesionesPrueba'
 
 
 export const AppRouter = () => {
@@ -28,13 +29,16 @@ export const AppRouter = () => {
           />
           <Route path="sesiones" element={
             <Sesiones
-            />}>
-            <Route path="/sesionesAdmin" element={
-              // <SesionesAdmin/>
-              <SesionesPrueba/>
-              }>
-            </Route>
-          </Route>
+            />}/> 
+          <Route path="sesiones-admin" element={              
+              <SesionesAdmin
+            />}/>
+          <Route path="calendario-carreras" element={              
+              <Carreras
+            />}/>
+          <Route path="settings" element={              
+              <Settings
+            />}/>
         </Route>      
     </Routes >
     </>

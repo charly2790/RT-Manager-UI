@@ -37,7 +37,7 @@ export const Sesiones = () => {
   }
 
   const formParams = {
-    route: "/sesiones/sesionesAdmin",
+    route: "/sesiones-admin",
     params: {
       alumno: state ? state.alumno : undefined
     }

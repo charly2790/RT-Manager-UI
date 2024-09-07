@@ -1,20 +1,21 @@
-import React, { useContext } from 'react'
-import dayjs from 'dayjs';
-import { useFetch } from '../../hooks'
-import { useForm, Controller } from "react-hook-form";
-import { LoadingMessage } from '../../components';
-import { Box, Grid, Typography, TextField, Select, MenuItem, InputLabel, FormControl, Button, IconButton } from '@mui/material'
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { AuthContext } from '../../auth';
-import { subDir } from '../types';
+import { Box, Grid, Typography, TextField, Select, MenuItem, InputLabel, FormControl, Button, IconButton } from '@mui/material'
+import { buildRequest } from '../../helpers';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { LoadingMessage } from '../../components';
 import { methods } from '../../types';
+import { subDir } from '../types';
+import { useFetch } from '../../hooks'
+import { useForm, Controller } from "react-hook-form";
+import dayjs from 'dayjs';
+import React, { useContext } from 'react'
 
 export const SesionForm = ({ idSuscripcion, handleAddSesion, handleDeleteSesion }) => {
     
     const { userLogged } = useContext(AuthContext);        
     
-    const reqSettings = buildRequest( subDir.tiposSesion, methods.post, {'sesiones': sesiones}, userLogged.token );
+    const reqSettings = buildRequest( subDir.tiposSesion, methods.get, { }, userLogged.token );
 
     const {
         register,

@@ -13,13 +13,13 @@ export const navbarItems = [{
     id:1,
     icon:<SportsScoreIcon/>,
     label:'Carreras',
-    route: 'carreras'
+    route: 'calendario-carreras'
 },
 {
     id:2,
     icon:<SettingsIcon/>,
     label:'Ajustes',
-    route: 'ajustes'
+    route: 'settings'
 },
 {
     id:3,
