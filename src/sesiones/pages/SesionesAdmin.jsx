@@ -8,7 +8,7 @@ import { SesionesTable } from '../components';
 import { SesionForm } from '../components';
 import { subDir } from '../types';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSesionesEntrenamiento } from '../../hooks/useSesiones';
+import { useSesionesEntrenamiento } from '../hooks';
 import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useContext } from 'react'

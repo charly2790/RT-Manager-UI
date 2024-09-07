@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import { sesionesReducer } from '../pages/Sesiones/sesionesReducer';
+import { sesionesReducer } from '../pages';
 
 const init = () => {
     return JSON.parse(localStorage.getItem('sesiones')) || [];
