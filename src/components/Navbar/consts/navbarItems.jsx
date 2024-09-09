@@ -7,24 +7,28 @@ export const navbarItems = [{
     id:0,
     icon: <PeopleIcon/>,
     label:'Alumnos',
-    route: 'alumnos'
+    route: 'alumnos',
+    allowedRoles: ['EQUIPO_ADMIN']
 },
 {
     id:1,
     icon:<SportsScoreIcon/>,
     label:'Carreras',
-    route: 'calendario-carreras'
+    route: 'calendario-carreras',
+    allowedRoles: ['EQUIPO_ADMIN','EQUIPO_MEMBER']
 },
 {
     id:2,
     icon:<SettingsIcon/>,
     label:'Ajustes',
-    route: 'settings'
+    route: 'settings',
+    allowedRoles: ['EQUIPO_ADMIN']
 },
 {
     id:3,
     icon:<WatchIcon/>,
     label:'Planificación',
-    route: 'sesiones'
+    route: 'sesiones',
+    allowedRoles: ['EQUIPO_ADMIN','EQUIPO_MEMBER']
 }
 ]

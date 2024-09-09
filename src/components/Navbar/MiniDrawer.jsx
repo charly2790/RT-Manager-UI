@@ -18,9 +18,11 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 
 import { useNavigate } from 'react-router-dom';
-import { navbarItems } from './consts/navbarItems.jsx';
 import { mainTheme } from '../../themes/mainTheme.js';
 import { Styles } from './styles.js';
+import { AuthContext } from '../../auth';
+import { useContext } from 'react';
+import { availableMenus } from './helpers';
 
 const drawerWidth = 220;
 
@@ -92,6 +94,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export const MiniDrawer = ({handleDrawerClose, handleDrawerOpen, open}) => {
     const theme = useTheme();    
     const navigate = useNavigate();
+    const { userLogged } = useContext(AuthContext);    
+    const navbarItems = availableMenus( userLogged.rol );
 
     return (
         <ThemeProvider theme={mainTheme}>
