@@ -23,8 +23,12 @@ import { Styles } from './styles.js';
 import { AuthContext } from '../../auth';
 import { useContext } from 'react';
 import { availableMenus } from './helpers';
+import { Avatar, Menu, MenuItem, Tooltip } from '@mui/material';
+import { useState } from 'react';
 
 const drawerWidth = 220;
+
+const settings = [ 'Profile', 'Account', 'Dashboard', 'Logout'];    
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -91,33 +95,83 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-export const MiniDrawer = ({handleDrawerClose, handleDrawerOpen, open}) => {
-    const theme = useTheme();    
+
+
+export const MiniDrawer = ({ handleDrawerClose, handleDrawerOpen, open }) => {
+    const theme = useTheme();
     const navigate = useNavigate();
-    const { userLogged } = useContext(AuthContext);    
-    const navbarItems = availableMenus( userLogged.rol );
+    const { userLogged, logout } = useContext(AuthContext);
+    const navbarItems = availableMenus(userLogged.rol);
+    const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const operations = {
+        'Profile': () => navigate("/profile"),
+        'Account': () => console.log('hiciste click en account'),
+        'Dashboard': () => console.log('hiciste click en dashboard'),
+        'Logout': () => {
+            logout();
+            navigate("/login", { replace: true })
+        }
+    }
+
+    const handleOpenUserMenu = (event) => {
+        setAnchorElUser(event.currentTarget);
+    };
+
+    const handleCloseUserMenu = () => {
+        setAnchorElUser(null);
+    };
 
     return (
         <ThemeProvider theme={mainTheme}>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
                 <AppBar position="fixed" open={open}>
-                    <Toolbar>
-                        <IconButton
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={handleDrawerOpen}
-                            edge="start"
-                            sx={{
-                                marginRight: 5,
-                                ...(open && { display: 'none' }),
-                            }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography variant="h6" noWrap component="div">
-                            Running Team Manager
-                        </Typography>
+                    <Toolbar >
+                        <Box sx={{ display: 'flex' }}>
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                onClick={handleDrawerOpen}
+                                edge="start"
+                                sx={{
+                                    marginRight: 5,
+                                    ...(open && { display: 'none' }),
+                                }}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Typography variant="h6" noWrap component="div" sx={{ mt: 0.5 }}>
+                                Running Team Manager
+                            </Typography>
+                        </Box>
+                        <Box id="profilesettings" sx={{ display: 'flex', flexGrow: 0, width: '100%',justifyContent: 'flex-end' }}>
+                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                <Avatar alt="Remy Sharp" src='https://mui.com/static/images/avatar/2.jpg' />
+                            </IconButton>
+                            <Menu
+                                sx={{ mt: '45px' }}
+                                id="menu-appbar"
+                                anchore1={anchorElUser}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right'
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right'
+                                }}
+                                open={Boolean(anchorElUser)}
+                                onClose={handleCloseUserMenu}
+                            >
+                                {settings.map((setting) => (
+                                    <MenuItem key={setting} onClick={operations[setting]}>
+                                        <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                                    </MenuItem>
+                                ))}
+                            </Menu>
+                        </Box>
                     </Toolbar>
                 </AppBar>
                 <Drawer variant="permanent" open={open} sx={Styles.drawer}>
