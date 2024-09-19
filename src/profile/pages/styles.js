@@ -31,6 +31,9 @@ export const styles = {
     },
     gridFormItem:{
         pt: 2
+    },
+    textfield:{
+        width: '80%',
     }
 
 
