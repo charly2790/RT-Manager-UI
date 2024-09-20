@@ -34,6 +34,20 @@ export const dashboardTheme = createTheme({
         },
     },
     palette: {
+        primary: {
+            main: '#5EC737',
+        },
+        secondary: {
+            main: '#29303A',
+            light: '#F5EBFF',
+            contrastText: '#47008F',
+        },
+        tertiary: {
+            main: "#ACB3C3"
+        },
+        quaternary: {
+            main: "#F5F6FB"
+        },
         white: {
             main: '#fff',
         },
@@ -47,4 +61,4 @@ export const dashboardTheme = createTheme({
             textTransform: 'capitalize',
         },
     },
-  });
+});

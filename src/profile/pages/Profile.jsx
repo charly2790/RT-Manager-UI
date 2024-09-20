@@ -1,32 +1,31 @@
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Avatar, Button, Divider, FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
+import { Avatar, Button, Divider, FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from '@mui/material'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AccountCircle, Edit, Facebook, Instagram, Save, X } from '@mui/icons-material'
+import { Description, Edit, Facebook, Instagram, Save, X } from '@mui/icons-material'
 import { MuiTelInput } from 'mui-tel-input';
 import { styles } from './styles'
 import React, { useState } from 'react'
-import { Form } from 'react-hook-form';
 
 const redesSociales = [
-  { 
-    nombre:'Facebook',
-    icono: <Facebook/>
+  {
+    nombre: 'Facebook',
+    icono: <Facebook />
   },
   {
     nombre: 'Instagram',
-    icono: <Instagram/>
+    icono: <Instagram />
   },
   {
     nombre: 'X',
-    icono: <X/>
-  },  
+    icono: <X />
+  },
 ]
 
 
 export const Profile = () => {
 
-  const [phone, setPhone] = useState('')
+  const [phone, setPhone] = useState('')    
 
   const handleChange = (newPhone) => {
     setPhone(newPhone)
@@ -35,11 +34,18 @@ export const Profile = () => {
 
   return (
     <>
-      <Grid container sx={{mb:16}}>
-        <Grid item xs={12}>
-          <Typography variant='h4' sx={{ mt: 1, mb: 2 }}>
-            Mi perfil
-          </Typography>
+      <Grid container sx={{ mb: 16 }}>
+        <Grid container item xs={12}>
+          <Grid item xs={5}>
+            <Typography variant='h4' sx={{ mt: 2, mb: 2 }}>
+              Mi perfil
+            </Typography>
+          </Grid>
+          <Grid item xs={4}>
+            <IconButton aria-label="delete" size='large' sx={{mt: 1}} color='primary'>
+              <Description />
+            </IconButton>
+          </Grid>
         </Grid>
         <Grid container item xs={12} position={'relative'}>
           <Avatar
@@ -81,8 +87,8 @@ export const Profile = () => {
             </LocalizationProvider>
           </Grid>
           <Grid item xs={12} sx={styles.gridFormItem}>
-              <InputLabel id="tel">Teléfono</InputLabel>
-              <MuiTelInput value={phone} onChange={handleChange} defaultCountry='AR' sx={styles.textfield} />              
+            <InputLabel id="tel">Teléfono</InputLabel>
+            <MuiTelInput value={phone} onChange={handleChange} defaultCountry='AR' sx={styles.textfield} />
           </Grid>
           <Grid item xs={12} sx={styles.gridFormItem}>
             <FormControl sx={{ width: '100%' }}>
@@ -109,26 +115,26 @@ export const Profile = () => {
             <Divider />
           </Grid>
           {
-            redesSociales.map( (red, index ) =>{
+            redesSociales.map((red, index) => {
               return <Grid item xs={12} key={index} sx={styles.gridFormItem}>
-                <TextField 
-                  variant="filled" 
-                  label={red.nombre} 
-                  size='small' 
+                <TextField
+                  variant="filled"
+                  label={red.nombre}
+                  size='small'
                   sx={styles.textfield}
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position="start">                        
+                      <InputAdornment position="start">
                         {red.icono}
                       </InputAdornment>
                     ),
                   }}
-                  />
+                />
               </Grid>
             })
           }
-          <Grid item xs={12} sx={{pt:4}}>
-            <Button color='primary' variant='contained' size = "large" sx={styles.textfield} startIcon={<Save/>}>
+          <Grid item xs={12} sx={{ pt: 4 }}>
+            <Button  variant='contained' size="large" sx={styles.textfield} startIcon={<Save />} color={'primary'}>
               Guardar
             </Button>
           </Grid>

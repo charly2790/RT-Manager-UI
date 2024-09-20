@@ -19,6 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 
 import { useNavigate } from 'react-router-dom';
 import { mainTheme } from '../../themes/mainTheme.js';
+import { dashboardTheme } from '../../themes/dashboardTheme.js';
 import { Styles } from './styles.js';
 import { AuthContext } from '../../auth';
 import { useContext } from 'react';
@@ -123,7 +124,7 @@ export const MiniDrawer = ({ handleDrawerClose, handleDrawerOpen, open }) => {
     };
 
     return (
-        <ThemeProvider theme={mainTheme}>
+        <ThemeProvider theme={dashboardTheme}>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
                 <AppBar position="fixed" open={open}>
@@ -142,7 +143,7 @@ export const MiniDrawer = ({ handleDrawerClose, handleDrawerOpen, open }) => {
                                 <MenuIcon />
                             </IconButton>
                             <Typography variant="h6" noWrap component="div" sx={{ mt: 0.5 }}>
-                                Running Team Manager
+                                RTM
                             </Typography>
                         </Box>
                         <Box id="profilesettings" sx={{ display: 'flex', flexGrow: 0, width: '100%',justifyContent: 'flex-end' }}>
