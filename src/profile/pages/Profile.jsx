@@ -1,13 +1,10 @@
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Avatar, Box, Button, Divider, FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from '@mui/material'
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { Description, Edit, Facebook, Instagram, Save, X } from '@mui/icons-material'
-import { MuiTelInput } from 'mui-tel-input';
-import { styles } from './styles'
-import { useForm, Controller } from 'react-hook-form';
 import React, { useState } from 'react'
 import dayjs from 'dayjs';
+import { useForm } from 'react-hook-form';
+import { styles } from './styles'
+import { Description, Edit, Facebook, Instagram, Save, X } from '@mui/icons-material'
+import { DateInput, SelectInput, TelInput } from '../../components';
+import { Avatar, Box, Button, Divider, FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from '@mui/material'
 
 
 const redesSociales = [
@@ -28,12 +25,6 @@ const redesSociales = [
 
 export const Profile = () => {
 
-  const [phone, setPhone] = useState('')
-
-  const handleChange = (newPhone) => {
-    setPhone(newPhone)
-  }
-
   const {
     register,
     handleSubmit,
@@ -42,15 +33,16 @@ export const Profile = () => {
   } = useForm()
 
   const onSubmit = handleSubmit((data) => {
-    let { nombre, apellido, apodo, fechaNacimiento } = data;
+    let { nombre, apellido, apodo, fechaNacimiento, tel, genero } = data;
 
     fechaNacimiento = dayjs(fechaNacimiento).format('YYYY-MM-DD');
 
     console.log('nombre: ', nombre);
     console.log('apellido: ', apellido);
     console.log('apodo: ', apodo);
-
-    console.log('fechaNacimiento: ', fechaNacimiento);
+    console.log('tel: ', tel);
+    console.log('fechaNacimiento: ', fechaNacimiento);    
+    console.log('genero: ', genero);
   })
 
 
@@ -126,68 +118,31 @@ export const Profile = () => {
               />
             </Grid>
             <Grid item xs={12} sx={styles.gridFormItem}>
-              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Controller
-                  control={control}
-                  name="fechaNacimiento"
-                  rules={{ required: 'La fecha de nacimiento es requerida' }}
-                  render={({ field: { onChange, value, defaultValue }, fieldState: { error } }) => {
-                    <DemoContainer components={['DatePicker']} sx={styles.textfield}>
-                      <DatePicker 
-                        variant="filled" 
-                        label="Fecha de nacimiento" 
-                        onChange={onChange}
-                        renderInput = {(params) => <TextField {...params} fullWidth />}
-                        />
-                    </DemoContainer>
-                  }}
-                >
-
-                </Controller>
-              </LocalizationProvider> */}
-              <LocalizationProvider dateAdapter={AdapterDayjs} >
-                <Controller
-                  control={control}
-                  name="fechaNacimiento"
-                  rules={{ required: 'La fecha es requerida' }}
-                  render={({ field: { onChange, value, defaultValue }, fieldState: { error } }) => (
-                    <DatePicker
-                      label="Fecha de nacimiento"
-                      disableFuture                      
-                      value={value}
-                      onChange={onChange}
-                      sx={styles.textfield}                      
-                      renderInput={(params) =>
-                        <TextField
-                          {...params}
-                          fullWidth
-                        />}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
+              <DateInput
+                control={control}
+                name="fechaNacimiento"
+                label="Fecha de nacimiento"
+                styles={styles.textfield}
+                disableFuture = {true}                
+              />             
             </Grid>
             <Grid item xs={12} sx={styles.gridFormItem}>
               <InputLabel id="tel">Teléfono</InputLabel>
-              <MuiTelInput value={phone} onChange={handleChange} defaultCountry='AR' sx={styles.textfield} />
+              <TelInput
+                control={control}
+                name="tel"
+                countries={['AR']}
+                styles={styles.textfield}
+              />
             </Grid>
             <Grid item xs={12} sx={styles.gridFormItem}>
-              <FormControl sx={{ width: '100%' }}>
-                <InputLabel id="Genero">Género</InputLabel>
-                <Select
-                  labelId="genero"
-                  id="genero"
-                  // value={age}
-                  label="Genero"
-                  placeholder='Genero'
-                  // onChange={handleChange}
-                  sx={styles.textfield}
-                >
-                  <MenuItem value={'Femenino'}>Femenino</MenuItem>
-                  <MenuItem value={'Masculino'}>Masculino</MenuItem>
-                  <MenuItem value={'Otro'}>Otro</MenuItem>
-                </Select>
-              </FormControl>
+              <SelectInput
+                register={register}
+                options={['Femenino', 'Masculino', 'Otro']}
+                label="Género"
+                name="genero"
+                styles={styles.textfield}
+              />             
             </Grid>
             <Grid item xs={12} sx={styles.gridFormItem}>
               <Typography variant='h6'>Redes Sociales</Typography>
