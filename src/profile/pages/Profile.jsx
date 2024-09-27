@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import { useForm } from 'react-hook-form';
 import { styles } from './styles'
+import { styled } from '@mui/material';
 import { Description, Edit, Facebook, Instagram, Save, X } from '@mui/icons-material'
 import { DateInput, SelectInput, TelInput } from '../../components';
 import { Avatar, Box, Button, Divider, FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from '@mui/material'
@@ -22,6 +23,18 @@ const redesSociales = [
   },
 ]
 
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
+
 
 export const Profile = () => {
 
@@ -32,6 +45,8 @@ export const Profile = () => {
     control
   } = useForm()
 
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const onSubmit = handleSubmit((data) => {
     let { nombre, apellido, apodo, fechaNacimiento, tel, genero } = data;
 
@@ -41,9 +56,20 @@ export const Profile = () => {
     console.log('apellido: ', apellido);
     console.log('apodo: ', apodo);
     console.log('tel: ', tel);
-    console.log('fechaNacimiento: ', fechaNacimiento);    
+    console.log('fechaNacimiento: ', fechaNacimiento);
     console.log('genero: ', genero);
+    redesSociales.forEach(red => {
+      console.log(`${red.nombre}`, data[red.nombre])
+    });
+    console.log('data: ', data)
   })
+
+  const handleImageChange = (event) => { // {{ edit_2 }}
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(URL.createObjectURL(file)); // Crea una URL temporal para la imagen
+    }
+  };
 
 
   return (
@@ -70,7 +96,7 @@ export const Profile = () => {
           <Grid container item xs={12} position={'relative'}>
             <Avatar
               alt="Profile Picture"
-              src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"
+              src={ selectedImage || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"}
               sx={styles.avatar}
             />
             <IconButton
@@ -79,8 +105,14 @@ export const Profile = () => {
               variant="outlined"
               color="neutral"
               sx={styles.iconButton}
+              onClick={() => document.querySelector('#upload-photo').click()}
             >
               <Edit sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+              <VisuallyHiddenInput 
+                id="upload-photo" 
+                type="file" 
+                {...register("image", { onChange: handleImageChange })} // {{ edit_5 }}
+                />
             </IconButton>
           </Grid>
           <Grid container item xs={12}>
@@ -123,8 +155,8 @@ export const Profile = () => {
                 name="fechaNacimiento"
                 label="Fecha de nacimiento"
                 styles={styles.textfield}
-                disableFuture = {true}                
-              />             
+                disableFuture={true}
+              />
             </Grid>
             <Grid item xs={12} sx={styles.gridFormItem}>
               <InputLabel id="tel">Teléfono</InputLabel>
@@ -142,7 +174,7 @@ export const Profile = () => {
                 label="Género"
                 name="genero"
                 styles={styles.textfield}
-              />             
+              />
             </Grid>
             <Grid item xs={12} sx={styles.gridFormItem}>
               <Typography variant='h6'>Redes Sociales</Typography>
@@ -158,6 +190,7 @@ export const Profile = () => {
                     label={red.nombre}
                     size='small'
                     sx={styles.textfield}
+                    {...register(red.nombre, { required: true })}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
