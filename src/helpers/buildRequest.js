@@ -1,31 +1,36 @@
 import { constants } from "../utils/constants"
 import qs from 'qs';
 
-export const buildRequest = ( subDir, method, vars, token = '') => {
+export const buildRequest = (
+    subDir,
+    method,
+    vars,
+    token = '',
+    contentType = 'application/x-www-form-urlencoded') => {
 
-    const { url } = constants;    
-    
+    const { url } = constants;
+
     let data = {};
     let params = {};
-
+        
     const headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${ token }`,
+        'Content-Type': contentType,
+        'Authorization': `Bearer ${token}`,
     }
 
-    if(method === 'get'){
+    if (method === 'get') {
         params = { ...vars }
     }
 
-    if(method === 'post'){
-        data =  qs.stringify( vars )
+    if (method === 'post') {
+        data = contentType === 'application/x-www-form-urlencoded' ? qs.stringify(vars) : vars;
     }
-        
+
 
     return {
         method,
         url: `${url}/${subDir}`,
-        headers,        
+        headers,
         params,
         data,
     }
