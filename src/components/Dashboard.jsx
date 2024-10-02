@@ -28,7 +28,7 @@ export const Dashboard = () => {
         <ThemeProvider theme={dashboardTheme}>
             <Grid container>
                 <MiniDrawer handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} open={open}/>
-                <Box sx={{ width: boxWidth, border: `2px dotted ${boxColor}`, margin }}>
+                <Box sx={{ width: boxWidth, margin }}>
                     <Box id="helper" sx={styles.toolbar} /> 
                     <Outlet />
                 </Box>
