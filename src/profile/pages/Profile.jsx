@@ -1,11 +1,17 @@
 import React, { useState } from 'react'
 import dayjs from 'dayjs';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
+import { useContext } from 'react';
 import { styles } from './styles'
 import { styled } from '@mui/material';
+import { methods } from '../../types';
 import { Description, Edit, Facebook, Instagram, Save, X } from '@mui/icons-material'
 import { DateInput, SelectInput, TelInput } from '../../components';
-import { Avatar, Box, Button, Divider, FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from '@mui/material'
+import { buildRequest } from '../../helpers';
+import { Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputLabel, TextField, Typography } from '@mui/material'
+import { AuthContext } from '../../auth';
+import Axios from 'axios';
+import { subDirs } from '../types';
 
 
 const redesSociales = [
@@ -46,28 +52,38 @@ export const Profile = () => {
   } = useForm()
 
   const [selectedImage, setSelectedImage] = useState(null);
+  const { userLogged } = useContext(AuthContext);
 
-  const onSubmit = handleSubmit((data) => {
-    let { nombre, apellido, apodo, fechaNacimiento, tel, genero } = data;
+  const onSubmit = handleSubmit( async (data) => {        
+    
+    //fechaNacimiento = dayjs(fechaNacimiento).format('YYYY-MM-DD');    
+    
+    const formData = new FormData();
 
-    fechaNacimiento = dayjs(fechaNacimiento).format('YYYY-MM-DD');
+    formData.append('profileImage', selectedImage);
 
-    console.log('nombre: ', nombre);
-    console.log('apellido: ', apellido);
-    console.log('apodo: ', apodo);
-    console.log('tel: ', tel);
-    console.log('fechaNacimiento: ', fechaNacimiento);
-    console.log('genero: ', genero);
-    redesSociales.forEach(red => {
-      console.log(`${red.nombre}`, data[red.nombre])
-    });
-    console.log('data: ', data)
+    Object.keys(data).forEach(key => {
+      formData.append(key, data[key])
+    })    
+
+    const reqSettings = buildRequest(
+      subDirs.profile,
+      methods.post,
+      formData,
+      userLogged.token,
+      'multipart/form-data',
+    )
+
+    const { result } = await Axios.request(reqSettings);
+
+    console.log( result )
   })
 
-  const handleImageChange = (event) => { // {{ edit_2 }}
+  const handleImageChange = (event) => { 
     const file = event.target.files[0];
     if (file) {
-      setSelectedImage(URL.createObjectURL(file)); // Crea una URL temporal para la imagen
+      //setSelectedImage(URL.createObjectURL(file));
+      setSelectedImage(file);
     }
   };
 
