@@ -1,3 +1,3 @@
 export const subDirs = {
-    profile: 'profiles'
+    profile: 'perfiles'
 }

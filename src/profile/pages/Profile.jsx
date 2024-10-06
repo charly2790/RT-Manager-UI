@@ -60,9 +60,13 @@ export const Profile = () => {
     
     const formData = new FormData();
 
+    formData.append('idUsuario', userLogged.idUsuario);
     formData.append('profileImage', selectedImage);
 
     Object.keys(data).forEach(key => {
+      if( key === 'fechaNacimiento'){
+        data[key] = dayjs(data[key]).format('YYYY-MM-DD');
+      }
       formData.append(key, data[key])
     })    
 
@@ -70,7 +74,7 @@ export const Profile = () => {
       subDirs.profile,
       methods.post,
       formData,
-      userLogged.token,
+      userLogged.token,      
       'multipart/form-data',
     )
 
