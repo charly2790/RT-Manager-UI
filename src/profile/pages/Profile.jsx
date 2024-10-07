@@ -44,46 +44,60 @@ const VisuallyHiddenInput = styled('input')({
 
 export const Profile = () => {
 
+  const { userLogged } = useContext(AuthContext);
   const {
     register,
     handleSubmit,
     formState: { errors },
-    control
-  } = useForm()
+    control,
+    setValue
+  } = useForm({
+    defaultValues:{
+      ...userLogged.perfil,
+      fechaNacimiento: userLogged.perfil.fechaNacimiento ? dayjs(userLogged.perfil.fechaNacimiento) : null
+    }
+  })
 
   const [selectedImage, setSelectedImage] = useState(null);
-  const { userLogged } = useContext(AuthContext);
 
-  const onSubmit = handleSubmit( async (data) => {        
-    
-    //fechaNacimiento = dayjs(fechaNacimiento).format('YYYY-MM-DD');    
-    
+  const onSubmit = handleSubmit(async (data) => {
+
     const formData = new FormData();
 
     formData.append('idUsuario', userLogged.idUsuario);
     formData.append('profileImage', selectedImage);
 
     Object.keys(data).forEach(key => {
-      if( key === 'fechaNacimiento'){
+      if (key === 'fechaNacimiento') {
         data[key] = dayjs(data[key]).format('YYYY-MM-DD');
       }
       formData.append(key, data[key])
-    })    
+    })
 
     const reqSettings = buildRequest(
       subDirs.profile,
       methods.post,
       formData,
-      userLogged.token,      
+      userLogged.token,
       'multipart/form-data',
     )
 
-    const { result } = await Axios.request(reqSettings);
+    const res = await Axios.request(reqSettings);
 
-    console.log( result )
+    if (res.status === 200 && res.statusText === 'OK' && data) {
+
+    }
+
+    //1) verificar si se retorna el objeto con la propiedad status [Ok]
+    //2) si el status es ok, actualizar el estado del componente. Se debe observar la actualización de la imagen de perfil.    
+    //3) si el status es error, mostrar el error
+    //4) Recuperar el perfil al hacer el login & almacenar en contexto [Ok]
+    //5) Mostrar datos de perfil almacenados en el contexto al iniciar pantalla de perfil    
+
+    console.log(result)
   })
 
-  const handleImageChange = (event) => { 
+  const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       //setSelectedImage(URL.createObjectURL(file));
@@ -116,7 +130,7 @@ export const Profile = () => {
           <Grid container item xs={12} position={'relative'}>
             <Avatar
               alt="Profile Picture"
-              src={ selectedImage || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"}
+              src={ selectedImage || userLogged.perfil.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"}
               sx={styles.avatar}
             />
             <IconButton
@@ -128,11 +142,11 @@ export const Profile = () => {
               onClick={() => document.querySelector('#upload-photo').click()}
             >
               <Edit sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
-              <VisuallyHiddenInput 
-                id="upload-photo" 
-                type="file" 
+              <VisuallyHiddenInput
+                id="upload-photo"
+                type="file"
                 {...register("image", { onChange: handleImageChange })} // {{ edit_5 }}
-                />
+              />
             </IconButton>
           </Grid>
           <Grid container item xs={12}>
@@ -179,10 +193,10 @@ export const Profile = () => {
               />
             </Grid>
             <Grid item xs={12} sx={styles.gridFormItem}>
-              <InputLabel id="tel">Teléfono</InputLabel>
+              <InputLabel id="telefono">Teléfono</InputLabel>
               <TelInput
                 control={control}
-                name="tel"
+                name="telefono"
                 countries={['AR']}
                 styles={styles.textfield}
               />
