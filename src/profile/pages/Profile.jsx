@@ -12,6 +12,7 @@ import { Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputLa
 import { AuthContext } from '../../auth';
 import Axios from 'axios';
 import { subDirs } from '../types';
+import _ from 'lodash';
 
 
 const redesSociales = [
@@ -44,7 +45,8 @@ const VisuallyHiddenInput = styled('input')({
 
 export const Profile = () => {
 
-  const { userLogged } = useContext(AuthContext);
+  const { userLogged,updateProfile } = useContext(AuthContext);
+  const { perfil = {} } = userLogged;
   const {
     register,
     handleSubmit,
@@ -53,8 +55,8 @@ export const Profile = () => {
     setValue
   } = useForm({
     defaultValues:{
-      ...userLogged.perfil,
-      fechaNacimiento: userLogged.perfil.fechaNacimiento ? dayjs(userLogged.perfil.fechaNacimiento) : null
+      ...perfil,
+      fechaNacimiento: !_.isEmpty(perfil) ? dayjs(perfil.fechaNacimiento) : null,
     }
   })
 
@@ -85,7 +87,8 @@ export const Profile = () => {
     const res = await Axios.request(reqSettings);
 
     if (res.status === 200 && res.statusText === 'OK' && data) {
-
+      const { data } = res;
+      updateProfile(data);
     }
 
     //1) verificar si se retorna el objeto con la propiedad status [Ok]
@@ -94,7 +97,6 @@ export const Profile = () => {
     //4) Recuperar el perfil al hacer el login & almacenar en contexto [Ok]
     //5) Mostrar datos de perfil almacenados en el contexto al iniciar pantalla de perfil    
 
-    console.log(result)
   })
 
   const handleImageChange = (event) => {
@@ -129,8 +131,8 @@ export const Profile = () => {
           </Grid>
           <Grid container item xs={12} position={'relative'}>
             <Avatar
-              alt="Profile Picture"
-              src={ selectedImage || userLogged.perfil.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"}
+              alt="Profile Picture"              
+              src = { selectedImage ? selectedImage : !_.isEmpty(perfil) ? perfil.avatar : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"}
               sx={styles.avatar}
             />
             <IconButton

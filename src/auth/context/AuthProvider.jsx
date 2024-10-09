@@ -52,12 +52,24 @@ export const AuthProvider = ({ children }) => {
         })    
     }
 
+    const handleUpdateUserProfile = ( profileUpdated ) => {
+        
+        const userLogged = JSON.parse(localStorage.getItem('userLogged'));
+
+        userLogged.perfil = profileUpdated;
+
+        localStorage.setItem('userLogged',JSON.stringify(userLogged));
+
+        dispatch({ type: types.updateUserLoggedData, payload: userLogged })
+    }
+
 
     return (
     <AuthContext.Provider value={{
         ...authState,
         login: handleLogin,
-        logout: handleLogout,        
+        logout: handleLogout,
+        updateProfile: handleUpdateUserProfile
     }}>
         { children }
     </AuthContext.Provider>)
