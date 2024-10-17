@@ -42,10 +42,52 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
+const getUpdatedFields = (formData, profileData) => {
+  console.log('_____________________________________');
+  console.log('Entra al handlesubmit');
+
+  let formValues = { ...formData };
+  let updatedData = {};
+  const redes = redesSociales.map(red => {
+    return red.nombre;
+  })
+
+  Object.keys(formData).forEach(key => {
+
+    let hasChanged = false;
+
+    if (!redes.includes(key)) {
+      if (key === 'fechaNacimiento') {
+        if (!dayjs(formData[key]).isSame(dayjs(profileData[key]))) {
+          hasChanged = true;
+        }
+      } else if (key === 'image') {
+        if (formData[key].length > 0) {
+          hasChanged = true;
+        }
+      } else if (formData[key] !== profileData[key]) {
+        hasChanged = true;
+      }
+
+    } else if (formData[key] !== profileData['redesSociales'][key]) {
+      hasChanged = true;
+    }
+
+    if (hasChanged) {
+      updatedData[key] = formData[key];
+    }
+
+  })
+
+  console.log('updatedData-->', updatedData);
+  console.log('_____________________________________');
+  return updatedData;
+}
+
 
 export const Profile = () => {
 
-  const { userLogged,updateProfile } = useContext(AuthContext);
+  const { userLogged, updateProfile } = useContext(AuthContext);
   const { perfil = {} } = userLogged;
   const {
     register,
@@ -54,15 +96,27 @@ export const Profile = () => {
     control,
     setValue
   } = useForm({
-    defaultValues:{
+    defaultValues: {
       ...perfil,
       fechaNacimiento: !_.isEmpty(perfil) ? dayjs(perfil.fechaNacimiento) : null,
+      genero: !_.isEmpty(perfil) ? perfil.genero : '',
+      Facebook: !_.isEmpty(perfil) ? perfil.redesSociales.Facebook : '',
+      Instagram: !_.isEmpty(perfil) ? perfil.redesSociales.Instagram : '',
+      X: !_.isEmpty(perfil) ? perfil.redesSociales.X : '',
     }
   })
 
   const [selectedImage, setSelectedImage] = useState(null);
 
   const onSubmit = handleSubmit(async (data) => {
+
+    let updatedData = {};
+    //Si perfil tiene datos es porque estoy actualizando un perfil
+    if (!_.isEmpty(perfil)) {
+      updatedData = getUpdatedFields(data, perfil);
+    }
+
+    return;
 
     const formData = new FormData();
 
@@ -77,8 +131,8 @@ export const Profile = () => {
     })
 
     const reqSettings = buildRequest(
-      subDirs.profile,
-      methods.post,
+      !_.isEmpty(perfil) ? `${subDirs.profile}/${userLogged.idUsuario}` : subDirs.profile,
+      !_.isEmpty(perfil) ? methods.put : methods.post,
       formData,
       userLogged.token,
       'multipart/form-data',
@@ -92,10 +146,12 @@ export const Profile = () => {
     }
 
     //1) verificar si se retorna el objeto con la propiedad status [Ok]
-    //2) si el status es ok, actualizar el estado del componente. Se debe observar la actualización de la imagen de perfil.    
-    //3) si el status es error, mostrar el error
+    //2) si el status es ok, actualizar el estado del componente. Se debe observar la actualización de la imagen de perfil.[Ok]
     //4) Recuperar el perfil al hacer el login & almacenar en contexto [Ok]
-    //5) Mostrar datos de perfil almacenados en el contexto al iniciar pantalla de perfil    
+    //5) Mostrar datos de perfil almacenados en el contexto al iniciar pantalla de perfil[OK]
+    //3) si el status es error, mostrar el error
+    //6) Corregir campos que no se visualizan.
+    //7) Si el perfil ya esta creado en back invocar al update profile
 
   })
 
@@ -131,8 +187,8 @@ export const Profile = () => {
           </Grid>
           <Grid container item xs={12} position={'relative'}>
             <Avatar
-              alt="Profile Picture"              
-              src = { selectedImage ? selectedImage : !_.isEmpty(perfil) ? perfil.avatar : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"}
+              alt="Profile Picture"
+              src={selectedImage ? selectedImage : !_.isEmpty(perfil) ? perfil.avatar : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"}
               sx={styles.avatar}
             />
             <IconButton
@@ -205,11 +261,11 @@ export const Profile = () => {
             </Grid>
             <Grid item xs={12} sx={styles.gridFormItem}>
               <SelectInput
-                register={register}
-                options={['Femenino', 'Masculino', 'Otro']}
-                label="Género"
+                control={control}
                 name="genero"
+                options={['Femenino', 'Masculino', 'Otro']}
                 styles={styles.textfield}
+                label="Género"
               />
             </Grid>
             <Grid item xs={12} sx={styles.gridFormItem}>
