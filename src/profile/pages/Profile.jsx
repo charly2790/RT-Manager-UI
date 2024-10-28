@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import dayjs from 'dayjs';
-import { set, useForm } from 'react-hook-form';
+import Axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
+import { subDirs } from '../types';
 import { styles } from './styles'
-import { styled } from '@mui/material';
+import { Snackbar, styled } from '@mui/material';
+import { set, useForm } from 'react-hook-form';
 import { methods } from '../../types';
 import { Description, Edit, Facebook, Instagram, Save, X } from '@mui/icons-material'
 import { DateInput, SelectInput, TelInput } from '../../components';
 import { buildRequest } from '../../helpers';
 import { Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputLabel, TextField, Typography } from '@mui/material'
 import { AuthContext } from '../../auth';
-import Axios from 'axios';
-import { subDirs } from '../types';
 import _ from 'lodash';
 
 
@@ -30,6 +31,8 @@ const redesSociales = [
   },
 ]
 
+const defaultAvatar = "https://res.cloudinary.com/dev7swtde/image/upload/v1728164795/ProfilePictures/l6vkwm31pvbuqpsvosnr.jpg"
+
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -42,58 +45,51 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const getUpdatedFields = (formData, profileData) => {  
-  
-  let formValues = {...formData};
+const getUpdatedFields = (formData, profileData) => {
+
+  let formValues = { ...formData };
   let updatedData = {};
 
   const redes = redesSociales.map(red => {
     return red.nombre;
   })
-  
-  if(formValues.redesSociales) {
+
+  if (formValues.redesSociales) {
     delete formValues.redesSociales;
-  }  
+  }
 
   Object.keys(formValues).forEach(key => {
-
-    let hasChanged = false;
 
     if (!redes.includes(key)) {
       if (key === 'fechaNacimiento') {
         if (!dayjs(formValues[key]).isSame(dayjs(profileData[key]))) {
-          hasChanged = true;
+          updatedData[key] = formValues[key];
         }
-      } else if (key === 'image') {
+      } else if (key === 'profileImage') {
         if (formValues[key].length > 0) {
-          hasChanged = true;
+          updatedData[key] = formValues[key][0];
         }
       } else if (formValues[key] !== profileData[key]) {
-        hasChanged = true;
+        updatedData[key] = formValues[key];
       }
 
     } else if (formValues[key] !== profileData['redesSociales'][key]) {
-      hasChanged = true;
-    }
-
-    if (hasChanged) {
       updatedData[key] = formValues[key];
     }
 
   })
-  
   return updatedData;
 }
-
 
 export const Profile = () => {
 
   const { userLogged, updateProfile } = useContext(AuthContext);
   const { perfil = {} } = userLogged;
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
     control,
     setValue
   } = useForm({
@@ -106,57 +102,82 @@ export const Profile = () => {
       X: !_.isEmpty(perfil) ? perfil.redesSociales.X : '',
     }
   })
-
-  const [selectedImage, setSelectedImage] = useState(null);
+  
+  const [avatarUpdated, setAvatarUpdated] = useState(false);
+  const [avatar, setAvatar] = useState(defaultAvatar);
+  const [open, setOpen] = useState(false);
 
   const onSubmit = handleSubmit(async (data) => {
 
-    let updatedData = {};
-    //Si perfil tiene datos es porque estoy actualizando un perfil
-    if (!_.isEmpty(perfil)) {
-      updatedData = getUpdatedFields(data, perfil);
-    }
-
-    if(_.isEmpty(updatedData)) return;
-    
     const formData = new FormData();
+    
+    let updatedData = {};
+
+    if(_.isEmpty(perfil)){
+      updatedData = {
+        ...data,
+        ['profileImage']:data.profileImage[0]
+      }
+    }else{
+      updatedData = {...getUpdatedFields(data, perfil)}; 
+    }        
+
+    Object.keys(updatedData).forEach(key => {
+      if (key === 'fechaNacimiento') {
+        updatedData[key] = dayjs(updatedData[key]).format('YYYY-MM-DD');
+      }
+      console.log('key: ', key, 'value: ', updatedData[key]);
+      formData.append(key, updatedData[key])
+    })
 
     formData.append('idUsuario', userLogged.idUsuario);
-    formData.append('profileImage', selectedImage);
-
-    Object.keys(data).forEach(key => {
-      if (key === 'fechaNacimiento') {
-        data[key] = dayjs(data[key]).format('YYYY-MM-DD');
-      }
-      formData.append(key, data[key])
-    })
 
     const reqSettings = buildRequest(
       !_.isEmpty(perfil) ? `${subDirs.profile}/${userLogged.idUsuario}` : subDirs.profile,
       !_.isEmpty(perfil) ? methods.patch : methods.post,
-      updatedData,
+      formData,
       userLogged.token,
       'multipart/form-data',
     )
 
     const res = await Axios.request(reqSettings);
 
-    if (res.status === 200 && res.statusText === 'OK' && data) {      
-      const { data } = res;
-      console.log(data);
-      updateProfile(data);
-    }    
+    if (res.status === 200 && res.statusText === 'OK' && data) {
+      const { data: { message, perfil: perfilUpdated } } = res;      
+      updateProfile(perfilUpdated);
+      setAvatarUpdated(false);
+      setAvatar(perfilUpdated.avatar);
+      setOpen(true);
+    }
 
   })
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      //setSelectedImage(URL.createObjectURL(file));
-      setSelectedImage(file);
+  useEffect(() => {
+    if (perfil && perfil.avatar) {
+      setAvatar(perfil.avatar);
+    } else {
+      setAvatar(defaultAvatar);
     }
+  }, [])
+
+  useEffect(() => {
+    if (avatarUpdated) {
+      setAvatar(defaultAvatar);
+    } 
+  }, [avatarUpdated])
+
+
+  const handleImageChange = () => {
+    setAvatarUpdated(true);
   };
 
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    navigate("/");
+  }
 
   return (
     <>
@@ -165,7 +186,12 @@ export const Profile = () => {
         noValidate
         onSubmit={onSubmit}
       >
-
+        {isSubmitSuccessful && <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          message="Perfil actualizado correctamente"          
+        />}
         <Grid container sx={{ mb: 16 }}>
           <Grid container item xs={12}>
             <Grid item xs={5}>
@@ -181,8 +207,8 @@ export const Profile = () => {
           </Grid>
           <Grid container item xs={12} position={'relative'}>
             <Avatar
-              alt="Profile Picture"
-              src={selectedImage ? selectedImage : !_.isEmpty(perfil) ? perfil.avatar : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"}
+              alt="Profile Picture"              
+              src={avatar}
               sx={styles.avatar}
             />
             <IconButton
@@ -197,7 +223,7 @@ export const Profile = () => {
               <VisuallyHiddenInput
                 id="upload-photo"
                 type="file"
-                {...register("image", { onChange: handleImageChange })} // {{ edit_5 }}
+                {...register("profileImage", { onChange: handleImageChange })}
               />
             </IconButton>
           </Grid>
