@@ -125,8 +125,7 @@ export const Profile = () => {
     Object.keys(updatedData).forEach(key => {
       if (key === 'fechaNacimiento') {
         updatedData[key] = dayjs(updatedData[key]).format('YYYY-MM-DD');
-      }
-      console.log('key: ', key, 'value: ', updatedData[key]);
+      }      
       formData.append(key, updatedData[key])
     })
 
