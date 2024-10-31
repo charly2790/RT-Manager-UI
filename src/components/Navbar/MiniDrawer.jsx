@@ -148,7 +148,7 @@ export const MiniDrawer = ({ handleDrawerClose, handleDrawerOpen, open }) => {
                         </Box>
                         <Box id="profilesettings" sx={{ display: 'flex', flexGrow: 0, width: '100%',justifyContent: 'flex-end' }}>
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src='https://mui.com/static/images/avatar/2.jpg' />
+                                <Avatar alt="Remy Sharp" src={ userLogged.perfil && userLogged.perfil.avatar } />
                             </IconButton>
                             <Menu
                                 sx={{ mt: '45px' }}
