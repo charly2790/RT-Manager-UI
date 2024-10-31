@@ -54,7 +54,7 @@ export const SimpleTable = ({ columns, data, formParams }) => {
     ];
 
     return (
-        <Paper sx={{ maxWidth: 936, margin: 'auto', overflow: 'hidden' }}>
+        <Paper sx={{ width: '100%', margin: 'auto', overflow: 'hidden' }}>
             <AppBar
                 position="static"
                 color='default'
