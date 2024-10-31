@@ -1,19 +1,21 @@
 import { AuthContext } from '../../auth/context/AuthContext';
 import { buildRequest } from '../../helpers';
-import { Grid, Typography } from '@mui/material';
+import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { LoadingMessage, SimpleTable } from '../../components';
 import { methods } from '../../types';
 import { subDir, columns } from '../types';
 import { useContext } from 'react'
 import { useFetch } from '../../hooks';
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs';
+import DoneIcon from '@mui/icons-material/Done';
 
 
 export const Sesiones = () => {
 
   const { userLogged } = useContext(AuthContext);
   const { state } = useLocation();
+  const navigate = useNavigate();
 
   const alumno = state ? state.alumno : undefined;
 
@@ -22,7 +24,7 @@ export const Sesiones = () => {
   const reqConfigs = buildRequest(subDir.sesionesEntrenamiento, methods.get, { idSuscripcion }, userLogged.token);
 
   const { data, hasError, isLoading } = useFetch(reqConfigs);
-  
+
   let sesiones = [];
 
   if (data) {
@@ -32,6 +34,14 @@ export const Sesiones = () => {
         Objetivo: sesion.Objetivo,
         idTipoSesion: sesion.idTipoSesion,
         completado: sesion.Completado ? "Si" : "No",
+        acciones:
+          (
+            <Tooltip title="Completar sesión">
+              <IconButton aria-label="complete" onClick={() => navigate(`/sesiones/${sesion.idSesion}`, { state: { sesion } })}>
+                <DoneIcon />
+              </IconButton>
+            </Tooltip>
+          )
       }
     })
   }
@@ -46,16 +56,16 @@ export const Sesiones = () => {
 
   return (
     <Grid container>
-        <Grid item xs={12} sx={{ mb: 2 }}>
-          <Typography variant='h4'>{ alumno? `Sesiones de entrenamiento de ${alumno.email}`: `Mis sesiones de entrenamiento`}</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          {
-            isLoading
-              ? <LoadingMessage />
-              : <SimpleTable columns={columns} data={sesiones} formParams={formParams} />
-          }
-        </Grid>
+      <Grid item xs={12} sx={{ mb: 2 }}>
+        <Typography variant='h4'>{alumno ? `Sesiones de entrenamiento de ${alumno.email}` : `Mis sesiones de entrenamiento`}</Typography>
       </Grid>
-      )
+      <Grid item xs={12}>
+        {
+          isLoading
+            ? <LoadingMessage />
+            : <SimpleTable columns={columns} data={sesiones} formParams={formParams} />
+        }
+      </Grid>
+    </Grid>
+  )
 }

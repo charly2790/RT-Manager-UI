@@ -6,7 +6,7 @@ import { PrivateRoutes } from './PrivateRoutes'
 import { Profile } from '../profile'
 import { PublicRoutes } from './PublicRoutes'
 import { Route, Routes } from 'react-router-dom'
-import { Sesiones, SesionesAdmin } from '../sesiones'
+import { Sesion, Sesiones, SesionesAdmin } from '../sesiones'
 import { Settings } from '../ajustes'
 import React from 'react'
 
@@ -28,6 +28,9 @@ export const AppRouter = () => {
           <Route path="alumnos" element={
             <Alumnos />}
           />
+          <Route path="sesiones/:sesionId" element={
+            <Sesion
+            />} />
           <Route path="sesiones" element={
             <Sesiones
             />} />

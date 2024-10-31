@@ -14,5 +14,9 @@ export const columns = [
     {
       header: "Completado?",
       accessorKey: "completado",
+    },
+    {
+      header: "Acciones",
+      accessorKey: "acciones"
     }
   ]
