@@ -33,7 +33,13 @@ export const styles = {
         pt: 2
     },
     textfield:{
-        width: '80%',
+        width: '90%',
+    },
+    btnSubmit:{
+        width: '95%',
+        [theme.breakpoints.down('md')]:{
+            width: '90%'
+        }
     }
 
 

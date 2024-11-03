@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { subDirs } from '../types';
 import { styles } from './styles'
-import { Snackbar, styled } from '@mui/material';
+import { Snackbar, styled, Tooltip } from '@mui/material';
 import { set, useForm } from 'react-hook-form';
 import { methods } from '../../types';
 import { Description, Edit, Facebook, Instagram, Save, X } from '@mui/icons-material'
@@ -102,7 +102,7 @@ export const Profile = () => {
       X: !_.isEmpty(perfil) ? perfil.redesSociales.X : '',
     }
   })
-  
+
   const [avatarUpdated, setAvatarUpdated] = useState(false);
   const [avatar, setAvatar] = useState(defaultAvatar);
   const [open, setOpen] = useState(false);
@@ -110,22 +110,22 @@ export const Profile = () => {
   const onSubmit = handleSubmit(async (data) => {
 
     const formData = new FormData();
-    
+
     let updatedData = {};
 
-    if(_.isEmpty(perfil)){
+    if (_.isEmpty(perfil)) {
       updatedData = {
         ...data,
-        ['profileImage']:data.profileImage[0]
+        ['profileImage']: data.profileImage[0]
       }
-    }else{
-      updatedData = {...getUpdatedFields(data, perfil)}; 
-    }        
+    } else {
+      updatedData = { ...getUpdatedFields(data, perfil) };
+    }
 
     Object.keys(updatedData).forEach(key => {
       if (key === 'fechaNacimiento') {
         updatedData[key] = dayjs(updatedData[key]).format('YYYY-MM-DD');
-      }      
+      }
       formData.append(key, updatedData[key])
     })
 
@@ -142,7 +142,7 @@ export const Profile = () => {
     const res = await Axios.request(reqSettings);
 
     if (res.status === 200 && res.statusText === 'OK' && data) {
-      const { data: { message, perfil: perfilUpdated } } = res;      
+      const { data: { message, perfil: perfilUpdated } } = res;
       updateProfile(perfilUpdated);
       setAvatarUpdated(false);
       setAvatar(perfilUpdated.avatar);
@@ -162,7 +162,7 @@ export const Profile = () => {
   useEffect(() => {
     if (avatarUpdated) {
       setAvatar(defaultAvatar);
-    } 
+    }
   }, [avatarUpdated])
 
 
@@ -189,24 +189,24 @@ export const Profile = () => {
           open={open}
           autoHideDuration={2000}
           onClose={handleClose}
-          message="Perfil actualizado correctamente"          
+          message="Perfil actualizado correctamente"
         />}
         <Grid container sx={{ mb: 16 }}>
           <Grid container item xs={12}>
-            <Grid item xs={5}>
-              <Typography variant='h4' sx={{ mt: 2, mb: 2 }}>
+            <Grid container item xs={5}>
+              <Typography variant='h4' sx={{ mt: 2, mb: 2, mr: 2 }}>
                 Mi perfil
               </Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <IconButton aria-label="delete" size='large' sx={{ mt: 1 }} color='primary'>
-                <Description />
-              </IconButton>
+              <Tooltip title="Certificados" placement="right-end">
+                <IconButton aria-label="delete" size='large' color='primary'>
+                  <Description />
+                </IconButton>
+              </Tooltip>
             </Grid>
           </Grid>
           <Grid container item xs={12} position={'relative'}>
             <Avatar
-              alt="Profile Picture"              
+              alt="Profile Picture"
               src={avatar}
               sx={styles.avatar}
             />
@@ -233,34 +233,31 @@ export const Profile = () => {
             <Grid item xs={12} sx={{ pt: 1 }}>
               <Divider />
             </Grid>
-            <Grid item xs={12} sx={styles.gridFormItem}>
+            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
               <TextField
                 variant="filled"
                 label="nombre"
-                size='small'
                 sx={styles.textfield}
                 {...register("nombre", { required: true })}
               />
             </Grid>
-            <Grid item xs={12} sx={styles.gridFormItem}>
+            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
               <TextField
                 variant="filled"
                 label="apellido"
-                size='small'
                 sx={styles.textfield}
                 {...register("apellido", { required: true })}
               />
             </Grid>
-            <Grid item xs={12} sx={styles.gridFormItem}>
+            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
               <TextField
                 variant="filled"
                 label="apodo"
-                size='small'
                 sx={styles.textfield}
                 {...register("apodo", { required: true })}
               />
             </Grid>
-            <Grid item xs={12} sx={styles.gridFormItem}>
+            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
               <DateInput
                 control={control}
                 name="fechaNacimiento"
@@ -269,7 +266,7 @@ export const Profile = () => {
                 disableFuture={true}
               />
             </Grid>
-            <Grid item xs={12} sx={styles.gridFormItem}>
+            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
               <InputLabel id="telefono">Teléfono</InputLabel>
               <TelInput
                 control={control}
@@ -278,7 +275,7 @@ export const Profile = () => {
                 styles={styles.textfield}
               />
             </Grid>
-            <Grid item xs={12} sx={styles.gridFormItem}>
+            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
               <SelectInput
                 control={control}
                 name="genero"
@@ -295,11 +292,10 @@ export const Profile = () => {
             </Grid>
             {
               redesSociales.map((red, index) => {
-                return <Grid item xs={12} key={index} sx={styles.gridFormItem}>
+                return <Grid item xs={12} md={6} key={index} sx={styles.gridFormItem}>
                   <TextField
                     variant="filled"
                     label={red.nombre}
-                    size='small'
                     sx={styles.textfield}
                     {...register(red.nombre, { required: true })}
                     InputProps={{
@@ -318,7 +314,7 @@ export const Profile = () => {
                 color={'primary'}
                 size="large"
                 startIcon={<Save />}
-                sx={styles.textfield}
+                sx={styles.btnSubmit}
                 type='submit'
                 variant='contained'
               >
