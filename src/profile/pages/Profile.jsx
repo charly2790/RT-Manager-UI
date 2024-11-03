@@ -210,21 +210,23 @@ export const Profile = () => {
               src={avatar}
               sx={styles.avatar}
             />
-            <IconButton
-              aria-label="upload new picture"
-              size="sm"
-              variant="outlined"
-              color="neutral"
-              sx={styles.iconButton}
-              onClick={() => document.querySelector('#upload-photo').click()}
-            >
-              <Edit sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
-              <VisuallyHiddenInput
-                id="upload-photo"
-                type="file"
-                {...register("profileImage", { onChange: handleImageChange })}
-              />
-            </IconButton>
+            <Tooltip title="Cambiar foto de perfil" placement='right-end'>
+              <IconButton
+                aria-label="upload new picture"
+                size="sm"
+                variant="outlined"
+                color="neutral"
+                sx={styles.iconButton}
+                onClick={() => document.querySelector('#upload-photo').click()}
+              >
+                <Edit sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+                <VisuallyHiddenInput
+                  id="upload-photo"
+                  type="file"
+                  {...register("profileImage", { onChange: handleImageChange })}
+                />
+              </IconButton>
+            </Tooltip>
           </Grid>
           <Grid container item xs={12}>
             <Grid item xs={12} sx={styles.gridFormItem}>
