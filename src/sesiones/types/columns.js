@@ -8,14 +8,12 @@ export const columns = [
       accessorKey: "Objetivo",
     },
     {
-      header: "Tipo de Sesion",
-      accessorKey: "idTipoSesion",
-    },
-    {
-      header: "Completado?",
-      accessorKey: "completado",
-    },
-    {
+      header: "Tipo",
+      accessorKey: "tipo",
+    },{
+      header: "Estado",
+      accessorKey: "estado",
+    },{
       header: "Acciones",
       accessorKey: "acciones"
     }

@@ -25,15 +25,22 @@ export const Sesiones = () => {
 
   const { data, hasError, isLoading } = useFetch(reqConfigs);
 
-  let sesiones = [];
+  let sesiones = [];  
 
   if (data) {
     sesiones = data.map(sesion => {
-      return {
-        fechaSesion: dayjs(sesion.fechaSesion).format("DD-MM-YYYY"),
-        Objetivo: sesion.Objetivo,
-        idTipoSesion: sesion.idTipoSesion,
-        completado: sesion.Completado ? "Si" : "No",
+
+      let {         
+        EstadoSesion, 
+        fechaSesion,         
+        Objetivo,
+        TipoSesion, 
+      } = sesion;
+      return {        
+        estado: EstadoSesion.descripcion,
+        fechaSesion: dayjs( fechaSesion ).format("DD-MM-YYYY"),        
+        Objetivo: Objetivo,
+        tipo: TipoSesion.descripcion,
         acciones:
           (
             <Tooltip title="Completar sesión">
