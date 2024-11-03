@@ -106,6 +106,7 @@ export const SimpleTable = ({ columns, data, formParams }) => {
                                         headerGroup.headers.map(header => (
                                             <TableCell key={header.id}
                                                 onClick={header.column.getToggleSortingHandler()}
+                                                sx={{fontWeight: 'bold'}}
                                             >
                                                 {header.column.columnDef.header}
                                                 {
