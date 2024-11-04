@@ -2,7 +2,7 @@ import { InputLabel, MenuItem, Select } from '@mui/material'
 import { Controller } from 'react-hook-form'
 import React from 'react'
 
-export const SelectInput = ({ control, name, options, styles, label, }) => {
+export const SelectInput = ({ control, name, options, styles, label, defaultOption, disabled = false }) => {
     return (
         <>
             <InputLabel id="Genero">{label}</InputLabel>
@@ -10,13 +10,15 @@ export const SelectInput = ({ control, name, options, styles, label, }) => {
                 control={control}
                 name={name}
                 rules={{ required: 'El género es requerido' }}
+                disabled={false}
                 render={({ field }) =>
                     <Select                        
                         label={label}
                         placeholder={label}
                         sx={styles}
-                        defaultValue={field.value}
+                        defaultValue={field.value || defaultOption}
                         onChange={(e) => field.onChange(e.target.value)}
+                        disabled={disabled}
                     >
                         {
                             options.map((option) => {
