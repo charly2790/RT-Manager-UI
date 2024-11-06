@@ -105,20 +105,24 @@ export const SesionForm = ({ idSuscripcion, handleAddSesion, handleDeleteSesion 
                                             control={control}
                                             name="fechaSesion"
                                             rules={{ required: 'La fecha es requerida' }}
-                                            render={({ field: { onChange, value, defaultValue }, fieldState: { error } }) => (
-                                                <DatePicker
+                                            render={({ field: { onChange, value }, fieldState: { error } }) => {
+                                                const dateValue = value ? dayjs.utc(value) : null
+                                                
+                                                return <DatePicker
                                                     label="Fecha de la sesión"
                                                     disablePast
-                                                    value={value}
+                                                    value={dateValue}
                                                     onChange={onChange}
                                                     sx={{ width: '100%', mt: 1 }}
                                                     renderInput={(params) =>
                                                         <TextField
                                                             {...params}
                                                             fullWidth
+                                                            error={!!error}
+                                                            helperText={error ? error.message : null}
                                                         />}
                                                 />
-                                            )}
+                                            }}
                                         />
                                     </LocalizationProvider>
                                 </Grid>
