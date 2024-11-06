@@ -1,41 +1,57 @@
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { Controller } from 'react-hook-form'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { TextField } from '@mui/material'
+import { InputLabel, TextField } from '@mui/material'
 import dayjs from 'dayjs';
 import React from 'react'
 import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(utc)
 
-export const DateInput = ({ control, name, label, disableFuture = false, disablePast = false, styles }) => {
+export const DateInput = ({ 
+    control, 
+    defaultValue, 
+    disabled = false, 
+    disableFuture = false, 
+    disablePast = false, 
+    label, 
+    name, 
+    showInputLabel = false,
+    styles, 
+}) => {
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} >
             <Controller
-                control={control}
+                control={control}                
                 name={name}
                 rules={{ required: 'La fecha es requerida' }}
-                render={({ field: { onChange, value }, fieldState: { error } }) => {                    
+                render={({ field: { onChange, value = defaultValue }, fieldState: { error } }) => {
                     const dateValue = value ? dayjs.utc(value) : null
 
                     return (
-                        <DatePicker
-                            label={label}
-                            disableFuture={disableFuture}
-                            disablePast={disablePast}
-                            value={dateValue}                            
-                            onChange={(newValue) => {
-                                onChange(newValue ? newValue.utc().format():null);
-                            }}
-                            sx={styles}
-                            renderInput={(params) =>
-                                <TextField
-                                    {...params}
-                                    fullWidth
-                                    error={!!error}
-                                    helperText={error ? error.message : null}
-                                />}
-                        />
+                        <>
+                            {showInputLabel && <InputLabel id="Genero">{label}</InputLabel>}
+                            <DatePicker
+                                label={label}
+                                disabled={disabled}
+                                disableFuture={disableFuture}
+                                disablePast={disablePast}
+                                format={"DD/MM/YYYY"}
+                                value={dateValue}
+                                onChange={(newValue) => {
+                                    onChange(newValue ? newValue.utc().format() : null);
+                                }}
+                                sx={styles}
+                                renderInput={(params) =>
+                                    <TextField
+                                        {...params}
+                                        fullWidth
+                                        error={!!error}
+                                        helperText={error ? error.message : null}
+                                        size={'small'}
+                                    />}
+                            />
+                        </>
                     )
                 }}
             />
