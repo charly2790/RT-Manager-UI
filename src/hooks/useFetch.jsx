@@ -15,7 +15,7 @@ export const useFetch = (settings) => {
         
         let response;
 
-        await new Promise( resolve => setTimeout(resolve, 1500) );
+        // await new Promise( resolve => setTimeout(resolve, 1500) );
                 
         try {            
             response = await Axios.request(settings);                      
