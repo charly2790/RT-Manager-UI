@@ -22,12 +22,7 @@ export const styles = {
         boxShadow: 'sm',
         '&:hover': {
             bgcolor: 'rgba(0, 0, 0, 0.7)'
-        },        
-        /*[theme.breakpoints.down('sm')]: {
-            left: 56,
-            top: 56,
-            size: 'xs'
-        }*/
+        },                
     },
     gridFormItem:{
         pt: 2
@@ -39,6 +34,20 @@ export const styles = {
         width: '95%',
         [theme.breakpoints.down('md')]:{
             width: '90%'
+        }
+    },
+    multilineTextField: {
+        width: '90%',        
+    },
+    textField:{        
+        width: '90%',        
+    },
+    actionButtonContainer: {
+        display: 'flex',
+        justifyContent: 'flex-end',
+        pr: 8,
+        [theme.breakpoints.down('sm')]:{
+            pr: 2
         }
     }
 

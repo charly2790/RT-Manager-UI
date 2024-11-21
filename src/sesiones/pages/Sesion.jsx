@@ -1,7 +1,10 @@
 import { AuthContext } from '../../auth';
-import { Box, Button, Grid, InputLabel, TextField, ThemeProvider, Typography } from '@mui/material';
+import { Box, Button, Divider, Grid, InputAdornment, InputLabel, TextField, ThemeProvider, Typography } from '@mui/material';
 import { buildRequest } from '../../helpers';
-import { DateInput, SelectInput } from '../../components';
+import { DateInput, 
+  // FileInput, 
+  SelectInput, 
+  TimeInput } from '../../components';
 import { mainTheme } from '../../themes/mainTheme';
 import { methods } from '../../types';
 import { styles } from './styles'
@@ -53,11 +56,11 @@ export const Sesion = () => {
         onSubmit={onSubmit}
       >
         <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
-          Nueva Sesión de Entrenamiento
+          Sesion #1 - Semana del 20/05/2024 al 26/05/2024
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Typography variant='h7' disabled={sesionFieldsState}>Fecha de la sesión</Typography>
+            <InputLabel id="fechaSesion">{"Fecha de la sesión"}</InputLabel>
             <DateInput
               control={control}
               name="fechaSesion"
@@ -77,6 +80,7 @@ export const Sesion = () => {
               label="Tipo de sesión"
               defaultOption={sesion ? sesion.TipoSesion.descripcion : ''}
               disabled={sesionFieldsState}
+              showInputLabel={true}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -88,15 +92,16 @@ export const Sesion = () => {
               label="Estado de sesión"
               defaultOption={sesion ? sesion.EstadoSesion.descripcion : ''}
               disabled={sesionFieldsState}
+              showInputLabel={true}
             />
           </Grid>
-          <Grid item xs={12} sm={12}>
+          <Grid item xs={12} md={6}>
             <InputLabel id="objetivo">{"Objetivo"}</InputLabel>
             <TextField
               error={errors.objetivo ? true : false}
               multiline
               required
-              sx={{ width: '95%' }}
+              sx={styles.multilineTextField}
               rows={2}
               id="objetivo"
               label={!sesion.Objetivo ? 'Objetivo' : ''}
@@ -117,13 +122,13 @@ export const Sesion = () => {
               helperText={errors.Objetivo ? errors.Objetivo.message : null}
             />
           </Grid>
-          <Grid item xs={12} sm={12}>
+          <Grid item xs={12} md={6}>
             <InputLabel id="comentarios">{"Comentarios"}</InputLabel>
             <TextField
               error={errors.objetivo ? true : false}
               multiline
               required
-              sx={{ width: '95%' }}
+              sx={styles.multilineTextField}
               rows={2}
               id="objetivo"
               label={!sesion.Objetivo ? 'Objetivo' : ''}
@@ -134,20 +139,114 @@ export const Sesion = () => {
               {...register("comentarios")}
             />
           </Grid>
-          <Grid container item xs={12}>
-            <Grid item xs={12} md={6}>
-            </Grid>
-            <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Button 
-                sx={{ mt: 3, mb: 2, mr: 8 }} 
-                variant="contained" 
+          {/* <Grid container item xs={12} sx={styles.actionButtonContainer}>
+            <Grid item xs={6} md={3}>
+              <Button               
+                variant="outlined"
                 disabled={!sesionFieldsState}
                 color="primary"
-                onClick={handleComplete}>
-                  {"Completar"}
+                onClick={handleComplete}                
+                sx={styles.btnSubmit}
+                >                
+                {"Atras"}
+              </Button>
+            </Grid>
+            <Grid item xs={6} md={3}>
+              <Button
+                variant="contained"
+                disabled={!sesionFieldsState}
+                color="primary"
+                onClick={handleComplete}
+                sx={styles.btnSubmit}
+                >
+                {"Completar"}
               </Button>
             </Grid>
 
+          </Grid> */}
+        </Grid>
+        <Typography component="h1" variant="h5" sx={{ mb: 2, mt: 2 }}>
+          Entrenamiento
+        </Typography>
+        <Divider />
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <InputLabel id="distancia" sx={{ mt: 2 }}>{"Distancia"}</InputLabel>
+            <TextField
+              sx={styles.textfield}
+              type='number'
+              InputProps={{
+                startAdornment: <InputAdornment position="start">km</InputAdornment>,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TimeInput
+              control={control}
+              name="tiempoTotalSesion"
+              label="Tiempo total de la sesión"
+              styles={styles.textfield}
+              defaultValue={'2022-04-17T00:00'}
+              disabled={false}
+              showInputLabel={true}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TimeInput
+              control={control}
+              name="tiempoNetoSesion"
+              label="Tiempo neto de la sesión"
+              styles={styles.textfield}
+              defaultValue={'1990-05-27T00:00'}
+              disabled={false}
+              showInputLabel={true}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <SelectInput
+              control={control}
+              name="rpe"
+              //Agrupar opciones(ver MUI), ver posibilidad de agregar íconos
+              options={['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
+              styles={styles.textfield}
+              label="RPE"
+              defaultOption={'1'}
+              showInputLabel={true}
+              inputLabelStyles={{ mt: 2 }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <InputLabel id="link" mt={2}>{"Link"}</InputLabel>
+            <TextField
+              error={errors.link ? true : false}
+              required
+              sx={styles.textfield}
+              id="link"
+              name="link"
+              value={null}
+              {...register("link", {
+                required: {
+                  value: true,
+                  message: 'El link es requerido'
+                },
+                minLength: {
+                  value: 3,
+                  message: 'Debe contener al menos 3 caracteres'
+                }
+                //TODO validar con REGEX
+              })}
+              helperText={errors.link ? errors.link.message : null}
+            />
+          </Grid>
+          <Grid>
+        {/*     <FileInput
+              control={ control }
+              label={ "Archivo" }
+              name={ "archivo" }
+              showInputLabel={ true }
+              styles={ styles.textfield }
+              inputLabelStyles={{ mt: 2 }}
+            /> */}
           </Grid>
         </Grid>
       </Box>

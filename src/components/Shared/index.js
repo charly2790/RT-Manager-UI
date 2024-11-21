@@ -1,3 +1,5 @@
-export * from './TelInput'
 export * from './DateInput'
+export * from './FileInput'
 export * from './SelectInput'
+export * from './TelInput'
+export * from './TimeInput'
