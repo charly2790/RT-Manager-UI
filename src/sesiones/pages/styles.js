@@ -44,10 +44,15 @@ export const styles = {
     },
     actionButtonContainer: {
         display: 'flex',
-        justifyContent: 'flex-end',
-        pr: 8,
+        justifyContent: 'center',
         [theme.breakpoints.down('sm')]:{
-            pr: 2
+            justifyContent:'start'
+        }
+    },
+    actionButton:{
+        width: '60%',
+        [theme.breakpoints.down('sm')]:{
+            width: '85%'
         }
     }
 

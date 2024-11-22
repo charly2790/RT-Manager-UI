@@ -1,10 +1,13 @@
 import { AuthContext } from '../../auth';
 import { Box, Button, Divider, Grid, InputAdornment, InputLabel, TextField, ThemeProvider, Typography } from '@mui/material';
 import { buildRequest } from '../../helpers';
-import { DateInput, 
-  // FileInput, 
-  SelectInput, 
-  TimeInput } from '../../components';
+import { createTheme } from '@mui/material/styles';
+import {
+  DateInput,
+FileInput,
+  SelectInput,
+  TimeInput
+} from '../../components';
 import { mainTheme } from '../../themes/mainTheme';
 import { methods } from '../../types';
 import { styles } from './styles'
@@ -13,6 +16,8 @@ import { useFetch } from '../../hooks';
 import { useForm } from 'react-hook-form';
 import { useLocation, useParams } from 'react-router-dom'
 import React, { useContext, useState } from 'react'
+
+const theme = createTheme();
 
 export const Sesion = () => {
 
@@ -138,32 +143,7 @@ export const Sesion = () => {
               autoComplete="family-name"
               {...register("comentarios")}
             />
-          </Grid>
-          {/* <Grid container item xs={12} sx={styles.actionButtonContainer}>
-            <Grid item xs={6} md={3}>
-              <Button               
-                variant="outlined"
-                disabled={!sesionFieldsState}
-                color="primary"
-                onClick={handleComplete}                
-                sx={styles.btnSubmit}
-                >                
-                {"Atras"}
-              </Button>
-            </Grid>
-            <Grid item xs={6} md={3}>
-              <Button
-                variant="contained"
-                disabled={!sesionFieldsState}
-                color="primary"
-                onClick={handleComplete}
-                sx={styles.btnSubmit}
-                >
-                {"Completar"}
-              </Button>
-            </Grid>
-
-          </Grid> */}
+          </Grid>          
         </Grid>
         <Typography component="h1" variant="h5" sx={{ mb: 2, mt: 2 }}>
           Entrenamiento
@@ -178,6 +158,7 @@ export const Sesion = () => {
               InputProps={{
                 startAdornment: <InputAdornment position="start">km</InputAdornment>,
               }}
+              {...register("distancia")}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -189,6 +170,7 @@ export const Sesion = () => {
               defaultValue={'2022-04-17T00:00'}
               disabled={false}
               showInputLabel={true}
+              inputLabelStyles={{ mt: 2 }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -200,23 +182,24 @@ export const Sesion = () => {
               defaultValue={'1990-05-27T00:00'}
               disabled={false}
               showInputLabel={true}
+              inputLabelStyles={{ mt: 1 }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <SelectInput
               control={control}
               name="rpe"
-              //Agrupar opciones(ver MUI), ver posibilidad de agregar íconos
+              //TODO Agrupar opciones(ver MUI), ver posibilidad de agregar íconos
               options={['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
               styles={styles.textfield}
               label="RPE"
               defaultOption={'1'}
               showInputLabel={true}
-              inputLabelStyles={{ mt: 2 }}
+              inputLabelStyles={{ mt: 1 }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <InputLabel id="link" mt={2}>{"Link"}</InputLabel>
+            <InputLabel id="link" mt={2} sx={{mt:1}}>{"Link"}</InputLabel>
             <TextField
               error={errors.link ? true : false}
               required
@@ -238,15 +221,40 @@ export const Sesion = () => {
               helperText={errors.link ? errors.link.message : null}
             />
           </Grid>
-          <Grid>
-        {/*     <FileInput
-              control={ control }
-              label={ "Archivo" }
-              name={ "archivo" }
-              showInputLabel={ true }
-              styles={ styles.textfield }
-              inputLabelStyles={{ mt: 2 }}
-            /> */}
+          <Grid item xs={12} md={6}>
+            <FileInput
+              control={control}
+              label={"Archivo"}
+              name={"archivo"}
+              showInputLabel={true}
+              styles={styles.textfield}
+              inputLabelStyles={{ mt: 1 }}
+            />
+          </Grid>
+          <Grid container item xs={12} sx={{
+            display: 'flex', 
+            justifyContent: 'flex-end', 
+            mt: 1,
+            mb: 3,
+            [theme.breakpoints.down('sm')]:{ pr: 1}}}>
+              <Grid container item xs={6} md={3} sx={styles.actionButtonContainer}>
+                <Button
+                  variant='outlined'
+                  sx={styles.actionButton}
+                  size='large'
+                >
+                  {"Atras"}
+                </Button>
+              </Grid>
+              <Grid xs={6} md={3} sx={styles.actionButtonContainer}>
+              <Button
+                variant='contained'
+                sx={styles.actionButton}
+                size='large'
+              >
+                  {"Guardar"}
+                </Button>
+              </Grid>
           </Grid>
         </Grid>
       </Box>

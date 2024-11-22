@@ -1,6 +1,7 @@
 import React from 'react'
 import { MuiFileInput } from "mui-file-input";
 import { Controller } from 'react-hook-form';
+import { InputLabel } from '@mui/material';
 
 export const FileInput = ({ 
     control, 
@@ -21,7 +22,7 @@ export const FileInput = ({
               {...field}
               helperText={fieldState.invalid ? "Archivo inválido" : ""}
               error={fieldState.invalid}
-              styles={styles}
+              sx={styles}
             />
         </>
         )}

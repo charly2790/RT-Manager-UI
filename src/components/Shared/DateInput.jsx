@@ -17,7 +17,8 @@ export const DateInput = ({
     label, 
     name, 
     showInputLabel = false,
-    styles, 
+    styles,
+    inputLabelStyles = {}
 }) => {
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} >
@@ -30,7 +31,7 @@ export const DateInput = ({
 
                     return (
                         <>
-                            {showInputLabel && <InputLabel id="Genero">{label}</InputLabel>}
+                            {showInputLabel && <InputLabel id={name} sx={inputLabelStyles}>{label}</InputLabel>}
                             <DatePicker
                                 label={label}
                                 disabled={disabled}

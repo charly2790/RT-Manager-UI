@@ -12,7 +12,8 @@ export const TimeInput = ({
     label, 
     name, 
     showInputLabel = false,
-    styles, 
+    styles,
+    inputLabelStyles = {} 
 }) => {
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} >
@@ -25,7 +26,7 @@ export const TimeInput = ({
 
                     return (
                         <>
-                            {showInputLabel && <InputLabel id={name} sx={{ mt: 2 }}>{label}</InputLabel>}
+                            {showInputLabel && <InputLabel id={name} sx={inputLabelStyles}>{label}</InputLabel>}
                             <TimeField
                                 defaultValue={dateValue}
                                 disabled={disabled}
