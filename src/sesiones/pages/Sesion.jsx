@@ -1,10 +1,10 @@
 import { AuthContext } from '../../auth';
-import { Box, Button, Divider, Grid, InputAdornment, InputLabel, TextField, ThemeProvider, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, Grow, InputAdornment, InputLabel, TextField, ThemeProvider, Typography } from '@mui/material';
 import { buildRequest } from '../../helpers';
 import { createTheme } from '@mui/material/styles';
 import {
   DateInput,
-FileInput,
+  FileInput,
   SelectInput,
   TimeInput
 } from '../../components';
@@ -16,15 +16,20 @@ import { useFetch } from '../../hooks';
 import { useForm } from 'react-hook-form';
 import { useLocation, useParams } from 'react-router-dom'
 import React, { useContext, useState } from 'react'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { Event } from '@mui/icons-material';
+import { DataCell } from '../components';
 
 const theme = createTheme();
+
 
 export const Sesion = () => {
 
   const { sesionId } = useParams();
   const { state } = useLocation();
   const { userLogged } = useContext(AuthContext);
-  const [sesionFieldsState, setSesionFieldsState] = useState(true);
+  const [sesionFieldsState, setSesionFieldsState] = useState(true);  
+
   const {
     register,
     handleSubmit,
@@ -39,112 +44,59 @@ export const Sesion = () => {
   const reqSesionStatesSettings = buildRequest(subDir.estadoSesion, methods.get, {}, userLogged.token);
   const { data: dataSesionStates, hasError: hasErrorSesionStates, isLoading: isLoadingSesionStates } = useFetch(reqSesionStatesSettings);
 
-
   const sesion = state ? state.sesion : undefined;
-  console.log('sesion-->', sesion);
   let tiposSesion = data ? data.tiposSesion : [];
   let estadosDeSesion = dataSesionStates ? dataSesionStates.estadosDeSesion : [];
 
-  const onSubmit = handleSubmit((data) => {
-    console.log('handle submit')
+  const onSubmit = handleSubmit(async (data) => {
+    console.log('Sesion form data--->');
   })
-  const handleComplete = () => {
-    console.log('¡Vas a completar la sesión!');
-  }
 
   return (
-    <ThemeProvider theme={mainTheme}>
+    <ThemeProvider theme={mainTheme}>      
+      <Accordion sx={{width: '95%'}}>
+        <AccordionSummary
+          expandIcon={<ArrowDropDownIcon />}
+        >
+          <Typography component="h1" variant="h5">
+            Sesion #1 - Semana del 20/05/2024 al 26/05/2024
+          </Typography>          
+        </AccordionSummary>        
+        <AccordionDetails>
+          <Grid
+            container
+            spacing={2}
+          >
+            <DataCell
+              title={"Fecha de Sesión"}
+              value={sesion.fechaSesion}
+            />
+            <DataCell
+              title={"Tipo de Sesion"}
+              value={ sesion ? sesion.TipoSesion.descripcion : '' }
+            />
+            <DataCell
+              title={"Estado de la sesión"}
+              value={sesion ? sesion.EstadoSesion.descripcion : ''}
+            />
+            <DataCell
+              title={"Objetivo"}
+              value={sesion ? sesion.Objetivo : ''}
+            />
+            <DataCell
+              title={"Comentarios"}
+              value={sesion.comentarios? sesion.comentarios : 'Recordar agregar campo al modelo'}
+            />                                    
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
+
       <Box
         component="form"
         noValidate
-        sx={{ mt: 3 }}
+        sx={{ pt: 1, pr: 2, pb: 2, pl: 2 }}
         onSubmit={onSubmit}
-      >
-        <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
-          Sesion #1 - Semana del 20/05/2024 al 26/05/2024
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <InputLabel id="fechaSesion">{"Fecha de la sesión"}</InputLabel>
-            <DateInput
-              control={control}
-              name="fechaSesion"
-              label=""
-              styles={styles.textfield}
-              defaultValue={sesion.fechaSesion} // setear valor por default
-              disabled={sesionFieldsState}
-              showInputLabel={true}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <SelectInput
-              control={control}
-              name="idTipoSesion"
-              options={tiposSesion.map(tipo => tipo.descripcion)}
-              styles={styles.textfield}
-              label="Tipo de sesión"
-              defaultOption={sesion ? sesion.TipoSesion.descripcion : ''}
-              disabled={sesionFieldsState}
-              showInputLabel={true}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <SelectInput
-              control={control}
-              name="estadoSesion"
-              options={estadosDeSesion.map(estado => estado.descripcion)}
-              styles={styles.textfield}
-              label="Estado de sesión"
-              defaultOption={sesion ? sesion.EstadoSesion.descripcion : ''}
-              disabled={sesionFieldsState}
-              showInputLabel={true}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <InputLabel id="objetivo">{"Objetivo"}</InputLabel>
-            <TextField
-              error={errors.objetivo ? true : false}
-              multiline
-              required
-              sx={styles.multilineTextField}
-              rows={2}
-              id="objetivo"
-              label={!sesion.Objetivo ? 'Objetivo' : ''}
-              name="objetivo"
-              value={sesion ? sesion.Objetivo : ''}
-              disabled={sesionFieldsState}
-              autoComplete="family-name"
-              {...register("Objetivo", {
-                required: {
-                  value: true,
-                  message: 'El objetivo es requerido'
-                },
-                minLength: {
-                  value: 3,
-                  message: 'Debe contener al menos 3 caracteres'
-                }
-              })}
-              helperText={errors.Objetivo ? errors.Objetivo.message : null}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <InputLabel id="comentarios">{"Comentarios"}</InputLabel>
-            <TextField
-              error={errors.objetivo ? true : false}
-              multiline
-              required
-              sx={styles.multilineTextField}
-              rows={2}
-              id="objetivo"
-              label={!sesion.Objetivo ? 'Objetivo' : ''}
-              name="objetivo"
-              value={"Cargar comentarios"} //TODO - Reemplazar por comentario
-              disabled={sesionFieldsState}
-              autoComplete="family-name"
-              {...register("comentarios")}
-            />
-          </Grid>          
-        </Grid>
+      >                
         <Typography component="h1" variant="h5" sx={{ mb: 2, mt: 2 }}>
           Entrenamiento
         </Typography>
@@ -199,7 +151,7 @@ export const Sesion = () => {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <InputLabel id="link" mt={2} sx={{mt:1}}>{"Link"}</InputLabel>
+            <InputLabel id="link" mt={2} sx={{ mt: 1 }}>{"Link"}</InputLabel>
             <TextField
               error={errors.link ? true : false}
               required
@@ -232,29 +184,31 @@ export const Sesion = () => {
             />
           </Grid>
           <Grid container item xs={12} sx={{
-            display: 'flex', 
-            justifyContent: 'flex-end', 
+            display: 'flex',
+            justifyContent: 'flex-end',
             mt: 1,
             mb: 3,
-            [theme.breakpoints.down('sm')]:{ pr: 1}}}>
-              <Grid container item xs={6} md={3} sx={styles.actionButtonContainer}>
-                <Button
-                  variant='outlined'
-                  sx={styles.actionButton}
-                  size='large'
-                >
-                  {"Atras"}
-                </Button>
-              </Grid>
-              <Grid xs={6} md={3} sx={styles.actionButtonContainer}>
+            [theme.breakpoints.down('sm')]: { pr: 1 }
+          }}>
+            <Grid container item xs={6} md={3} sx={styles.actionButtonContainer}>
+              <Button
+                variant='outlined'
+                sx={styles.actionButton}
+                size='large'
+              >
+                {"Atras"}
+              </Button>
+            </Grid>
+            <Grid xs={6} md={3} sx={styles.actionButtonContainer}>
               <Button
                 variant='contained'
                 sx={styles.actionButton}
                 size='large'
+                type='submit'
               >
-                  {"Guardar"}
-                </Button>
-              </Grid>
+                {"Guardar"}
+              </Button>
+            </Grid>
           </Grid>
         </Grid>
       </Box>
