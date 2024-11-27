@@ -69,23 +69,39 @@ export const Sesion = () => {
           >
             <DataCell
               title={"Fecha de Sesión"}
-              value={sesion.fechaSesion}
+              value={sesion.fechaSesion}              
+              settings={{
+                icon: "EVENT",                
+              }}
             />
             <DataCell
               title={"Tipo de Sesion"}
-              value={ sesion ? sesion.TipoSesion.descripcion : '' }
+              value={ sesion ? sesion.TipoSesion.descripcion : '' }                            
+              settings={{
+                icon: "DIRECTION_RUN",                
+              }}
             />
             <DataCell
               title={"Estado de la sesión"}
-              value={sesion ? sesion.EstadoSesion.descripcion : ''}
+              value={sesion ? sesion.EstadoSesion.descripcion : ''}           
+              settings={ sesion ? sesion.EstadoSesion.idEstado === 1 
+                ? { icon:"PENDING", color:"info.main" } 
+                : sesion.EstadoSesion.idEstado === 2 
+                  ? {icon: "DONE", color:"sucess.dark" } 
+                  : {icon: "WARNING", color:"error.main" }
+                : { icon:"PENDING", color:"info.main" }                  
+                }
+              
             />
             <DataCell
               title={"Objetivo"}
-              value={sesion ? sesion.Objetivo : ''}
+              value={sesion ? sesion.Objetivo : ''}              
+              settings={{icon: "GOAL"}}         
             />
             <DataCell
               title={"Comentarios"}
-              value={sesion.comentarios? sesion.comentarios : 'Recordar agregar campo al modelo'}
+              value={sesion.comentarios? sesion.comentarios : 'Recordar agregar campo al modelo'}              
+              settings={{icon: 'COMMENTS'}}
             />                                    
           </Grid>
         </AccordionDetails>
