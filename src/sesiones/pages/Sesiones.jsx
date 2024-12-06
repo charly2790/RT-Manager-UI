@@ -27,10 +27,11 @@ export const Sesiones = () => {
 
   let sesiones = [];  
 
-  if (data) {
+  if (data) {    
     sesiones = data.map(sesion => {
 
-      let {         
+      let {      
+        Entrenamiento,   
         EstadoSesion, 
         fechaSesion,         
         Objetivo,

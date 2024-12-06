@@ -14,7 +14,7 @@ export const DataCell = ({
         <ThemeProvider theme={mainTheme}>
             <Grid container item xs={12} md={4}>
                 <IconCell icon={icon} />
-                <Grid container xs={10}>
+                <Grid container item xs={10}>
                     <Grid item xs={12}><Typography variant="subtitle1" >{title}</Typography></Grid>
                     <Grid item xs={12}><Typography variant='body2' sx={{color: color}} >{value}</Typography></Grid>
                 </Grid>

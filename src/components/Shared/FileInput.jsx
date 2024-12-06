@@ -4,7 +4,8 @@ import { Controller } from 'react-hook-form';
 import { InputLabel } from '@mui/material';
 
 export const FileInput = ({ 
-    control, 
+    control,
+    disabled, 
     label,
     name,
     showInputLabel = false,
@@ -22,6 +23,7 @@ export const FileInput = ({
               {...field}
               helperText={fieldState.invalid ? "Archivo inválido" : ""}
               error={fieldState.invalid}
+              disabled
               sx={styles}
             />
         </>
