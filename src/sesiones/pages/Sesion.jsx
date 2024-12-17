@@ -1,5 +1,5 @@
 import { AuthContext } from '../../auth';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, Grow, InputAdornment, InputLabel, TextField, ThemeProvider, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, Grow, InputAdornment, InputLabel, Snackbar, TextField, ThemeProvider, Typography } from '@mui/material';
 import { buildRequest } from '../../helpers';
 import { createTheme } from '@mui/material/styles';
 import {
@@ -11,23 +11,35 @@ import { mainTheme } from '../../themes/mainTheme';
 import { methods } from '../../types';
 import { styles } from './styles'
 import { useForm } from 'react-hook-form';
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import React, { useContext, useEffect, useState } from 'react'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { DataCell } from '../components';
 import dayjs from 'dayjs';
 import { subDir } from '../types';
 import Axios from 'axios';
+import _, { isEmpty } from 'lodash';
 
 const theme = createTheme();
 
+const getUpdatedKeys = ( formFields, defaultFields ) => {  
+  /* const updatedData = updatedKeys.map( key => {
+    return { [key] : formFields[key]}
+    }) */   
+   return Object.keys(defaultFields).filter(field =>{
+     return formFields[field] !== defaultFields[field];
+   })
+}
+
 
 export const Sesion = () => {
-
+  
   const { state } = useLocation();
   const { userLogged: { idUsuario, token, rol } } = useContext(AuthContext);
   const [ disableFields, setDisableFields ] = useState(false);
   const [ showAdminFields, setShowAdminFields ] = useState(false);
+  const [ apiMessage, setApiMessage ] = useState("");
+  const navigate = useNavigate();
   
   const sesion = state ? state.sesion : undefined;
   const { EstadoSesion : { descripcion : estadoSesion }  } = sesion;
@@ -48,7 +60,11 @@ export const Sesion = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitSuccessful },
+    formState: { 
+      errors, 
+      isSubmitSuccessful, 
+      isDirty, 
+      dirtyFields },
     control,
     setValue
   } = useForm({
@@ -58,35 +74,74 @@ export const Sesion = () => {
     }
   })
 
+  const onNavigateBack = () => {
+    navigate(-1)
+  }
 
-  const onSubmit = handleSubmit(async (data) => {
 
+  const onSubmit = handleSubmit(async (data) => {      
+
+    let updatedKeys = Object.keys(data);        
+    const isCreate = _.isEmpty(sesion.Entrenamiento);
     const formData = new FormData();
-    Object.keys(data).forEach(field => {
+    
+    if(!isCreate){      
+      updatedKeys = !isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];      
+    }
+        
+    updatedKeys.forEach(field => {
       formData.append(field, data[field]);
-    })
+    })        
 
     formData.append('idUsuario', idUsuario);
     formData.append('idSesion', sesion.idSesion);
 
-    const reqSettings = buildRequest(
-      subDir.entrenamientos,
-      methods.post,
+    const reqEntrenamiento = buildRequest(
+      isCreate ? subDir.entrenamientos : `${subDir.entrenamientos}/${sesion.Entrenamiento.idEntrenamiento}`,
+      isCreate ? methods.post : methods.patch,
       formData,
       token,
       'multipart/form-data'
     )
 
-    const res = await Axios.request(reqSettings);
+    const res = await Axios.request(reqEntrenamiento);
 
     if (res.status === 200 && res.statusText === 'OK') {
-      console.log(res.data);
+
+      const { idSesion } = sesion;      
+      
+      const params = {
+        idSesion,
+      }
+
+      const reqSesion = buildRequest(
+        subDir.updateStatus,
+        methods.patch,
+        params,
+        token,
+      );
+
+      const res = await Axios.request(reqSesion);
+
+      if (res.status === 200 && res.statusText === 'OK') {        
+        const { data: {message}} = res;
+        setApiMessage(message);
+      }
+
     }
 
   })
 
   return (
     <ThemeProvider theme={mainTheme}>
+       {
+          isSubmitSuccessful && <Snackbar
+            open={open}
+            autoHideDuration={2000}
+            onClose={onNavigateBack}
+            message={apiMessage}
+          />
+        }
       <Accordion sx={{ width: '95%' }}>
         <AccordionSummary
           expandIcon={<ArrowDropDownIcon />}
@@ -145,7 +200,7 @@ export const Sesion = () => {
         noValidate
         sx={{ pt: 1, pr: 2, pb: 2, pl: 2 }}
         onSubmit={onSubmit}
-      >
+      >       
         <Typography component="h1" variant="h5" sx={{ mb: 2, mt: 2 }}>
           Entrenamiento
         </Typography>
@@ -272,13 +327,14 @@ export const Sesion = () => {
                 variant='outlined'
                 sx={styles.actionButton}
                 size='large'
+                onClick={onNavigateBack}
               >
                 {"Atras"}
               </Button>
             </Grid>
             <Grid item xs={6} md={3} sx={styles.actionButtonContainer}>
               <Button
-                disabled={disableFields}
+                disabled={disableFields || !isDirty}
                 variant='contained'
                 sx={styles.actionButton}
                 size='large'
