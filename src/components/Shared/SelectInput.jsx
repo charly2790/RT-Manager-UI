@@ -20,7 +20,7 @@ export const SelectInput = ({
                 control={control}
                 name={name}
                 rules={{ required: 'El género es requerido' }}
-                disabled={false}
+                disabled={disabled}
                 render={({ field }) =>
                     <Select
                         label={showInputLabel ? '' : label}

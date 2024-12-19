@@ -1,42 +1,29 @@
-import { AuthContext } from '../../auth';
+import _, { isEmpty } from 'lodash';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, Grow, InputAdornment, InputLabel, Snackbar, TextField, ThemeProvider, Typography } from '@mui/material';
+import { AuthContext } from '../../auth';
 import { buildRequest } from '../../helpers';
 import { createTheme } from '@mui/material/styles';
-import {
-  FileInput,
-  SelectInput,
-  TimeInput
-} from '../../components';
+import { DataCell } from '../components';
+import { FileInput, SelectInput, TimeInput} from '../../components';
 import { mainTheme } from '../../themes/mainTheme';
 import { methods } from '../../types';
+import { ROLES, SESSION_STATUS } from '../../types';
 import { styles } from './styles'
+import { subDir } from '../types';
 import { useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom'
-import React, { useContext, useEffect, useState } from 'react'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { DataCell } from '../components';
-import dayjs from 'dayjs';
-import { subDir } from '../types';
 import Axios from 'axios';
-import _, { isEmpty } from 'lodash';
+import dayjs from 'dayjs';
+import React, { useContext, useEffect, useState } from 'react'
 
 const theme = createTheme();
-
-const getUpdatedKeys = ( formFields, defaultFields ) => {  
-  /* const updatedData = updatedKeys.map( key => {
-    return { [key] : formFields[key]}
-    }) */   
-   return Object.keys(defaultFields).filter(field =>{
-     return formFields[field] !== defaultFields[field];
-   })
-}
-
-
 export const Sesion = () => {
   
   const { state } = useLocation();
   const { userLogged: { idUsuario, token, rol } } = useContext(AuthContext);
   const [ disableFields, setDisableFields ] = useState(false);
+  const [ readOnly, setReadOnly ] = useState(true);
   const [ showAdminFields, setShowAdminFields ] = useState(false);
   const [ apiMessage, setApiMessage ] = useState("");
   const navigate = useNavigate();
@@ -45,17 +32,16 @@ export const Sesion = () => {
   const { EstadoSesion : { descripcion : estadoSesion }  } = sesion;
   
   useEffect(() => {
-    if (rol === 'EQUIPO_ADMIN') {      
+    if (rol === ROLES.TEAM_LEADER || (rol === ROLES.TEAM_MEMBER && estadoSesion === SESSION_STATUS.VALIDATED)) {      
       setShowAdminFields(true);
-    } else if(rol === 'EQUIPO_MEMBER'){
-      if( estadoSesion === 'HECHA'){
-        setDisableFields(true);  
-      }
+    }
+
+    if( (rol === ROLES.TEAM_LEADER && estadoSesion !== SESSION_STATUS.VALIDATED) || 
+        (rol === ROLES.TEAM_MEMBER && [ SESSION_STATUS.PENDING,SESSION_STATUS.SENT ].includes(estadoSesion))){
+      setReadOnly(false);
     }
   }, [])
-
-
-  console.log('Sesion: ', sesion);
+  
 
   const {
     register,
@@ -87,11 +73,13 @@ export const Sesion = () => {
     
     if(!isCreate){      
       updatedKeys = !isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];      
-    }
+    }    
         
     updatedKeys.forEach(field => {
       formData.append(field, data[field]);
-    })        
+    })
+    
+    console.log('data--->', data);
 
     formData.append('idUsuario', idUsuario);
     formData.append('idSesion', sesion.idSesion);
@@ -103,6 +91,8 @@ export const Sesion = () => {
       token,
       'multipart/form-data'
     )
+
+    console.log('reqEntrenamiento --->', reqEntrenamiento);
 
     const res = await Axios.request(reqEntrenamiento);
 
@@ -123,13 +113,11 @@ export const Sesion = () => {
 
       const res = await Axios.request(reqSesion);
 
-      if (res.status === 200 && res.statusText === 'OK') {        
+      if (res.status === 200 && res.statusText === 'OK') {
         const { data: {message}} = res;
         setApiMessage(message);
       }
-
     }
-
   })
 
   return (
@@ -212,6 +200,7 @@ export const Sesion = () => {
               <InputLabel id="distancia" sx={{ mt: 2 }}>{"Distancia"}</InputLabel>
               <TextField
                 sx={styles.textfield}
+                disabled={readOnly}
                 type='number'                
                 InputProps={{
                   startAdornment: <InputAdornment position="start">km</InputAdornment>,
@@ -223,13 +212,13 @@ export const Sesion = () => {
           {
             showAdminFields &&
             <Grid item xs={12} md={6}>
-              <TimeInput
+              <TimeInput                
                 control={control}
                 name="tiempoTotal"
                 label="Tiempo total de la sesión"
                 styles={styles.textfield}
                 defaultValue={'2022-04-17T00:00'}
-                disabled={false}
+                disabled={readOnly}
                 showInputLabel={true}
                 inputLabelStyles={{ mt: 2 }}
               />
@@ -244,7 +233,7 @@ export const Sesion = () => {
                 label="Tiempo neto de la sesión"
                 styles={styles.textfield}
                 defaultValue={'1990-05-27T00:00'}
-                disabled={false}
+                disabled={readOnly}
                 showInputLabel={true}
                 inputLabelStyles={{ mt: 1 }}
               />
@@ -256,6 +245,7 @@ export const Sesion = () => {
               <SelectInput
                 control={control}
                 name="rpe"
+                disabled={readOnly}
                 //TODO Agrupar opciones(ver MUI), ver posibilidad de agregar íconos
                 options={['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
                 styles={styles.textfield}
@@ -273,7 +263,7 @@ export const Sesion = () => {
               required
               sx={styles.textfield}
               id="link"
-              disabled={disableFields}
+              disabled={readOnly}
               name="link"
               value={undefined}
               {...register("link", {
@@ -304,7 +294,7 @@ export const Sesion = () => {
             <InputLabel id="comentario" sx={{ mt: 2 }}>{"Comentario"}</InputLabel>
             <TextField
               multiline
-              disabled={disableFields}
+              disabled={readOnly}
               rows={2}
               required
               id="comentario"
@@ -334,7 +324,7 @@ export const Sesion = () => {
             </Grid>
             <Grid item xs={6} md={3} sx={styles.actionButtonContainer}>
               <Button
-                disabled={disableFields || !isDirty}
+                disabled={!isDirty}
                 variant='contained'
                 sx={styles.actionButton}
                 size='large'

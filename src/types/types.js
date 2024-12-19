@@ -4,3 +4,15 @@ export const methods = {
     post: 'post',
     put: 'put',
 }
+
+export const ROLES = {
+    TEAM_MEMBER: 'EQUIPO_MEMBER',
+    TEAM_LEADER: 'EQUIPO_ADMIN',
+}
+
+export const SESSION_STATUS = {
+    PENDING: 'PENDIENTE',
+    SENT: 'ENVIADA',
+    EXPIRED: 'VENCIDA',
+    VALIDATED: 'VALIDADA',
+}
