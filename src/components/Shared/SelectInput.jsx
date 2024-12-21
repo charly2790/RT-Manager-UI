@@ -7,8 +7,7 @@ export const SelectInput = ({
     name,
     options,
     styles,
-    label,
-    defaultOption,
+    label,    
     disabled = false,
     showInputLabel = false ,
     inputLabelStyles = {}
@@ -19,15 +18,14 @@ export const SelectInput = ({
             <Controller
                 control={control}
                 name={name}
-                rules={{ required: 'El género es requerido' }}
-                disabled={disabled}
-                render={({ field }) =>
-                    <Select
+                rules={{ required: 'El género es requerido' }}                
+                render={({ field:{ value, onChange} }) =>{                    
+                    return <Select
                         label={showInputLabel ? '' : label}
                         placeholder={label}
-                        sx={styles}
-                        defaultValue={field.value || defaultOption}
-                        onChange={(e) => field.onChange(e.target.value)}
+                        sx={styles}                        
+                        value = { value }
+                        onChange={ onChange }                        
                         disabled={disabled}
                     >
                         {
@@ -36,6 +34,8 @@ export const SelectInput = ({
                             })
                         }
                     </Select>
+
+                }
                 }
             />
 

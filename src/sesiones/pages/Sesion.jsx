@@ -29,9 +29,28 @@ export const Sesion = () => {
   const navigate = useNavigate();
   
   const sesion = state ? state.sesion : undefined;
-  const { EstadoSesion : { descripcion : estadoSesion }  } = sesion;
+  const { EstadoSesion : { descripcion : estadoSesion }, Entrenamiento  } = sesion;
+      
+  const {
+    register,
+    handleSubmit,    
+    getValues,
+    formState: { 
+      errors, 
+      isSubmitSuccessful, 
+      isDirty,      
+      dirtyFields,
+      defaultValues},
+    control,
+    setValue
+  } = useForm({    
+    defaultValues: {
+      archivo: undefined,
+      ...sesion.Entrenamiento      
+    }
+  })
   
-  useEffect(() => {
+  useEffect(() => {    
     if (rol === ROLES.TEAM_LEADER || (rol === ROLES.TEAM_MEMBER && estadoSesion === SESSION_STATUS.VALIDATED)) {      
       setShowAdminFields(true);
     }
@@ -40,36 +59,17 @@ export const Sesion = () => {
         (rol === ROLES.TEAM_MEMBER && [ SESSION_STATUS.PENDING,SESSION_STATUS.SENT ].includes(estadoSesion))){
       setReadOnly(false);
     }
-  }, [])
-  
-
-  const {
-    register,
-    handleSubmit,
-    formState: { 
-      errors, 
-      isSubmitSuccessful, 
-      isDirty, 
-      dirtyFields },
-    control,
-    setValue
-  } = useForm({
-    disabled: disableFields,
-    defaultValues:{
-      ...sesion.Entrenamiento,
-    }
-  })
+  }, [])  
 
   const onNavigateBack = () => {
     navigate(-1)
   }
 
-
-  const onSubmit = handleSubmit(async (data) => {      
+  const onSubmit = handleSubmit(async (data) => {        
 
     let updatedKeys = Object.keys(data);        
     const isCreate = _.isEmpty(sesion.Entrenamiento);
-    const formData = new FormData();
+    const formData = new FormData();    
     
     if(!isCreate){      
       updatedKeys = !isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];      
@@ -77,9 +77,7 @@ export const Sesion = () => {
         
     updatedKeys.forEach(field => {
       formData.append(field, data[field]);
-    })
-    
-    console.log('data--->', data);
+    })    
 
     formData.append('idUsuario', idUsuario);
     formData.append('idSesion', sesion.idSesion);
@@ -90,9 +88,7 @@ export const Sesion = () => {
       formData,
       token,
       'multipart/form-data'
-    )
-
-    console.log('reqEntrenamiento --->', reqEntrenamiento);
+    )    
 
     const res = await Axios.request(reqEntrenamiento);
 
@@ -245,12 +241,10 @@ export const Sesion = () => {
               <SelectInput
                 control={control}
                 name="rpe"
-                disabled={readOnly}
-                //TODO Agrupar opciones(ver MUI), ver posibilidad de agregar íconos
-                options={['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
+                disabled={readOnly}                
+                options={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
                 styles={styles.textfield}
-                label="RPE"
-                defaultOption={'0'}
+                label="RPE"                
                 showInputLabel={true}
                 inputLabelStyles={{ mt: 1 }}
               />
