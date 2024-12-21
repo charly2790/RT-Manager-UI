@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -14,12 +14,13 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 import {
     useReactTable,
-    getCoreRowModel,    
+    getCoreRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     getFilteredRowModel,
 } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom';
+import { mainTheme } from '../themes/mainTheme';
 
 export const SimpleTable = ({ columns, data, formParams }) => {
 
@@ -54,85 +55,87 @@ export const SimpleTable = ({ columns, data, formParams }) => {
     ];
 
     return (
-        <Paper sx={{ width: '100%', margin: 'auto', overflow: 'hidden' }}>
-            <AppBar
-                position="static"
-                color='default'
-                elevation={0}
-                sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-            >
-                <Toolbar>
-                    <Grid container spacing={2} alignItems="center">
-                        <Grid item>
-                            <SearchIcon color="inherit" sx={{ display: 'block' }} />
+        <ThemeProvider theme={mainTheme}>
+            <Paper sx={{ width: '100%', margin: 'auto', overflow: 'hidden' }}>
+                <AppBar
+                    position="static"
+                    color='default'
+                    elevation={0}
+                    sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+                >
+                    <Toolbar>
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item>
+                                <SearchIcon color="inherit" sx={{ display: 'block' }} />
+                            </Grid>
+                            <Grid item xs>
+                                <TextField
+                                    fullWidth
+                                    placeholder='Buscar por email, número telefónico o id usuario'
+                                    id="standard-basic"
+                                    inputProps={{
+                                        sx: { fontSize: 'default' },
+                                    }}
+                                    variant="standard"
+                                    value={filtering}
+                                    onChange={(e) => setFiltering(e.target.value)}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <Button
+                                    variant='contained'
+                                    sx={{ mr: 1 }}
+                                    color='primary'
+                                    onClick={() => navigate(formParams.route, formParams.params ? { state: { ...formParams.params } } : {})}
+                                >
+                                    Agregar Usuario
+                                </Button>
+                                <Tooltip title="Reload">
+                                    <IconButton>
+                                        <RefreshIcon color="inherit" sx={{ display: 'block' }} />
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
                         </Grid>
-                        <Grid item xs>
-                            <TextField
-                                fullWidth
-                                placeholder='Buscar por email, número telefónico o id usuario'
-                                id="standard-basic"
-                                inputProps={{
-                                    sx: { fontSize: 'default' },
-                                }}
-                                variant="standard"
-                                value={filtering}
-                                onChange={(e) => setFiltering(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item>
-                            <Button
-                                variant='contained'
-                                sx={{ mr: 1 }}
-                                onClick={() => navigate(formParams.route, formParams.params ? { state: { ...formParams.params} } : {})}
-                            >
-                                Agregar Usuario
-                            </Button>
-                            <Tooltip title="Reload">
-                                <IconButton>
-                                    <RefreshIcon color="inherit" sx={{ display: 'block' }} />
-                                </IconButton>
-                            </Tooltip>
-                        </Grid>
-                    </Grid>
-                </Toolbar>
-            </AppBar>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        {
-                            table.getHeaderGroups().map(headerGroup => (
-                                <TableRow key={headerGroup.id}>
-                                    {
-                                        headerGroup.headers.map(header => (
-                                            <TableCell key={header.id}
-                                                onClick={header.column.getToggleSortingHandler()}
-                                                sx={{fontWeight: 'bold'}}
-                                            >
-                                                {header.column.columnDef.header}
-                                                {
-                                                    { asc: '⬆️', desc: '⬇️' }[header.column.getIsSorted() ?? null]
-                                                }
-                                            </TableCell>
-                                        ))
-                                    }
+                    </Toolbar>
+                </AppBar>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            {
+                                table.getHeaderGroups().map(headerGroup => (
+                                    <TableRow key={headerGroup.id}>
+                                        {
+                                            headerGroup.headers.map(header => (
+                                                <TableCell key={header.id}
+                                                    onClick={header.column.getToggleSortingHandler()}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    {header.column.columnDef.header}
+                                                    {
+                                                        { asc: '⬆️', desc: '⬇️' }[header.column.getIsSorted() ?? null]
+                                                    }
+                                                </TableCell>
+                                            ))
+                                        }
+                                    </TableRow>
+                                ))
+                            }
+                        </TableHead>
+                        <TableBody>
+                            {table.getRowModel().rows.map((row) => (
+                                <TableRow key={row.id}>
+                                    {row.getVisibleCells().map((cell, index) => (
+                                        <TableCell key={`${row.id}-${index}`}>
+                                            {/* {console.log(`cell`, cell)} */}
+                                            {/* {flexRender(cell.column.columnDef.cell, cell.getContext())}*/}
+                                            {cell.renderValue('cell')}
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
-                            ))
-                        }
-                    </TableHead>
-                    <TableBody>
-                        {table.getRowModel().rows.map((row) => (
-                            <TableRow key={row.id}>
-                                {row.getVisibleCells().map((cell, index) => (
-                                    <TableCell key={`${row.id}-${index}`}>
-                                        {/* {console.log(`cell`, cell)} */}
-                                        {/* {flexRender(cell.column.columnDef.cell, cell.getContext())}*/}
-                                        {cell.renderValue('cell')}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                    {/* <tfoot>
+                            ))}
+                        </TableBody>
+                        {/* <tfoot>
                         {
                             table.getFooterGroups().map(footerGroup => (
                                 <tr key={footerGroup.id}>
@@ -149,15 +152,16 @@ export const SimpleTable = ({ columns, data, formParams }) => {
                             ))
                         }
                     </tfoot> */}
-                </Table>
-            </TableContainer>
+                    </Table>
+                </TableContainer>
 
-            <ButtonGroup color="primary" aria-label="Medium-sized button group" sx={{ mt: 1 }}>
-                {buttons}
-            </ButtonGroup>
+                <ButtonGroup color="primary" aria-label="Medium-sized button group" sx={{ mt: 1 }}>
+                    {buttons}
+                </ButtonGroup>
 
 
 
-        </Paper>
+            </Paper>
+        </ThemeProvider>
     )
 }

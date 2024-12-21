@@ -61,11 +61,22 @@ export const Sesiones = () => {
     }
   }
 
+  let nickname = "";
+  
+  if(alumno){    
+    const { Perfil } = alumno;
+    if(Perfil){
+      nickname = Perfil.apodo.charAt(0).toUpperCase() + Perfil.apodo.slice(1).toLowerCase();
+    }else{
+      nickname = alumno.email;
+    }
+  }
+  
 
   return (
     <Grid container>
       <Grid item xs={12} sx={{ mb: 2 }}>
-        <Typography variant='h4'>{alumno ? `Sesiones de entrenamiento de ${alumno.email}` : `Mis sesiones de entrenamiento`}</Typography>
+        <Typography variant='h4'>{alumno ? `Sesiones de ${nickname}` : `Mis sesiones de entrenamiento`}</Typography>
       </Grid>
       <Grid item xs={12}>
         {
