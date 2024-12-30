@@ -4,26 +4,27 @@ import { Controller } from 'react-hook-form';
 import { InputLabel } from '@mui/material';
 
 export const FileInput = ({ 
-    control,
-    disabled, 
+    control,    
     label,
     name,
     showInputLabel = false,
     styles,
     inputLabelStyles = {},
+    disabled = false,
 }) => {
   return (
     <Controller
         name={name}
-        control={control}
+        control={control}        
         render={({ field, fieldState }) => (
         <>
             {showInputLabel && <InputLabel id={name} sx={inputLabelStyles}>{label}</InputLabel>}
             <MuiFileInput                
               {...field}
+              multiple              
               helperText={fieldState.invalid ? "Archivo inválido" : ""}
               error={fieldState.invalid}
-              disabled
+              disabled = {disabled}
               sx={styles}
             />
         </>

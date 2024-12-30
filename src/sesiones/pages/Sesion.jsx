@@ -21,8 +21,7 @@ const theme = createTheme();
 export const Sesion = () => {
   
   const { state } = useLocation();
-  const { userLogged: { idUsuario, token, rol } } = useContext(AuthContext);
-  const [ disableFields, setDisableFields ] = useState(false);
+  const { userLogged: { idUsuario, token, rol } } = useContext(AuthContext);  
   const [ readOnly, setReadOnly ] = useState(true);
   const [ showAdminFields, setShowAdminFields ] = useState(false);
   const [ apiMessage, setApiMessage ] = useState("");
@@ -63,7 +62,7 @@ export const Sesion = () => {
 
   const onNavigateBack = () => {
     navigate(-1)
-  }
+  }  
 
   const onSubmit = handleSubmit(async (data) => {        
 
@@ -76,12 +75,16 @@ export const Sesion = () => {
     }    
         
     updatedKeys.forEach(field => {
-      formData.append(field, data[field]);
-    })    
-
-    formData.append('idUsuario', idUsuario);
-    formData.append('idSesion', sesion.idSesion);
-
+      if(field === 'archivos'){        
+        const archivos = data[field];
+        archivos.forEach((archivo) => {
+          formData.append('archivos', archivo);
+        })
+      } else {
+        formData.append(field, data[field]);
+      }
+    })        
+    
     const reqEntrenamiento = buildRequest(
       isCreate ? subDir.entrenamientos : `${subDir.entrenamientos}/${sesion.Entrenamiento.idEntrenamiento}`,
       isCreate ? methods.post : methods.patch,
@@ -276,9 +279,10 @@ export const Sesion = () => {
           </Grid>
           <Grid item xs={12} md={6}>
             <FileInput
+              disabled={readOnly}
               control={control}
               label={"Archivo"}
-              name={"archivo"}
+              name={"archivos"}
               showInputLabel={true}
               styles={styles.textfield}
               inputLabelStyles={{ mt: 1 }}
