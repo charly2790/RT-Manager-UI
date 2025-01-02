@@ -1,9 +1,10 @@
 import _, { isEmpty } from 'lodash';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, Grow, InputAdornment, InputLabel, Snackbar, TextField, ThemeProvider, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, Grow, InputAdornment, InputLabel, Link, Snackbar, TextField, ThemeProvider, Typography } from '@mui/material';
 import { AuthContext } from '../../auth';
 import { buildRequest } from '../../helpers';
 import { createTheme } from '@mui/material/styles';
 import { DataCell } from '../components';
+import { DialogTrainingShots } from '../components/DialogTrainingShots';
 import { FileInput, SelectInput, TimeInput} from '../../components';
 import { mainTheme } from '../../themes/mainTheme';
 import { methods } from '../../types';
@@ -17,6 +18,7 @@ import Axios from 'axios';
 import dayjs from 'dayjs';
 import React, { useContext, useEffect, useState } from 'react'
 
+
 const theme = createTheme();
 export const Sesion = () => {
   
@@ -25,6 +27,7 @@ export const Sesion = () => {
   const [ readOnly, setReadOnly ] = useState(true);
   const [ showAdminFields, setShowAdminFields ] = useState(false);
   const [ apiMessage, setApiMessage ] = useState("");
+  const [ openDialog, setOpenDialog ] = useState(false);
   const navigate = useNavigate();
   
   const sesion = state ? state.sesion : undefined;
@@ -62,17 +65,20 @@ export const Sesion = () => {
 
   const onNavigateBack = () => {
     navigate(-1)
-  }  
-
+  }
+  
   const onSubmit = handleSubmit(async (data) => {        
-
+    
+    const { idSesion } = sesion;      
     let updatedKeys = Object.keys(data);        
     const isCreate = _.isEmpty(sesion.Entrenamiento);
     const formData = new FormData();    
     
     if(!isCreate){      
       updatedKeys = !isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];      
-    }    
+    }
+    
+    formData.append('idSesion', idSesion);     
         
     updatedKeys.forEach(field => {
       if(field === 'archivos'){        
@@ -97,7 +103,6 @@ export const Sesion = () => {
 
     if (res.status === 200 && res.statusText === 'OK') {
 
-      const { idSesion } = sesion;      
       
       const params = {
         idSesion,
@@ -118,6 +123,13 @@ export const Sesion = () => {
       }
     }
   })
+  
+  const handleOpenDialog = () =>{
+    setOpenDialog(true);
+  }
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  }
 
   return (
     <ThemeProvider theme={mainTheme}>
@@ -303,6 +315,9 @@ export const Sesion = () => {
             />
 
           </Grid>
+          <Grid container item xs={12} md={6} sx={{justifyContent: 'center', alignItems: 'center'}}>
+            <Link sx={{ mt: 2 }} onClick={handleOpenDialog}>{"VER ARCHIVOS"}</Link>
+          </Grid>
           <Grid container item xs={12} sx={{
             display: 'flex',
             justifyContent: 'flex-end',
@@ -333,6 +348,10 @@ export const Sesion = () => {
             </Grid>
           </Grid>
         </Grid>
+        <DialogTrainingShots
+          open={openDialog}
+          onClose={handleCloseDialog}
+        />
       </Box>
     </ThemeProvider>
   )
