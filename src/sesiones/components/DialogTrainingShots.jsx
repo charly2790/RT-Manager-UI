@@ -1,6 +1,9 @@
 import { Dialog, IconButton, ImageList, ImageListItem, ImageListItemBar, ListSubheader } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import _ from 'lodash';
+// import Slider from 'react-slick';
+
 
 const itemData = [
     {
@@ -78,7 +81,34 @@ const itemData = [
 
 export const DialogTrainingShots = (props) => {
 
-    const { open, onClose } = props;
+    const { open, onClose, entrenamiento } = props;
+    const [trainingShots, setTrainingShots] = useState([]);
+
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1
+    };
+
+    useEffect(() => {
+        if (!_.isNil(entrenamiento) &&
+            !_.isEmpty(entrenamiento.MediaEntrenamientos)) {
+
+            const { MediaEntrenamientos } = entrenamiento;
+
+            let items = MediaEntrenamientos.map((media) => {
+                return {
+                    link: media.Documento.link,
+                    title: 'Captura de entrenamiento',
+                }
+            });
+
+            setTrainingShots(items);
+        }
+
+    }, [])
 
     const handleClose = () => {
         onClose();
@@ -86,25 +116,26 @@ export const DialogTrainingShots = (props) => {
 
     return (
         <Dialog open={open} onClose={handleClose}>
-            <ImageList sx={{ width: 500, height: 450 }}>
+            <ImageList sx={{ width: 640, height: 480 }}>
                 <ImageListItem key="Subheader" cols={2}>
                     <ListSubheader component="div">December</ListSubheader>
                 </ImageListItem>
-                {itemData.map((item) => (
-                    <ImageListItem key={item.img}>
+                {trainingShots.map((shot) => (
+                    <ImageListItem key={shot.link}>
                         <img
-                            srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                            src={`${item.img}?w=248&fit=crop&auto=format`}
-                            alt={item.title}
+                            //srcSet={`${shot.link}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                            src={`${shot.link}?w=248&fit=crop&auto=format`}
+                            //src={shot.link}
+                            alt={shot.title}
                             loading="lazy"
                         />
                         <ImageListItemBar
-                            title={item.title}
-                            subtitle={item.author}
+                            title={shot.title}
+                            subtitle={shot.title}
                             actionIcon={
                                 <IconButton
                                     sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                                    aria-label={`info about ${item.title}`}
+                                    aria-label={`info about ${shot.title}`}
                                 >
                                     <InfoIcon />
                                 </IconButton>
@@ -113,6 +144,18 @@ export const DialogTrainingShots = (props) => {
                     </ImageListItem>
                 ))}
             </ImageList>
+           {/* <Slider>
+                {trainingShots.map((shot, index) => (
+                    <div key={index}>
+                        <img
+                            src={shot.links}
+                            alt={`Slide ${index + 1}`}
+                            style={{ width: "100%", borderRadius: "10px" }}
+                        />
+                    </div>
+                ))}
+            </Slider> */}
+
         </Dialog>
     )
 }

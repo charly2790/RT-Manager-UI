@@ -316,7 +316,12 @@ export const Sesion = () => {
 
           </Grid>
           <Grid container item xs={12} md={6} sx={{justifyContent: 'center', alignItems: 'center'}}>
-            <Link sx={{ mt: 2 }} onClick={handleOpenDialog}>{"VER ARCHIVOS"}</Link>
+            <Link 
+              sx={{ mt: 2 }} 
+              onClick={handleOpenDialog}              
+              >
+                {"VER ARCHIVOS"}
+            </Link>
           </Grid>
           <Grid container item xs={12} sx={{
             display: 'flex',
@@ -351,6 +356,7 @@ export const Sesion = () => {
         <DialogTrainingShots
           open={openDialog}
           onClose={handleCloseDialog}
+          entrenamiento={Entrenamiento}
         />
       </Box>
     </ThemeProvider>
