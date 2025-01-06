@@ -17,6 +17,9 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Axios from 'axios';
 import dayjs from 'dayjs';
 import React, { useContext, useEffect, useState } from 'react'
+import { DialogTrainingShotsSwiper } from '../components/DialogTrainingShotsSwiper';
+
+
 
 
 const theme = createTheme();
@@ -353,7 +356,7 @@ export const Sesion = () => {
             </Grid>
           </Grid>
         </Grid>
-        <DialogTrainingShots
+        <DialogTrainingShotsSwiper
           open={openDialog}
           onClose={handleCloseDialog}
           entrenamiento={Entrenamiento}
