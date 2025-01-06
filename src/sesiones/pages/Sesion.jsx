@@ -4,7 +4,6 @@ import { AuthContext } from '../../auth';
 import { buildRequest } from '../../helpers';
 import { createTheme } from '@mui/material/styles';
 import { DataCell } from '../components';
-import { DialogTrainingShots } from '../components/DialogTrainingShots';
 import { FileInput, SelectInput, TimeInput} from '../../components';
 import { mainTheme } from '../../themes/mainTheme';
 import { methods } from '../../types';
