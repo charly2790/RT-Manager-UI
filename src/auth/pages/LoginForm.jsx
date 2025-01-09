@@ -15,54 +15,32 @@ import React, { useContext, useEffect, useState } from 'react'
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { CircularProgress } from '@mui/material';
 
 
 export const LoginForm = () => {
-  
+
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-  
+
   const {
     register,
     handleSubmit,
-    formState: { errors },    
+    formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm()
 
-  const [formState, setFormState] = useState({    
-    isLoading: false,
-    success: false,
-    hasError: false,
-    errorMessage: '',
-  });
-
-  
   const onSubmit = handleSubmit(async (data) => {
 
     let { email, password } = data;
     let idEquipo = 1;    
 
-    setFormState({
-      ...formState,      
-      isLoading: true,
-    });
+    await login({ idEquipo, email, password });
 
-    login({idEquipo, email, password});
-
-    try {      
-      setFormState({
-        ...formState,
-        isLoading: false,
-        success: true
-      })
-    } catch (error) {
-      console.error(error.message);
-    }
-    
   })
 
-  useEffect(() => {    
-    formState.success? navigate("/"):null
-  }, [formState.success])
+  useEffect(() => {
+    isSubmitSuccessful ? navigate("/") : null
+  }, [isSubmitSuccessful])
 
   return (
     <ThemeProvider theme={mainTheme}>
@@ -93,7 +71,7 @@ export const LoginForm = () => {
               mx: 4,
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',              
+              alignItems: 'center',
             }}
           >
             <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
@@ -103,7 +81,7 @@ export const LoginForm = () => {
               Acceder
             </Typography>
             <Box
-              component="form"              
+              component="form"
               sx={{ mt: 1, width: '100%' }}
               onSubmit={onSubmit}
             >
@@ -147,27 +125,18 @@ export const LoginForm = () => {
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
-              {
-                formState.isLoading ?
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="outlined"
-                    onClick={onSubmit}
-                    sx={{ mt: 3, mb: 2 }}
-                  >
-                    Accediendo...
-                  </Button> :
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    onClick={onSubmit}
-                    sx={{ mt: 3, mb: 2 }}
-                  >
-                    Acceder
-                  </Button>
-              }
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                disabled={isSubmitting}                
+                sx={{ mt: 3, mb: 2 }}
+              >
+                { isSubmitting 
+                  ? <CircularProgress size={24} /> 
+                  : 'Acceder' 
+                }
+              </Button>
               <Grid container>
                 <Grid item xs>
                   <Link href="#" variant="body2">
