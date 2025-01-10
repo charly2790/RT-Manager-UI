@@ -4,7 +4,9 @@ import { AuthContext } from '../../auth';
 import { buildRequest } from '../../helpers';
 import { createTheme } from '@mui/material/styles';
 import { DataCell } from '../components';
+import { DialogTrainingShotsSwiper } from '../components/DialogTrainingShotsSwiper';
 import { FileInput, SelectInput, TimeInput} from '../../components';
+import { getShots } from '../helpers';
 import { mainTheme } from '../../themes/mainTheme';
 import { methods } from '../../types';
 import { ROLES, SESSION_STATUS } from '../../types';
@@ -16,9 +18,6 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Axios from 'axios';
 import dayjs from 'dayjs';
 import React, { useContext, useEffect, useState } from 'react'
-import { DialogTrainingShotsSwiper } from '../components/DialogTrainingShotsSwiper';
-
-
 
 
 const theme = createTheme();
@@ -30,10 +29,12 @@ export const Sesion = () => {
   const [ showAdminFields, setShowAdminFields ] = useState(false);
   const [ apiMessage, setApiMessage ] = useState("");
   const [ openDialog, setOpenDialog ] = useState(false);
+  const [ shots, setShots ] = useState([]);
   const navigate = useNavigate();
   
   const sesion = state ? state.sesion : undefined;
   const { EstadoSesion : { descripcion : estadoSesion }, Entrenamiento  } = sesion;
+  const entrenamientoMedia = Entrenamiento && Entrenamiento.MediaEntrenamientos ? Entrenamiento.MediaEntrenamientos : [];
       
   const {
     register,
@@ -41,16 +42,17 @@ export const Sesion = () => {
     getValues,
     formState: { 
       errors, 
-      isSubmitSuccessful, 
+      isSubmitSuccessful,       
       isDirty,      
       dirtyFields,
-      defaultValues},
+      defaultValues      
+    },
     control,
     setValue
   } = useForm({    
     defaultValues: {
       archivo: undefined,
-      ...sesion.Entrenamiento      
+      ...Entrenamiento      
     }
   })
   
@@ -63,6 +65,10 @@ export const Sesion = () => {
         (rol === ROLES.TEAM_MEMBER && [ SESSION_STATUS.PENDING,SESSION_STATUS.SENT ].includes(estadoSesion))){
       setReadOnly(false);
     }
+
+    if(!_.isNil(Entrenamiento)){
+      setShots(getShots(Entrenamiento));
+    }
   }, [])  
 
   const onNavigateBack = () => {
@@ -73,7 +79,7 @@ export const Sesion = () => {
     
     const { idSesion } = sesion;      
     let updatedKeys = Object.keys(data);        
-    const isCreate = _.isEmpty(sesion.Entrenamiento);
+    const isCreate = _.isEmpty(Entrenamiento);
     const formData = new FormData();    
     
     if(!isCreate){      
@@ -130,6 +136,18 @@ export const Sesion = () => {
     setOpenDialog(true);
   }
   const handleCloseDialog = () => {
+    let shotsToDelete = shots.filter( shot => shot.markToDelete );
+    
+    /* const reqEntrenamiento = buildRequest(
+      isCreate ? subDir.entrenamientos : `${subDir.entrenamientos}/${sesion.Entrenamiento.idEntrenamiento}`,
+      isCreate ? methods.post : methods.patch,
+      formData,
+      token,
+      'multipart/form-data'
+    )    */ 
+
+    //const res = await Axios.request(reqEntrenamiento);
+
     setOpenDialog(false);
   }
 
@@ -357,8 +375,8 @@ export const Sesion = () => {
         </Grid>
         <DialogTrainingShotsSwiper
           open={openDialog}
-          onClose={handleCloseDialog}
-          entrenamiento={Entrenamiento}
+          onClose={handleCloseDialog}        
+          shots={shots}          
         />
       </Box>
     </ThemeProvider>

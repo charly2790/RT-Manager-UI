@@ -6,4 +6,5 @@ export const types = {
 
 export const subdir = {
     login: 'login',
+    RANDOM_IMAGE: 'randomImage' 
 }

@@ -1,9 +1,14 @@
 import { AuthContext } from '../context';
+import { buildRequest } from '../../helpers';
+import { CircularProgress } from '@mui/material';
 import { mainTheme } from '../../themes/mainTheme';
+import { methods } from '../../types';
+import { subdir } from '../types'
 import { ThemeProvider } from '@emotion/react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
+import Axios from "axios";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -15,13 +20,13 @@ import React, { useContext, useEffect, useState } from 'react'
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { CircularProgress } from '@mui/material';
 
 
 export const LoginForm = () => {
 
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const [ randomUrlImage, setRandomUrlImage ] = useState('');
 
   const {
     register,
@@ -41,6 +46,15 @@ export const LoginForm = () => {
   useEffect(() => {
     isSubmitSuccessful ? navigate("/") : null
   }, [isSubmitSuccessful])
+  
+  useEffect(()=>{
+    const params = { query: 'marathon' }
+    const reqConfigs = buildRequest( subdir.RANDOM_IMAGE, methods.get, params );
+    const result = Axios.request( reqConfigs ).then( res => {
+      console.log('res--->', res.data.url);
+      setRandomUrlImage( res.data.url );
+    });
+  },[])  
 
   return (
     <ThemeProvider theme={mainTheme}>
@@ -52,12 +66,12 @@ export const LoginForm = () => {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: 'url(https://source.unsplash.com/random?marathon)',
+            backgroundImage: `url(${randomUrlImage})`,            
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
-        >
+        >          
         </Grid>
         <Grid
           item
