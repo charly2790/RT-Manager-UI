@@ -66,8 +66,7 @@ export const SesionesAdmin = () => {
           }}>
           <CssBaseline />
           <Box
-            sx={{
-              border: '3px solid green',
+            sx={{              
               display: 'flex',
               justifyContent: 'center',
             }}
@@ -82,11 +81,10 @@ export const SesionesAdmin = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 mt: 10,
-                width: '50%',
-                border: '1px dotted red',                
+                width: '50%',              
               }}
             >
-              <Typography component="h1" variant="h5">Nuevas sesiones</Typography>
+              <Typography component="h1" variant="h5">Vista Previa</Typography>
               <SesionesTable data={appendButton(sesiones, handleDeleteSesion)} handleDeleteSesion={handleDeleteSesion} />
               <Button
                 type="submit"
