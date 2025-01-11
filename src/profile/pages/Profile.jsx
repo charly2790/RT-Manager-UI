@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { subDirs } from '../types';
 import { styles } from './styles'
-import { Snackbar, styled, Tooltip } from '@mui/material';
+import { createTheme, Snackbar, styled, ThemeProvider, Tooltip } from '@mui/material';
 import { set, useForm } from 'react-hook-form';
 import { methods } from '../../types';
 import { Description, Edit, Facebook, Instagram, Save, X } from '@mui/icons-material'
@@ -14,6 +14,8 @@ import { buildRequest } from '../../helpers';
 import { Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputLabel, TextField, Typography } from '@mui/material'
 import { AuthContext } from '../../auth';
 import _ from 'lodash';
+import { mainTheme } from '../../themes/mainTheme';
+
 
 
 const redesSociales = [
@@ -81,6 +83,8 @@ const getUpdatedFields = (formData, profileData) => {
   return updatedData;
 }
 
+const theme = createTheme();
+
 export const Profile = () => {
 
   const { userLogged, updateProfile } = useContext(AuthContext);
@@ -89,7 +93,7 @@ export const Profile = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors, isSubmitSuccessful, isDirty },
     control,
     setValue
   } = useForm({
@@ -165,6 +169,10 @@ export const Profile = () => {
     }
   }, [avatarUpdated])
 
+  const onNavigateBack = () => {
+    navigate(-1)
+  }
+
 
   const handleImageChange = () => {
     setAvatarUpdated(true);
@@ -179,153 +187,188 @@ export const Profile = () => {
   }
 
   return (
-    <>
-      <Box
-        component="form"
-        noValidate
-        onSubmit={onSubmit}
-      >
-        {isSubmitSuccessful && <Snackbar
-          open={open}
-          autoHideDuration={2000}
-          onClose={handleClose}
-          message="Perfil actualizado correctamente"
-        />}
-        <Grid container sx={{ mb: 16 }}>
-          <Grid container item xs={12}>
-            <Grid container item xs={5}>
-              <Typography variant='h4' sx={{ mt: 2, mb: 2, mr: 2 }}>
-                Mi perfil
-              </Typography>
-              <Tooltip title="Certificados" placement="right-end">
-                <IconButton aria-label="delete" size='large' color='primary'>
-                  <Description />
+    <ThemeProvider theme={mainTheme}>
+
+      <>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={onSubmit}
+        >
+          {isSubmitSuccessful && <Snackbar
+            open={open}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            message="Perfil actualizado correctamente"
+          />}
+          <Grid container sx={{ mb: 16 }}>
+            <Grid container item xs={12}>
+              <Grid container item xs={5}>
+                <Typography variant='h4' sx={{ mt: 2, mb: 2, mr: 2 }}>
+                  Mi perfil
+                </Typography>
+                <Tooltip title="Certificados" placement="right-end">
+                  <IconButton aria-label="delete" size='large' color='primary'>
+                    <Description />
+                  </IconButton>
+                </Tooltip>
+              </Grid>
+            </Grid>
+            <Grid container item xs={12} position={'relative'}>
+              <Avatar
+                alt="Profile Picture"
+                src={avatar}
+                sx={styles.avatar}
+              />
+              <Tooltip title="Cambiar foto de perfil" placement='right-end'>
+                <IconButton
+                  aria-label="upload new picture"
+                  size="sm"
+                  variant="outlined"
+                  color="neutral"
+                  sx={styles.iconButton}
+                  onClick={() => document.querySelector('#upload-photo').click()}
+                >
+                  <Edit sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+                  <VisuallyHiddenInput
+                    id="upload-photo"
+                    type="file"
+                    {...register("profileImage", { onChange: handleImageChange })}
+                  />
                 </IconButton>
               </Tooltip>
             </Grid>
-          </Grid>
-          <Grid container item xs={12} position={'relative'}>
-            <Avatar
-              alt="Profile Picture"
-              src={avatar}
-              sx={styles.avatar}
-            />
-            <Tooltip title="Cambiar foto de perfil" placement='right-end'>
-              <IconButton
-                aria-label="upload new picture"
-                size="sm"
-                variant="outlined"
-                color="neutral"
-                sx={styles.iconButton}
-                onClick={() => document.querySelector('#upload-photo').click()}
-              >
-                <Edit sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
-                <VisuallyHiddenInput
-                  id="upload-photo"
-                  type="file"
-                  {...register("profileImage", { onChange: handleImageChange })}
+            <Grid container item xs={12}>
+              <Grid item xs={12} sx={styles.gridFormItem}>
+                <Typography variant='h6'>Datos personales</Typography>
+              </Grid>
+              <Grid item xs={12} sx={{ pt: 1 }}>
+                <Divider />
+              </Grid>
+              <Grid item xs={12} md={6} sx={styles.gridFormItem}>
+                <TextField
+                  variant="filled"
+                  label="nombre"
+                  sx={styles.textfield}
+                  {...register("nombre", { required: true })}
                 />
-              </IconButton>
-            </Tooltip>
-          </Grid>
-          <Grid container item xs={12}>
-            <Grid item xs={12} sx={styles.gridFormItem}>
-              <Typography variant='h6'>Datos personales</Typography>
-            </Grid>
-            <Grid item xs={12} sx={{ pt: 1 }}>
-              <Divider />
-            </Grid>
-            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
-              <TextField
-                variant="filled"
-                label="nombre"
-                sx={styles.textfield}
-                {...register("nombre", { required: true })}
-              />
-            </Grid>
-            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
-              <TextField
-                variant="filled"
-                label="apellido"
-                sx={styles.textfield}
-                {...register("apellido", { required: true })}
-              />
-            </Grid>
-            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
-              <TextField
-                variant="filled"
-                label="apodo"
-                sx={styles.textfield}
-                {...register("apodo", { required: true })}
-              />
-            </Grid>
-            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
-              <DateInput
-                control={control}
-                name="fechaNacimiento"
-                label="Fecha de nacimiento"
-                styles={styles.textfield}
-                disableFuture={true}
-              />
-            </Grid>
-            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
-              <InputLabel id="telefono">Teléfono</InputLabel>
-              <TelInput
-                control={control}
-                name="telefono"
-                countries={['AR']}
-                styles={styles.textfield}
-              />
-            </Grid>
-            <Grid item xs={12} md={6} sx={styles.gridFormItem}>
-              <SelectInput
-                control={control}
-                name="genero"
-                options={['Femenino', 'Masculino', 'Otro']}
-                styles={styles.textfield}
-                label="Género"
-              />
-            </Grid>
-            <Grid item xs={12} sx={styles.gridFormItem}>
-              <Typography variant='h6'>Redes Sociales</Typography>
-            </Grid>
-            <Grid item xs={12} sx={{ pt: 1 }}>
-              <Divider />
-            </Grid>
-            {
-              redesSociales.map((red, index) => {
-                return <Grid item xs={12} md={6} key={index} sx={styles.gridFormItem}>
-                  <TextField
-                    variant="filled"
-                    label={red.nombre}
-                    sx={styles.textfield}
-                    {...register(red.nombre, { required: true })}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          {red.icono}
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
+              </Grid>
+              <Grid item xs={12} md={6} sx={styles.gridFormItem}>
+                <TextField
+                  variant="filled"
+                  label="apellido"
+                  sx={styles.textfield}
+                  {...register("apellido", { required: true })}
+                />
+              </Grid>
+              <Grid item xs={12} md={6} sx={styles.gridFormItem}>
+                <TextField
+                  variant="filled"
+                  label="apodo"
+                  sx={styles.textfield}
+                  {...register("apodo", { required: true })}
+                />
+              </Grid>
+              <Grid item xs={12} md={6} sx={styles.gridFormItem}>
+                <DateInput
+                  control={control}
+                  name="fechaNacimiento"
+                  label="Fecha de nacimiento"
+                  styles={styles.textfield}
+                  disableFuture={true}
+                />
+              </Grid>
+              <Grid item xs={12} md={6} sx={styles.gridFormItem}>
+                <InputLabel id="telefono">Teléfono</InputLabel>
+                <TelInput
+                  control={control}
+                  name="telefono"
+                  countries={['AR']}
+                  styles={styles.textfield}
+                />
+              </Grid>
+              <Grid item xs={12} md={6} sx={styles.gridFormItem}>
+                <SelectInput
+                  control={control}
+                  name="genero"
+                  options={['Femenino', 'Masculino', 'Otro']}
+                  styles={styles.textfield}
+                  label="Género"
+                  showInputLabel={true}
+                />
+              </Grid>
+              <Grid item xs={12} sx={styles.gridFormItem}>
+                <Typography variant='h6'>Redes Sociales</Typography>
+              </Grid>
+              <Grid item xs={12} sx={{ pt: 1 }}>
+                <Divider />
+              </Grid>
+              {
+                redesSociales.map((red, index) => {
+                  return <Grid item xs={12} md={6} key={index} sx={styles.gridFormItem}>
+                    <TextField
+                      variant="filled"
+                      label={red.nombre}
+                      sx={styles.textfield}
+                      {...register(red.nombre, { required: true })}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            {red.icono}
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                })
+              }
+              {/*  <Grid item xs={12} sx={{ pt: 4 }}>
+                <Button
+                  color={'primary'}
+                  size="large"
+                  startIcon={<Save />}
+                  sx={styles.btnSubmit}
+                  type='submit'
+                  variant='contained'
+                >
+                  Guardar
+                </Button>
+              </Grid> */}
+              <Grid container item xs={12} sx={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                mt: 1,
+                mb: 3,
+                [theme.breakpoints.down('sm')]: { pr: 1 }
+              }}>
+                <Grid container item xs={6} md={3} sx={styles.actionButtonContainer}>
+                  <Button
+                    variant='outlined'
+                    sx={styles.actionButton}
+                    size='large'
+                    onClick={onNavigateBack}
+                  >
+                    {"Atras"}
+                  </Button>
                 </Grid>
-              })
-            }
-            <Grid item xs={12} sx={{ pt: 4 }}>
-              <Button
-                color={'primary'}
-                size="large"
-                startIcon={<Save />}
-                sx={styles.btnSubmit}
-                type='submit'
-                variant='contained'
-              >
-                Guardar
-              </Button>
+                <Grid item xs={6} md={3} sx={styles.actionButtonContainer}>
+                  <Button
+                    disabled={!isDirty}
+                    color={'primary'}
+                    size='large'
+                    variant='contained'
+                    startIcon={<Save />}                    
+                    sx={styles.actionButton}
+                    type='submit'
+                  >
+                    {"Guardar"}
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </Box>
-    </>
+        </Box>
+      </>
+    </ThemeProvider>
   )
 }
