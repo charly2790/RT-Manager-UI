@@ -9,6 +9,7 @@ import { useFetch } from '../../hooks';
 import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs';
 import DoneIcon from '@mui/icons-material/Done';
+import { ORIGINS } from '../../types';
 
 
 export const Sesiones = () => {
@@ -82,7 +83,7 @@ export const Sesiones = () => {
         {
           isLoading
             ? <LoadingMessage />
-            : <SimpleTable columns={columns} data={sesiones} formParams={formParams} />
+            : <SimpleTable columns={columns} data={sesiones} formParams={formParams} origin={ORIGINS.SESIONES}/>
         }
       </Grid>
     </Grid>

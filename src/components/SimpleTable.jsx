@@ -21,8 +21,14 @@ import {
 } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom';
 import { mainTheme } from '../themes/mainTheme';
+import _ from 'lodash';
 
-export const SimpleTable = ({ columns, data, formParams }) => {
+const buttonMessage = {
+    'SESIONES': 'Nueva Sesión',
+    'USUARIOS': 'Nuevo Usuario',
+}
+
+export const SimpleTable = ({ columns, data, formParams, origin = null }) => {
 
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
@@ -88,7 +94,7 @@ export const SimpleTable = ({ columns, data, formParams }) => {
                                     color='primary'
                                     onClick={() => navigate(formParams.route, formParams.params ? { state: { ...formParams.params } } : {})}
                                 >
-                                    Agregar Usuario
+                                    { !_.isNil(origin)? buttonMessage[origin] : 'Nuevo' }
                                 </Button>
                                 <Tooltip title="Reload">
                                     <IconButton>

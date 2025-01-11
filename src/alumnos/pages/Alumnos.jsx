@@ -1,12 +1,10 @@
-//import { constants } from '../../utils/constants.js'
-//import { SimpleTable } from '../../components/SimpleTable';
-// import { UserContext } from '../Context/UserContext.jsx';
 import "../../styles.css";
 import { AuthContext } from "../../auth/context/AuthContext.jsx";
 import { buildRequest } from '../../helpers';
 import { IconButton, Typography } from '@mui/material';
 import { LoadingMessage, SimpleTable } from "../../components";
 import { methods } from "../../types";
+import { ORIGINS } from "../../types";
 import { subdir } from "../types";
 import { useContext } from 'react';
 import { useFetch } from "../../hooks";
@@ -63,7 +61,7 @@ export const Alumnos = () => {
             {                
                 isLoading
                     ? <LoadingMessage />
-                    : <SimpleTable columns={columns} data={alumnosData} />
+                    : <SimpleTable columns={columns} data={alumnosData} origin={ORIGINS.USUARIOS}/>
             }
         </div>
     )
