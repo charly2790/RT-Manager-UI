@@ -5,11 +5,12 @@ import { buildRequest } from '../../helpers';
 import { createTheme } from '@mui/material/styles';
 import { DataCell } from '../components';
 import { DialogTrainingShotsSwiper } from '../components/DialogTrainingShotsSwiper';
-import { FileInput, SelectInput, TimeInput} from '../../components';
+import { FileInput, SelectInput, TimeInput } from '../../components';
 import { getShots } from '../helpers';
 import { mainTheme } from '../../themes/mainTheme';
 import { methods } from '../../types';
 import { ROLES, SESSION_STATUS } from '../../types';
+import { Save } from '@mui/icons-material'
 import { styles } from './styles'
 import { subDir } from '../types';
 import { useForm } from 'react-hook-form';
@@ -22,74 +23,93 @@ import React, { useContext, useEffect, useState } from 'react'
 
 const theme = createTheme();
 export const Sesion = () => {
-  
+
   const { state } = useLocation();
-  const { userLogged: { idUsuario, token, rol } } = useContext(AuthContext);  
-  const [ readOnly, setReadOnly ] = useState(true);
-  const [ showAdminFields, setShowAdminFields ] = useState(false);
-  const [ apiMessage, setApiMessage ] = useState("");
-  const [ openDialog, setOpenDialog ] = useState(false);
-  const [ shots, setShots ] = useState([]);
+  const { userLogged: { idUsuario, token, rol } } = useContext(AuthContext);
+  const [readOnly, setReadOnly] = useState(true);
+  const [showAdminFields, setShowAdminFields] = useState(false);
+  const [haveMedia, setHaveMedia] = useState(false);
+  const [apiMessage, setApiMessage] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [isRequired, setIsRequired] = useState(true);
+  const [shots, setShots] = useState([]);
   const navigate = useNavigate();
-  
+
   const sesion = state ? state.sesion : undefined;
-  const { EstadoSesion : { descripcion : estadoSesion }, Entrenamiento  } = sesion;
+  const { EstadoSesion: { descripcion: estadoSesion }, Entrenamiento } = sesion;
   const entrenamientoMedia = Entrenamiento && Entrenamiento.MediaEntrenamientos ? Entrenamiento.MediaEntrenamientos : [];
-      
+
   const {
     register,
-    handleSubmit,    
+    handleSubmit,
     getValues,
-    formState: { 
-      errors, 
-      isSubmitSuccessful,       
-      isDirty,      
+    formState: {
+      errors,
+      isSubmitSuccessful,
+      isDirty,
       dirtyFields,
-      defaultValues      
+      defaultValues
     },
     control,
     setValue
-  } = useForm({    
+  } = useForm({
     defaultValues: {
       archivo: undefined,
-      ...Entrenamiento      
+      ...Entrenamiento
     }
   })
-  
-  useEffect(() => {    
-    if (rol === ROLES.TEAM_LEADER || (rol === ROLES.TEAM_MEMBER && estadoSesion === SESSION_STATUS.VALIDATED)) {      
+
+  useEffect(() => {
+    if (rol === ROLES.TEAM_LEADER || (rol === ROLES.TEAM_MEMBER && estadoSesion === SESSION_STATUS.VALIDATED)) {
       setShowAdminFields(true);
     }
 
-    if( (rol === ROLES.TEAM_LEADER && estadoSesion !== SESSION_STATUS.VALIDATED) || 
-        (rol === ROLES.TEAM_MEMBER && [ SESSION_STATUS.PENDING,SESSION_STATUS.SENT ].includes(estadoSesion))){
+    if ((rol === ROLES.TEAM_LEADER && estadoSesion !== SESSION_STATUS.VALIDATED) ||
+      (rol === ROLES.TEAM_MEMBER && [SESSION_STATUS.PENDING, SESSION_STATUS.SENT].includes(estadoSesion))) {
       setReadOnly(false);
     }
 
-    if(!_.isNil(Entrenamiento)){
+    if (!_.isNil(Entrenamiento)) {
       setShots(getShots(Entrenamiento));
     }
-  }, [])  
+  }, [])
+
+  useEffect(() => {
+    if (
+        !_.isNil(Entrenamiento) && 
+        !_.isNil(Entrenamiento.MediaEntrenamientos) && 
+        Entrenamiento.MediaEntrenamientos.length > 0) {
+      setHaveMedia(true);
+    }
+  }, [Entrenamiento])
+
+  useEffect(() => {
+    let fields = Object.keys(dirtyFields);
+    
+    if(fields.some(dirtyField => dirtyField === 'archivos' || dirtyField === 'link')){
+      setIsRequired(true);
+    }
+  },[dirtyFields])  
 
   const onNavigateBack = () => {
     navigate(-1)
   }
-  
-  const onSubmit = handleSubmit(async (data) => {        
-    
-    const { idSesion } = sesion;      
-    let updatedKeys = Object.keys(data);        
+
+  const onSubmit = handleSubmit(async (data) => {
+
+    const { idSesion } = sesion;
+    let updatedKeys = Object.keys(data);
     const isCreate = _.isEmpty(Entrenamiento);
-    const formData = new FormData();    
-    
-    if(!isCreate){      
-      updatedKeys = !isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];      
+    const formData = new FormData();
+
+    if (!isCreate) {
+      updatedKeys = !isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];
     }
-    
-    formData.append('idSesion', idSesion);     
-        
+
+    formData.append('idSesion', idSesion);
+
     updatedKeys.forEach(field => {
-      if(field === 'archivos'){        
+      if (field === 'archivos') {
         const archivos = data[field];
         archivos.forEach((archivo) => {
           formData.append('archivos', archivo);
@@ -97,21 +117,21 @@ export const Sesion = () => {
       } else {
         formData.append(field, data[field]);
       }
-    })        
-    
+    })
+
     const reqEntrenamiento = buildRequest(
       isCreate ? subDir.entrenamientos : `${subDir.entrenamientos}/${sesion.Entrenamiento.idEntrenamiento}`,
       isCreate ? methods.post : methods.patch,
       formData,
       token,
       'multipart/form-data'
-    )    
+    )
 
     const res = await Axios.request(reqEntrenamiento);
 
     if (res.status === 200 && res.statusText === 'OK') {
 
-      
+
       const params = {
         idSesion,
       }
@@ -126,25 +146,25 @@ export const Sesion = () => {
       const res = await Axios.request(reqSesion);
 
       if (res.status === 200 && res.statusText === 'OK') {
-        const { data: {message}} = res;
+        const { data: { message } } = res;
         setApiMessage(message);
       }
     }
   })
-  
-  const handleOpenDialog = () =>{
+
+  const handleOpenDialog = () => {
     setOpenDialog(true);
   }
   const handleCloseDialog = () => {
-    let shotsToDelete = shots.filter( shot => shot.markToDelete );
-    
+    let shotsToDelete = shots.filter(shot => shot.markToDelete);
+
     /* const reqEntrenamiento = buildRequest(
       isCreate ? subDir.entrenamientos : `${subDir.entrenamientos}/${sesion.Entrenamiento.idEntrenamiento}`,
       isCreate ? methods.post : methods.patch,
       formData,
       token,
       'multipart/form-data'
-    )    */ 
+    )    */
 
     //const res = await Axios.request(reqEntrenamiento);
 
@@ -153,14 +173,14 @@ export const Sesion = () => {
 
   return (
     <ThemeProvider theme={mainTheme}>
-       {
-          isSubmitSuccessful && <Snackbar
-            open={open}
-            autoHideDuration={2000}
-            onClose={onNavigateBack}
-            message={apiMessage}
-          />
-        }
+      {
+        isSubmitSuccessful && <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={onNavigateBack}
+          message={apiMessage}
+        />
+      }
       <Accordion sx={{ width: '95%' }}>
         <AccordionSummary
           expandIcon={<ArrowDropDownIcon />}
@@ -219,7 +239,7 @@ export const Sesion = () => {
         noValidate
         sx={{ pt: 1, pr: 2, pb: 2, pl: 2 }}
         onSubmit={onSubmit}
-      >       
+      >
         <Typography component="h1" variant="h5" sx={{ mb: 2, mt: 2 }}>
           Entrenamiento
         </Typography>
@@ -232,7 +252,7 @@ export const Sesion = () => {
               <TextField
                 sx={styles.textfield}
                 disabled={readOnly}
-                type='number'                
+                type='number'
                 InputProps={{
                   startAdornment: <InputAdornment position="start">km</InputAdornment>,
                 }}
@@ -243,7 +263,7 @@ export const Sesion = () => {
           {
             showAdminFields &&
             <Grid item xs={12} md={6}>
-              <TimeInput                
+              <TimeInput
                 control={control}
                 name="tiempoTotal"
                 label="Tiempo total de la sesión"
@@ -270,21 +290,6 @@ export const Sesion = () => {
               />
             </Grid>
           }
-          {
-            showAdminFields &&
-            <Grid item xs={12} md={6}>
-              <SelectInput
-                control={control}
-                name="rpe"
-                disabled={readOnly}                
-                options={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-                styles={styles.textfield}
-                label="RPE"                
-                showInputLabel={true}
-                inputLabelStyles={{ mt: 1 }}
-              />
-            </Grid>
-          }
           <Grid item xs={12} md={6}>
             <InputLabel id="link" mt={2} sx={{ mt: 1 }}>{"Link"}</InputLabel>
             <TextField
@@ -297,7 +302,7 @@ export const Sesion = () => {
               value={undefined}
               {...register("link", {
                 required: {
-                  value: true,
+                  value: !Object.keys(dirtyFields).some(dirtyField => dirtyField === 'archivos'),
                   message: 'El link es requerido'
                 },
                 minLength: {
@@ -308,15 +313,28 @@ export const Sesion = () => {
               })}
               helperText={errors.link ? errors.link.message : null}
             />
-          </Grid>
+          </Grid>          
           <Grid item xs={12} md={6}>
             <FileInput
+              mandatory={!Object.keys(dirtyFields).some(dirtyField => dirtyField === 'link')}
               disabled={readOnly}
               control={control}
               label={"Archivo"}
               name={"archivos"}
               showInputLabel={true}
               styles={styles.textfield}
+              inputLabelStyles={{ mt: 1 }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <SelectInput
+              control={control}
+              name="rpe"
+              disabled={readOnly}
+              options={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+              styles={styles.textfield}
+              label="RPE"
+              showInputLabel={true}
               inputLabelStyles={{ mt: 1 }}
             />
           </Grid>
@@ -335,14 +353,17 @@ export const Sesion = () => {
             />
 
           </Grid>
-          <Grid container item xs={12} md={6} sx={{justifyContent: 'center', alignItems: 'center'}}>
-            <Link 
-              sx={{ mt: 2 }} 
-              onClick={handleOpenDialog}              
+          {
+            haveMedia &&
+            <Grid container item xs={12} md={6} sx={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Link
+                sx={{ mt: 2 }}
+                onClick={handleOpenDialog}
               >
                 {"VER ARCHIVOS"}
-            </Link>
-          </Grid>
+              </Link>
+            </Grid>
+          }
           <Grid container item xs={12} sx={{
             display: 'flex',
             justifyContent: 'flex-end',
@@ -364,6 +385,7 @@ export const Sesion = () => {
               <Button
                 disabled={!isDirty}
                 variant='contained'
+                startIcon={<Save />}
                 sx={styles.actionButton}
                 size='large'
                 type='submit'
@@ -375,8 +397,8 @@ export const Sesion = () => {
         </Grid>
         <DialogTrainingShotsSwiper
           open={openDialog}
-          onClose={handleCloseDialog}        
-          shots={shots}          
+          onClose={handleCloseDialog}
+          shots={shots}
         />
       </Box>
     </ThemeProvider>

@@ -3,7 +3,8 @@ import { MuiFileInput } from "mui-file-input";
 import { Controller } from 'react-hook-form';
 import { InputLabel } from '@mui/material';
 
-export const FileInput = ({ 
+export const FileInput = ({
+    mandatory, 
     control,    
     label,
     name,
@@ -15,7 +16,8 @@ export const FileInput = ({
   return (
     <Controller
         name={name}
-        control={control}        
+        control={control}
+        rules={{ required: mandatory ? 'Este campo es obligatorio' : false }}
         render={({ field, fieldState }) => (
         <>
             {showInputLabel && <InputLabel id={name} sx={inputLabelStyles}>{label}</InputLabel>}
