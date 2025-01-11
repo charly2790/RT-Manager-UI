@@ -17,3 +17,8 @@ export const SESSION_STATUS = {
     VALIDATED: 'VALIDADA',
     REVIEWING: 'REVISANDO',
 }
+
+export const ORIGINS = {
+    SESIONES: 'SESIONES',
+    USUARIOS: 'USUARIOS'
+}
