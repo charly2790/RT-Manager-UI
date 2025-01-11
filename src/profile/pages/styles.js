@@ -40,6 +40,19 @@ export const styles = {
         [theme.breakpoints.down('md')]:{
             width: '90%'
         }
+    },
+    actionButtonContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        [theme.breakpoints.down('sm')]:{
+            justifyContent:'start'
+        }
+    },
+    actionButton:{
+        width: '60%',
+        [theme.breakpoints.down('sm')]:{
+            width: '85%'
+        }
     }
 
 
