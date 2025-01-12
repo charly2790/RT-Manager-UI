@@ -26,7 +26,11 @@ export const LoginForm = () => {
 
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-  const [ randomUrlImage, setRandomUrlImage ] = useState('');
+  const [randomUrlImage, setRandomUrlImage] = useState('');
+  const [onError, setOnError] = useState({
+    is: false,
+    message: ''
+  });
 
   const {
     register,
@@ -37,24 +41,28 @@ export const LoginForm = () => {
   const onSubmit = handleSubmit(async (data) => {
 
     let { email, password } = data;
-    let idEquipo = 1;    
-
-    await login({ idEquipo, email, password });
-
+    let idEquipo = 1;
+    
+    
+    try {            
+      await login({ idEquipo, email, password });
+    } catch (error) {
+      console.log('errors--->', errors);
+    }    
   })
 
   useEffect(() => {
     isSubmitSuccessful ? navigate("/") : null
   }, [isSubmitSuccessful])
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     const params = { query: 'marathon' }
-    const reqConfigs = buildRequest( subdir.RANDOM_IMAGE, methods.get, params );
-    const result = Axios.request( reqConfigs ).then( res => {
+    const reqConfigs = buildRequest(subdir.RANDOM_IMAGE, methods.get, params);
+    const result = Axios.request(reqConfigs).then(res => {
       console.log('res--->', res.data.url);
-      setRandomUrlImage( res.data.url );
+      setRandomUrlImage(res.data.url);
     });
-  },[])  
+  }, [])
 
   return (
     <ThemeProvider theme={mainTheme}>
@@ -66,12 +74,12 @@ export const LoginForm = () => {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: `url(${randomUrlImage})`,            
+            backgroundImage: `url(${randomUrlImage})`,
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
-        >          
+        >
         </Grid>
         <Grid
           item
@@ -143,12 +151,12 @@ export const LoginForm = () => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                disabled={isSubmitting}                
+                disabled={isSubmitting}
                 sx={{ mt: 3, mb: 2 }}
               >
-                { isSubmitting 
-                  ? <CircularProgress size={24} /> 
-                  : 'Acceder' 
+                {isSubmitting
+                  ? <CircularProgress size={24} />
+                  : 'Acceder'
                 }
               </Button>
               {/* <Grid container>
