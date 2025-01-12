@@ -35,7 +35,7 @@ export const SesionForm = ({ idSuscripcion, handleAddSesion, handleDeleteSesion 
 
     const onSubmit = handleSubmit((data) => {
 
-        let { idTipoSesion, Objetivo, fechaSesion } = data;        
+        let { idTipoSesion, Objetivo, fechaSesion, comentario } = data;        
 
         fechaSesion = dayjs(fechaSesion).format('YYYY-MM-DD');
 
@@ -46,7 +46,8 @@ export const SesionForm = ({ idSuscripcion, handleAddSesion, handleDeleteSesion 
             idSuscripcion,
             idTipoSesion,
             Objetivo,
-            fechaSesion,            
+            fechaSesion,
+            comentario            
         }
 
         handleAddSesion(newSesion);
@@ -160,7 +161,7 @@ export const SesionForm = ({ idSuscripcion, handleAddSesion, handleDeleteSesion 
                                             name="comentarios"
                                             autoComplete="family-name"
                                             sx={{ mt: 2 }}
-                                            {...register("comentarios")}
+                                            {...register("comentario")}
                                         />
                                     </Grid>
                                 </Grid>

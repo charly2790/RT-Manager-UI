@@ -37,13 +37,14 @@ export const SesionesAdmin = () => {
 
   const handleSubmit = async () => {    
     
-    const nuevasSesiones = sesiones.map(({ idSuscripcion, idTipoSesion, Objetivo, fechaSesion }) => {
+    const nuevasSesiones = sesiones.map(({ idSuscripcion, idTipoSesion, Objetivo, fechaSesion, comentario }) => {
       return { 
         idSuscripcion, 
         idTipoSesion, 
         Objetivo, 
-        fechaSesion }
-    })
+        fechaSesion,
+        comentario}
+    })    
 
     try{
       const reqSettings = buildRequest( subDir.sesionesEntrenamiento, methods.post, {'sesiones': nuevasSesiones}, userLogged.token );      

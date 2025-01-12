@@ -227,7 +227,7 @@ export const Sesion = () => {
             />
             <DataCell
               title={"Comentarios"}
-              value={sesion.comentarios ? sesion.comentarios : 'Recordar agregar campo al modelo'}
+              value={sesion.comentario ? sesion.comentario : 'N/A'}
               settings={{ icon: 'COMMENTS' }}
             />
           </Grid>
