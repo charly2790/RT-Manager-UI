@@ -358,7 +358,7 @@ export const Profile = () => {
                 </Grid>
                 <Grid item xs={6} md={3} sx={styles.actionButtonContainer}>
                   <Button
-                    disabled={!isDirty}
+                    disabled={!isDirty || isSubmitting}
                     color={'primary'}
                     size='large'
                     variant='contained'
