@@ -148,7 +148,7 @@ export const Profile = () => {
 
     console.log('res-->', res);
 
-    if (res.status === 200 && res.statusText === 'OK' && data) {
+    if (res.status === 200 && !_.isNil(res.data) && !_.isEmpty(res.data.perfil)) {
       const { data: { message, perfil: perfilUpdated } } = res;
       updateProfile(perfilUpdated);
       setAvatarUpdated(false);
