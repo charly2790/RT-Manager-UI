@@ -58,8 +58,7 @@ export const LoginForm = () => {
   useEffect(() => {
     const params = { query: 'marathon' }
     const reqConfigs = buildRequest(subdir.RANDOM_IMAGE, methods.get, params);
-    const result = Axios.request(reqConfigs).then(res => {
-      console.log('res--->', res.data.url);
+    const result = Axios.request(reqConfigs).then(res => {      
       setRandomUrlImage(res.data.url);
     });
   }, [])
