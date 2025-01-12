@@ -145,12 +145,20 @@ export const Profile = () => {
 
     const res = await Axios.request(reqSettings);
 
+    console.log('res-->', res);
+
     if (res.status === 200 && res.statusText === 'OK' && data) {
+      console.log('ingresa--->')
       const { data: { message, perfil: perfilUpdated } } = res;
+      console.log('perfilUpdated-->', perfilUpdated);
       updateProfile(perfilUpdated);
+      console.log('hizo update de perfil-->');    
       setAvatarUpdated(false);
+      console.log('paso el setAvatarUpdated');
       setAvatar(perfilUpdated.avatar);
+      console.log('paso el setAvatar');
       setOpen(true);
+      console.log('paso el setOpen');
     }
 
   })
