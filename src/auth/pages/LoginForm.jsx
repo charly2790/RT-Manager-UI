@@ -151,18 +151,18 @@ export const LoginForm = () => {
                   : 'Acceder' 
                 }
               </Button>
-              <Grid container>
+              {/* <Grid container>
                 <Grid item xs>
                   <Link href="#" variant="body2">
                     Olvidé mi contraseña
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
-                    {"¿Aún no tienes una contraseña? ¡Registrate!"}
+                  <Link href="#" variant="body2" disabled={true}>
+                    {"¿Aún no tienes una cuenta? ¡Registrate!"}
                   </Link>
                 </Grid>
-              </Grid>
+              </Grid> */}
             </Box>
           </Box>
         </Grid>
