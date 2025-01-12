@@ -147,8 +147,10 @@ export const Profile = () => {
     const res = await Axios.request(reqSettings);
 
     console.log('res-->', res);
+    console.log('res.data-->', res.data);
+    console.log('res.data.perfil-->', res.data.perfil);
 
-    if (res.status === 200 && !_.isNil(res.data) && !_.isEmpty(res.data.perfil)) {
+    if (res.status === 200 && !_.isNil(res.data) && !_.isNil(res.data.perfil)) {
       const { data: { message, perfil: perfilUpdated } } = res;
       updateProfile(perfilUpdated);
       setAvatarUpdated(false);
