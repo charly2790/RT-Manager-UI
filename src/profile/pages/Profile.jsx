@@ -366,7 +366,7 @@ export const Profile = () => {
                   >
                     {isSubmitting
                       ? <CircularProgress size={24} />
-                      : 'Acceder'
+                      : 'Guardar'
                     }
                   </Button>
                 </Grid>
