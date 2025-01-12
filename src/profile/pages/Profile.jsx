@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import dayjs from 'dayjs';
-import Axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { subDirs } from '../types';
-import { styles } from './styles'
-import { createTheme, Snackbar, styled, ThemeProvider, Tooltip } from '@mui/material';
-import { set, useForm } from 'react-hook-form';
-import { methods } from '../../types';
-import { Description, Edit, Facebook, Instagram, Save, X } from '@mui/icons-material'
-import { DateInput, SelectInput, TelInput } from '../../components';
-import { buildRequest } from '../../helpers';
-import { Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputLabel, TextField, Typography } from '@mui/material'
-import { AuthContext } from '../../auth';
 import _ from 'lodash';
+import { AuthContext } from '../../auth';
+import { Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputLabel, TextField, Typography } from '@mui/material'
+import { buildRequest } from '../../helpers';
+import { CircularProgress } from '@mui/material';
+import { createTheme, Snackbar, styled, ThemeProvider, Tooltip } from '@mui/material';
+import { DateInput, SelectInput, TelInput } from '../../components';
+import { Description, Edit, Facebook, Instagram, Save, X } from '@mui/icons-material'
 import { mainTheme } from '../../themes/mainTheme';
+import { methods } from '../../types';
+import { set, useForm } from 'react-hook-form';
+import { styles } from './styles'
+import { subDirs } from '../types';
+import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Axios from 'axios';
+import dayjs from 'dayjs';
+import React, { useEffect, useState } from 'react'
 
 
 
@@ -93,7 +94,7 @@ export const Profile = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitSuccessful, isDirty },
+    formState: { errors, isSubmitting, isSubmitSuccessful, isDirty },
     control,
     setValue
   } = useForm({
@@ -148,17 +149,11 @@ export const Profile = () => {
     console.log('res-->', res);
 
     if (res.status === 200 && res.statusText === 'OK' && data) {
-      console.log('ingresa--->')
       const { data: { message, perfil: perfilUpdated } } = res;
-      console.log('perfilUpdated-->', perfilUpdated);
       updateProfile(perfilUpdated);
-      console.log('hizo update de perfil-->');    
       setAvatarUpdated(false);
-      console.log('paso el setAvatarUpdated');
       setAvatar(perfilUpdated.avatar);
-      console.log('paso el setAvatar');
       setOpen(true);
-      console.log('paso el setOpen');
     }
 
   })
@@ -365,11 +360,14 @@ export const Profile = () => {
                     color={'primary'}
                     size='large'
                     variant='contained'
-                    startIcon={<Save />}                    
+                    startIcon={<Save />}
                     sx={styles.actionButton}
                     type='submit'
                   >
-                    {"Guardar"}
+                    {isSubmitting
+                      ? <CircularProgress size={24} />
+                      : 'Acceder'
+                    }
                   </Button>
                 </Grid>
               </Grid>
