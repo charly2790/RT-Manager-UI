@@ -1,15 +1,15 @@
 import { AuthContext } from '../../auth/context/AuthContext';
-import { buildRequest } from '../../helpers';
+import { buildRequest, convertToUtcTime } from '../../helpers';
 import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { LoadingMessage, SimpleTable } from '../../components';
 import { methods } from '../../types';
+import { ORIGINS } from '../../types';
 import { subDir, columns } from '../types';
 import { useContext } from 'react'
 import { useFetch } from '../../hooks';
 import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs';
 import DoneIcon from '@mui/icons-material/Done';
-import { ORIGINS } from '../../types';
 
 
 export const Sesiones = () => {
@@ -39,8 +39,8 @@ export const Sesiones = () => {
         TipoSesion, 
       } = sesion;
       return {        
-        estado: EstadoSesion.descripcion,
-        fechaSesion: dayjs( fechaSesion ).format("DD-MM-YYYY"),        
+        estado: EstadoSesion.descripcion,        
+        fechaSesion: convertToUtcTime(fechaSesion).format("DD-MM-YYYY"),        
         Objetivo: Objetivo,
         tipo: TipoSesion.descripcion,
         acciones:
