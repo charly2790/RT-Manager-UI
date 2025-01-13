@@ -1,7 +1,14 @@
+import { parseDate } from "../../helpers"
+
 export const columns = [
     {
       header: "Fecha",
       accessorKey: "fechaSesion",
+      sortingFn: (rowA, rowB,columnId) =>{        
+        const dateA = rowA.original[columnId].split("-").reverse().join("-");
+        const dateB = rowB.original[columnId].split("-").reverse().join("-");
+        return dateA.localeCompare(dateB);
+      }      
     },
     {
       header: "Objetivo",
