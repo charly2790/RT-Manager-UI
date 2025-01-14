@@ -4,7 +4,7 @@ import { Controller } from 'react-hook-form';
 import { InputLabel } from '@mui/material';
 
 export const FileInput = ({
-    mandatory, 
+    //mandatory, 
     control,    
     label,
     name,
@@ -17,7 +17,7 @@ export const FileInput = ({
     <Controller
         name={name}
         control={control}
-        rules={{ required: mandatory ? 'Este campo es obligatorio' : false }}
+        //rules={{ required: mandatory ? 'Este campo es obligatorio' : false }}
         render={({ field, fieldState }) => (
         <>
             {showInputLabel && <InputLabel id={name} sx={inputLabelStyles}>{label}</InputLabel>}

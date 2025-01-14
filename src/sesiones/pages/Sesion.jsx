@@ -1,4 +1,4 @@
-import _, { isEmpty } from 'lodash';
+import _, { isEmpty, set } from 'lodash';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, Grow, InputAdornment, InputLabel, Link, Snackbar, TextField, ThemeProvider, Typography } from '@mui/material';
 import { AuthContext } from '../../auth';
 import { buildRequest } from '../../helpers';
@@ -31,7 +31,6 @@ export const Sesion = () => {
   const [haveMedia, setHaveMedia] = useState(false);
   const [apiMessage, setApiMessage] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
-  const [isRequired, setIsRequired] = useState(true);
   const [shots, setShots] = useState([]);
   const navigate = useNavigate();
 
@@ -55,6 +54,7 @@ export const Sesion = () => {
   } = useForm({
     defaultValues: {
       archivo: undefined,
+      rpe: 0,
       ...Entrenamiento
     }
   })
@@ -76,97 +76,102 @@ export const Sesion = () => {
 
   useEffect(() => {
     if (
-        !_.isNil(Entrenamiento) && 
-        !_.isNil(Entrenamiento.MediaEntrenamientos) && 
-        Entrenamiento.MediaEntrenamientos.length > 0) {
+      !_.isNil(Entrenamiento) &&
+      !_.isNil(Entrenamiento.MediaEntrenamientos) &&
+      Entrenamiento.MediaEntrenamientos.length > 0) {
       setHaveMedia(true);
     }
   }, [Entrenamiento])
 
-  useEffect(() => {
-    let fields = Object.keys(dirtyFields);
-    
-    if(fields.some(dirtyField => dirtyField === 'archivos' || dirtyField === 'link')){
-      setIsRequired(true);
-    }
-  },[dirtyFields])  
 
   const onNavigateBack = () => {
     navigate(-1)
   }
 
-  const onSubmit = handleSubmit(async (data) => {
+  const validateMandatoryFields = (fields) => {
 
-    const { idSesion } = sesion;
-    let updatedKeys = Object.keys(data);
-    const isCreate = _.isEmpty(Entrenamiento);
-    const formData = new FormData();
+    const mandatoryKeys = ['archivos', 'link', 'comentario'];
+    let hasError = true;
 
-    if (!isCreate) {
-      updatedKeys = !isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];
-    }
-
-    formData.append('idSesion', idSesion);
-
-    updatedKeys.forEach(field => {
-      if (field === 'archivos') {
-        const archivos = data[field];
-        archivos.forEach((archivo) => {
-          formData.append('archivos', archivo);
-        })
-      } else {
-        formData.append(field, data[field]);
+    mandatoryKeys.forEach(key => {
+      if (!_.isNil(fields[key])) {
+        hasError = false;
       }
     })
+    return hasError;
+  }
 
-    const reqEntrenamiento = buildRequest(
-      isCreate ? subDir.entrenamientos : `${subDir.entrenamientos}/${sesion.Entrenamiento.idEntrenamiento}`,
-      isCreate ? methods.post : methods.patch,
-      formData,
-      token,
-      'multipart/form-data'
-    )
+  const onSubmit = handleSubmit(async (data) => {
 
-    const res = await Axios.request(reqEntrenamiento);
+    try {
+      
+      const { idSesion } = sesion;
+      let updatedKeys = Object.keys(dirtyFields);
+      const isCreate = _.isEmpty(Entrenamiento);
+      const formData = new FormData();
 
-    if (res.status === 200 && res.statusText === 'OK') {
-
-
-      const params = {
-        idSesion,
+      if (validateMandatoryFields(getValues())) {        
+        throw new Error('Faltan campos obligatorios');
       }
 
-      const reqSesion = buildRequest(
-        subDir.updateStatus,
-        methods.patch,
-        params,
-        token,
-      );
+      if (!isCreate) {
+        updatedKeys = !isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];
+      }
 
-      const res = await Axios.request(reqSesion);
+      formData.append('idSesion', idSesion);
+
+      updatedKeys.forEach(field => {
+        if (field === 'archivos') {
+          const archivos = data[field];
+          archivos.forEach((archivo) => {
+            formData.append('archivos', archivo);
+          })
+        } else {
+          formData.append(field, data[field]);
+        }
+      })
+
+      const reqEntrenamiento = buildRequest(
+        isCreate ? subDir.entrenamientos : `${subDir.entrenamientos}/${sesion.Entrenamiento.idEntrenamiento}`,
+        isCreate ? methods.post : methods.patch,
+        formData,
+        token,
+        'multipart/form-data'
+      )
+
+      const res = await Axios.request(reqEntrenamiento);
 
       if (res.status === 200 && res.statusText === 'OK') {
-        const { data: { message } } = res;
-        setApiMessage(message);
+
+
+        const params = {
+          idSesion,
+        }
+
+        const reqSesion = buildRequest(
+          subDir.updateStatus,
+          methods.patch,
+          params,
+          token,
+        );
+
+        const res = await Axios.request(reqSesion);        
+        if (res.status === 200 ) {
+          const { data: { message } } = res;
+          setApiMessage(message);
+        }
       }
+    } catch (error) {      
+      setApiMessage(error.message);
     }
-  })
+  }
+  )
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
   }
   const handleCloseDialog = () => {
-    let shotsToDelete = shots.filter(shot => shot.markToDelete);
-
-    /* const reqEntrenamiento = buildRequest(
-      isCreate ? subDir.entrenamientos : `${subDir.entrenamientos}/${sesion.Entrenamiento.idEntrenamiento}`,
-      isCreate ? methods.post : methods.patch,
-      formData,
-      token,
-      'multipart/form-data'
-    )    */
-
-    //const res = await Axios.request(reqEntrenamiento);
+    let shotsToDelete = shots.filter(shot => shot.markToDelete);   
 
     setOpenDialog(false);
   }
@@ -232,8 +237,7 @@ export const Sesion = () => {
             />
           </Grid>
         </AccordionDetails>
-      </Accordion>
-
+      </Accordion>      
       <Box
         component="form"
         noValidate
@@ -301,10 +305,10 @@ export const Sesion = () => {
               name="link"
               value={undefined}
               {...register("link", {
-                required: {
-                  value: !Object.keys(dirtyFields).some(dirtyField => dirtyField === 'archivos'),
-                  message: 'El link es requerido'
-                },
+                /*  required: {
+                   value: !Object.keys(dirtyFields).some(dirtyField => dirtyField === 'archivos'),
+                   message: 'El link es requerido'
+                 }, */
                 minLength: {
                   value: 3,
                   message: 'Debe contener al menos 3 caracteres'
@@ -313,10 +317,10 @@ export const Sesion = () => {
               })}
               helperText={errors.link ? errors.link.message : null}
             />
-          </Grid>          
+          </Grid>
           <Grid item xs={12} md={6}>
             <FileInput
-              mandatory={!Object.keys(dirtyFields).some(dirtyField => dirtyField === 'link')}
+              //mandatory={!Object.keys(dirtyFields).some(dirtyField => dirtyField === 'link')}
               disabled={readOnly}
               control={control}
               label={"Archivo"}
