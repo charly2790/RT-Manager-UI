@@ -1,7 +1,9 @@
 import _, { isEmpty, set } from 'lodash';
+import 'dayjs/locale/es';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, Grow, InputAdornment, InputLabel, Link, Snackbar, TextField, ThemeProvider, Typography } from '@mui/material';
 import { AuthContext } from '../../auth';
 import { buildRequest } from '../../helpers';
+import { convertToUtcTime } from '../../helpers';
 import { createTheme } from '@mui/material/styles';
 import { DataCell } from '../components';
 import { DialogTrainingShotsSwiper } from '../components/DialogTrainingShotsSwiper';
@@ -20,6 +22,7 @@ import Axios from 'axios';
 import dayjs from 'dayjs';
 import React, { useContext, useEffect, useState } from 'react'
 
+dayjs.locale('es');
 
 const theme = createTheme();
 export const Sesion = () => {
@@ -139,27 +142,12 @@ export const Sesion = () => {
         'multipart/form-data'
       )
 
-      const res = await Axios.request(reqEntrenamiento);
-
-      if (res.status === 200 && res.statusText === 'OK') {
-
-
-        const params = {
-          idSesion,
-        }
-
-        const reqSesion = buildRequest(
-          subDir.updateStatus,
-          methods.patch,
-          params,
-          token,
-        );
-
-        const res = await Axios.request(reqSesion);        
-        if (res.status === 200 ) {
-          const { data: { message } } = res;
-          setApiMessage(message);
-        }
+      const res = await Axios.request(reqEntrenamiento);      
+      
+      const { data: { message, result} } = res;      
+      
+      if (res.status === 200 && !_.isNil(result)) {
+        setApiMessage(message);      
       }
     } catch (error) {      
       setApiMessage(error.message);
@@ -191,7 +179,7 @@ export const Sesion = () => {
           expandIcon={<ArrowDropDownIcon />}
         >
           <Typography component="h1" variant="h5">
-            Sesion #1 - Semana del 20/05/2024 al 26/05/2024
+            {`${sesion.TipoSesion.descripcion} - ${convertToUtcTime(sesion.fechaSesion).format("dddd  DD [de] MMMM [del] YYYY")}`}
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -201,7 +189,7 @@ export const Sesion = () => {
           >
             <DataCell
               title={"Fecha de Sesión"}
-              value={dayjs(sesion.fechaSesion).format("DD-MM-YYYY")}
+              value={convertToUtcTime(sesion.fechaSesion).format("DD-MM-YYYY")}
               settings={{
                 icon: "EVENT",
               }}
