@@ -24,4 +24,6 @@ export const columns = [
       header: "Acciones",
       accessorKey: "acciones"
     }
-  ]
+  ];
+
+  export const defaultSort =  { id: "fechaSesion", desc: true };

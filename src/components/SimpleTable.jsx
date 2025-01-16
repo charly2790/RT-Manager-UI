@@ -28,9 +28,9 @@ const buttonMessage = {
     'USUARIOS': 'Nuevo Usuario',
 }
 
-export const SimpleTable = ({ columns, data, formParams, origin = null }) => {
+export const SimpleTable = ({ columns, data, formParams, origin = null, defaultSort = {} }) => {
 
-    const [sorting, setSorting] = useState([]);
+    const [sorting, setSorting] = useState([defaultSort]);
     const [filtering, setFiltering] = useState("");
     const navigate = useNavigate();
 
@@ -51,6 +51,13 @@ export const SimpleTable = ({ columns, data, formParams, origin = null }) => {
             onSortingChange: setSorting,
             //Fin ordenamiento tabla
             onGlobalFilterChange: setFiltering,
+            initialState: {
+                sorting: [
+                  {
+                    ...defaultSort
+                  },
+                ],
+              },
         });
 
     const buttons = [

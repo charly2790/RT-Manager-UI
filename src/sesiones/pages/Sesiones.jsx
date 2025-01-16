@@ -4,7 +4,7 @@ import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { LoadingMessage, SimpleTable } from '../../components';
 import { methods } from '../../types';
 import { ORIGINS } from '../../types';
-import { subDir, columns } from '../types';
+import { subDir, columns, defaultSort } from '../types';
 import { useContext } from 'react'
 import { useFetch } from '../../hooks';
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -72,7 +72,6 @@ export const Sesiones = () => {
       nickname = alumno.email;
     }
   }
-  
 
   return (
     <Grid container>
@@ -83,7 +82,13 @@ export const Sesiones = () => {
         {
           isLoading
             ? <LoadingMessage />
-            : <SimpleTable columns={columns} data={sesiones} formParams={formParams} origin={ORIGINS.SESIONES}/>
+            : <SimpleTable 
+                columns={columns} 
+                data={sesiones} 
+                formParams={formParams} 
+                origin={ORIGINS.SESIONES}
+                defaultSort={defaultSort}
+                />
         }
       </Grid>
     </Grid>
