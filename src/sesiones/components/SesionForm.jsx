@@ -111,7 +111,7 @@ export const SesionForm = ({ idSuscripcion, handleAddSesion, handleDeleteSesion 
                                                 
                                                 return <DatePicker
                                                     label="Fecha de la sesión"
-                                                    disablePast
+                                                    //disablePast
                                                     value={dateValue}
                                                     onChange={onChange}
                                                     sx={{ width: '100%', mt: 1 }}
