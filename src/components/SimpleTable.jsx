@@ -28,6 +28,11 @@ const buttonMessage = {
     'USUARIOS': 'Nuevo Usuario',
 }
 
+const placeholderMessage = {
+    'SESIONES': 'Buscar por fecha, objetivo o tipo de sesión',
+    'USUARIOS': 'Buscar por nombre, apellido o correo',
+}
+
 export const SimpleTable = ({ columns, data, formParams, origin = null, defaultSort = {} }) => {
 
     const [sorting, setSorting] = useState([defaultSort]);
@@ -84,7 +89,7 @@ export const SimpleTable = ({ columns, data, formParams, origin = null, defaultS
                             <Grid item xs>
                                 <TextField
                                     fullWidth
-                                    placeholder='Buscar por email, número telefónico o id usuario'
+                                    placeholder={!_.isNil(origin)? placeholderMessage[origin] : ''}
                                     id="standard-basic"
                                     inputProps={{
                                         sx: { fontSize: 'default' },
