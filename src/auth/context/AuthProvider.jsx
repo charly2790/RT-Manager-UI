@@ -43,7 +43,13 @@ export const AuthProvider = ({ children }) => {
         
     }
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        
+        const { token } = JSON.parse(localStorage.getItem('userLogged'));
+
+        const reqConfigs = buildRequest( subdir.logout, methods.post,{}, token);
+
+        Axios.request(reqConfigs);        
         
         localStorage.removeItem('userLogged');
 
