@@ -30,7 +30,7 @@ export const SelectInput = ({
                     >
                         {
                             options.map((option) => {
-                                return <MenuItem key={option} value={option}>{option}</MenuItem>
+                                return <MenuItem key={option.label} value={option.value}>{option.label}</MenuItem>
                             })
                         }
                     </Select>

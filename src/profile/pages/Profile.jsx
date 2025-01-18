@@ -296,7 +296,11 @@ export const Profile = () => {
                 <SelectInput
                   control={control}
                   name="genero"
-                  options={['Femenino', 'Masculino', 'Otro']}
+                  options={[
+                    { label: 'Femenino', value: 'Femenino' },
+                    { label: 'Masculino', value: 'Masculino' },
+                    { label: 'Otro', value: 'Otro' },
+                  ]}
                   styles={styles.textfield}
                   label="Género"
                   showInputLabel={true}

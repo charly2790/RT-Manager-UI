@@ -57,7 +57,7 @@ export const Sesion = () => {
   } = useForm({
     defaultValues: {
       archivo: undefined,
-      rpe: 0,
+      rpe: { value: 0, label: '0 - Nada en absoluto 😄'},
       ...Entrenamiento
     }
   })
@@ -144,7 +144,7 @@ export const Sesion = () => {
 
       const res = await Axios.request(reqEntrenamiento);      
       
-      const { data: { message, result} } = res;      
+      const { data: { message, result} } = res;          
       
       if (res.status === 200 && !_.isNil(result)) {
         setApiMessage(message);      
@@ -323,11 +323,24 @@ export const Sesion = () => {
               control={control}
               name="rpe"
               disabled={readOnly}
-              options={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+              options = {[
+                { value: 0, label: '0 - Nada en absoluto 😄'},
+                { value: 1, label: '1 - Muy débil 😄'},
+                { value: 2, label: '2 - Débil 😄'},
+                { value: 3, label: '3 - Moderado 😃'},
+                { value: 4, label: '4 - Un poco fuerte 😃'},
+                { value: 5, label: '5 - Fuerte 🙂'},
+                { value: 6, label: '6 - Fuerte 🙂'},
+                { value: 7, label: '7 - Muy fuerte 🙁'},
+                { value: 8, label: '8 - Muy fuerte 🙁'},
+                { value: 9, label: '9 - Muy muy fuerte 😦'},
+                { value: 10, label: '10 - Muy muy fuerte 😦'},
+
+              ]}              
               styles={styles.textfield}
-              label="RPE"
+              label="RPE (Escala de esfuerzo percibido)"
               showInputLabel={true}
-              inputLabelStyles={{ mt: 1 }}
+              inputLabelStyles={{ mt: 2 }}
             />
           </Grid>
           <Grid item xs={12} md={6}>

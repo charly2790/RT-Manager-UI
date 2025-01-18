@@ -2,7 +2,7 @@ import { AuthContext } from '../../auth/context/AuthContext';
 import { buildRequest, convertToUtcTime } from '../../helpers';
 import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { LoadingMessage, SimpleTable } from '../../components';
-import { methods } from '../../types';
+import { methods, ROLES } from '../../types';
 import { ORIGINS } from '../../types';
 import { subDir, columns, defaultSort } from '../types';
 import { useContext } from 'react'
@@ -14,15 +14,15 @@ import DoneIcon from '@mui/icons-material/Done';
 
 export const Sesiones = () => {
 
-  const { userLogged } = useContext(AuthContext);
+  const { userLogged : { idSuscripcion: idSusc, token, rol } } = useContext(AuthContext);
   const { state } = useLocation();
   const navigate = useNavigate();
 
   const alumno = state ? state.alumno : undefined;
 
-  const idSuscripcion = alumno ? alumno.Suscripcions[0].idSuscripcion : userLogged.idSuscripcion
+  const idSuscripcion = alumno ? alumno.Suscripcions[0].idSuscripcion : idSusc;
 
-  const reqConfigs = buildRequest(subDir.sesionesEntrenamiento, methods.get, { idSuscripcion }, userLogged.token);
+  const reqConfigs = buildRequest(subDir.sesionesEntrenamiento, methods.get, { idSuscripcion }, token);
 
   const { data, hasError, isLoading } = useFetch(reqConfigs);
 
@@ -61,6 +61,12 @@ export const Sesiones = () => {
       alumno: state ? state.alumno : undefined
     }
   }
+  
+  const tableSettings = {
+    origin: ORIGINS.SESIONES,
+    defaultSort,
+    showNewButton: rol === ROLES.TEAM_LEADER ? true : false
+  }
 
   let nickname = "";
   
@@ -88,6 +94,7 @@ export const Sesiones = () => {
                 formParams={formParams} 
                 origin={ORIGINS.SESIONES}
                 defaultSort={defaultSort}
+                tableSettings={tableSettings}
                 />
         }
       </Grid>

@@ -33,7 +33,12 @@ const placeholderMessage = {
     'USUARIOS': 'Buscar por nombre, apellido o correo',
 }
 
-export const SimpleTable = ({ columns, data, formParams, origin = null, defaultSort = {} }) => {
+export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
+
+    const {
+        defaultSort,
+        origin,
+        showNewButton } = tableSettings;
 
     const [sorting, setSorting] = useState([defaultSort]);
     const [filtering, setFiltering] = useState("");
@@ -58,11 +63,11 @@ export const SimpleTable = ({ columns, data, formParams, origin = null, defaultS
             onGlobalFilterChange: setFiltering,
             initialState: {
                 sorting: [
-                  {
-                    ...defaultSort
-                  },
+                    {
+                        ...defaultSort
+                    },
                 ],
-              },
+            },
         });
 
     const buttons = [
@@ -89,7 +94,7 @@ export const SimpleTable = ({ columns, data, formParams, origin = null, defaultS
                             <Grid item xs>
                                 <TextField
                                     fullWidth
-                                    placeholder={!_.isNil(origin)? placeholderMessage[origin] : ''}
+                                    placeholder={!_.isNil(origin) ? placeholderMessage[origin] : ''}
                                     id="standard-basic"
                                     inputProps={{
                                         sx: { fontSize: 'default' },
@@ -100,14 +105,18 @@ export const SimpleTable = ({ columns, data, formParams, origin = null, defaultS
                                 />
                             </Grid>
                             <Grid item>
-                                <Button
-                                    variant='contained'
-                                    sx={{ mr: 1 }}
-                                    color='primary'
-                                    onClick={() => navigate(formParams.route, formParams.params ? { state: { ...formParams.params } } : {})}
-                                >
-                                    { !_.isNil(origin)? buttonMessage[origin] : 'Nuevo' }
-                                </Button>
+                                {
+                                    showNewButton
+                                        ? <Button
+                                            variant='contained'
+                                            sx={{ mr: 1 }}
+                                            color='primary'
+                                            onClick={() => navigate(formParams.route, formParams.params ? { state: { ...formParams.params } } : {})}
+                                        >
+                                            {!_.isNil(origin) ? buttonMessage[origin] : 'Nuevo'}
+                                        </Button>
+                                        : null
+                                }
                                 <Tooltip title="Reload">
                                     <IconButton>
                                         <RefreshIcon color="inherit" sx={{ display: 'block' }} />
@@ -153,32 +162,12 @@ export const SimpleTable = ({ columns, data, formParams, origin = null, defaultS
                                 </TableRow>
                             ))}
                         </TableBody>
-                        {/* <tfoot>
-                        {
-                            table.getFooterGroups().map(footerGroup => (
-                                <tr key={footerGroup.id}>
-                                    {footerGroup.headers.map(footer => (
-                                        <th key={footer.id}>
-                                            <th>
-                                                {footer.column.columnDef.footer}
-                                            </th>
-                                        </th>
-                                    ))
-
-                                    }
-                                </tr>
-                            ))
-                        }
-                    </tfoot> */}
                     </Table>
                 </TableContainer>
 
-                <ButtonGroup color="primary" aria-label="Medium-sized button group" sx={{ mt: 1 }}>
+                <ButtonGroup color="primary" aria-label="Medium-sized button group" sx={{ mt: 1, mb: 2 }}>
                     {buttons}
                 </ButtonGroup>
-
-
-
             </Paper>
         </ThemeProvider>
     )
