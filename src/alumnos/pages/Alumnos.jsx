@@ -1,37 +1,21 @@
 import "../../styles.css";
 import { AuthContext } from "../../auth/context/AuthContext.jsx";
 import { buildRequest } from '../../helpers';
+import { columns, defaultSort } from "../types";
 import { IconButton, Typography } from '@mui/material';
 import { LoadingMessage, SimpleTable } from "../../components";
 import { methods } from "../../types";
 import { ORIGINS } from "../../types";
+import { ROLES } from "../../types";
 import { subdir } from "../types";
 import { useContext } from 'react';
 import { useFetch } from "../../hooks";
 import { useNavigate } from 'react-router-dom';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 
-const columns = [
-    {
-        header: "email",
-        accessorKey: "email",
-    },
-    {
-        header: "ID Suscripcion",
-        accessorKey: "idSuscripcion",
-    },
-    {
-        header: "ID Equipo",
-        accessorKey: "idEquipo",
-    },
-    {
-        header: "Acciones",
-        accessorKey: "Acciones",
-    }
-]
 export const Alumnos = () => {
     
-    const { userLogged:{ idEquipo, token } } = useContext( AuthContext );
+    const { userLogged:{ idEquipo, token, rol } } = useContext( AuthContext );
     const navigate = useNavigate();
     let alumnosData = [];
     
@@ -56,12 +40,18 @@ export const Alumnos = () => {
         })
     }
 
+    const tableSettings = {
+        origin: ORIGINS.USUARIOS,
+        defaultSort,
+        showNewButton: rol === ROLES.TEAM_LEADER ? true : false
+      }
+
     return (
         <div className="flex-drow-jccenter">
             {                
                 isLoading
                     ? <LoadingMessage />
-                    : <SimpleTable columns={columns} data={alumnosData} origin={ORIGINS.USUARIOS}/>
+                    : <SimpleTable columns={columns} data={alumnosData} tableSettings={tableSettings}/>
             }
         </div>
     )
