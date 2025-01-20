@@ -33,6 +33,11 @@ export const Sesion = () => {
   const [showAdminFields, setShowAdminFields] = useState(false);
   const [haveMedia, setHaveMedia] = useState(false);
   const [apiMessage, setApiMessage] = useState("");
+  const [submitStatus, setSubmitStatus] = useState({
+    onResponse: false,
+    success: false,
+    message: ""
+  });
   const [openDialog, setOpenDialog] = useState(false);
   const [shots, setShots] = useState([]);
   const navigate = useNavigate();
@@ -57,10 +62,10 @@ export const Sesion = () => {
   } = useForm({
     defaultValues: {
       archivo: undefined,
-      rpe: { value: 0, label: '0 - Nada en absoluto 😄'},
+      rpe: { value: 0, label: '0 - Nada en absoluto 😄' },
       ...Entrenamiento
     }
-  })
+  });  
 
   useEffect(() => {
     if (rol === ROLES.TEAM_LEADER || (rol === ROLES.TEAM_MEMBER && estadoSesion === SESSION_STATUS.VALIDATED)) {
@@ -86,6 +91,23 @@ export const Sesion = () => {
     }
   }, [Entrenamiento])
 
+  useEffect(()=>{
+    const timer = setTimeout(() => {
+      if(submitStatus.success){
+        onNavigateBack();
+      }else{
+        setSubmitStatus({
+          onResponse: false,
+          success: false,
+          message: ""
+        })
+      }      
+    }, 3000);
+
+    return () => clearTimeout(timer);
+
+  },[submitStatus.onResponse])
+
 
   const onNavigateBack = () => {
     navigate(-1)
@@ -107,13 +129,13 @@ export const Sesion = () => {
   const onSubmit = handleSubmit(async (data) => {
 
     try {
-      
+
       const { idSesion } = sesion;
       let updatedKeys = Object.keys(dirtyFields);
       const isCreate = _.isEmpty(Entrenamiento);
       const formData = new FormData();
 
-      if (validateMandatoryFields(getValues())) {        
+      if (validateMandatoryFields(getValues())) {
         throw new Error('Faltan campos obligatorios');
       }
 
@@ -142,15 +164,24 @@ export const Sesion = () => {
         'multipart/form-data'
       )
 
-      const res = await Axios.request(reqEntrenamiento);      
-      
-      const { data: { message, result} } = res;          
-      
+      const res = await Axios.request(reqEntrenamiento);
+
+      const { data: { message, result } } = res;
+
       if (res.status === 200 && !_.isNil(result)) {
-        setApiMessage(message);      
+        setSubmitStatus({
+          onResponse: true,
+          success: true,
+          message
+        });        
       }
-    } catch (error) {      
-      setApiMessage(error.message);
+    } catch (error) {
+      const { response: { data: { message } } } = error;
+      setSubmitStatus({
+        onResponse: true,
+        success: false,
+        message
+      })      
     }
   }
   )
@@ -159,7 +190,7 @@ export const Sesion = () => {
     setOpenDialog(true);
   }
   const handleCloseDialog = () => {
-    let shotsToDelete = shots.filter(shot => shot.markToDelete);   
+    let shotsToDelete = shots.filter(shot => shot.markToDelete);
 
     setOpenDialog(false);
   }
@@ -167,11 +198,10 @@ export const Sesion = () => {
   return (
     <ThemeProvider theme={mainTheme}>
       {
-        isSubmitSuccessful && <Snackbar
-          open={open}
-          autoHideDuration={2000}
-          onClose={onNavigateBack}
-          message={apiMessage}
+        <Snackbar
+          open={submitStatus.onResponse}
+          autoHideDuration={2000}          
+          message={submitStatus.message}
         />
       }
       <Accordion sx={{ width: '95%' }}>
@@ -225,7 +255,7 @@ export const Sesion = () => {
             />
           </Grid>
         </AccordionDetails>
-      </Accordion>      
+      </Accordion>
       <Box
         component="form"
         noValidate
@@ -323,20 +353,20 @@ export const Sesion = () => {
               control={control}
               name="rpe"
               disabled={readOnly}
-              options = {[
-                { value: 0, label: '0 - Nada en absoluto 😄'},
-                { value: 1, label: '1 - Muy débil 😄'},
-                { value: 2, label: '2 - Débil 😄'},
-                { value: 3, label: '3 - Moderado 😃'},
-                { value: 4, label: '4 - Un poco fuerte 😃'},
-                { value: 5, label: '5 - Fuerte 🙂'},
-                { value: 6, label: '6 - Fuerte 🙂'},
-                { value: 7, label: '7 - Muy fuerte 🙁'},
-                { value: 8, label: '8 - Muy fuerte 🙁'},
-                { value: 9, label: '9 - Muy muy fuerte 😦'},
-                { value: 10, label: '10 - Muy muy fuerte 😦'},
+              options={[
+                { value: 0, label: '0 - Nada en absoluto 😄' },
+                { value: 1, label: '1 - Muy débil 😄' },
+                { value: 2, label: '2 - Débil 😄' },
+                { value: 3, label: '3 - Moderado 😃' },
+                { value: 4, label: '4 - Un poco fuerte 😃' },
+                { value: 5, label: '5 - Fuerte 🙂' },
+                { value: 6, label: '6 - Fuerte 🙂' },
+                { value: 7, label: '7 - Muy fuerte 🙁' },
+                { value: 8, label: '8 - Muy fuerte 🙁' },
+                { value: 9, label: '9 - Muy muy fuerte 😦' },
+                { value: 10, label: '10 - Muy muy fuerte 😦' },
 
-              ]}              
+              ]}
               styles={styles.textfield}
               label="RPE (Escala de esfuerzo percibido)"
               showInputLabel={true}

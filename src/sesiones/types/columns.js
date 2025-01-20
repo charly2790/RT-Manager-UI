@@ -11,6 +11,10 @@ export const columns = [
       }      
     },
     {
+      header: "Id Sesión",
+      accessorKey: "idSesion",
+    },
+    {
       header: "Objetivo",
       accessorKey: "Objetivo",
     },

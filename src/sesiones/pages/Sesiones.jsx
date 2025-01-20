@@ -31,7 +31,8 @@ export const Sesiones = () => {
   if (data) {    
     sesiones = data.map(sesion => {
 
-      let {      
+      let {
+        idSesion,      
         Entrenamiento,   
         EstadoSesion, 
         fechaSesion,         
@@ -40,7 +41,8 @@ export const Sesiones = () => {
       } = sesion;
       return {        
         estado: EstadoSesion.descripcion,        
-        fechaSesion: convertToUtcTime(fechaSesion).format("DD-MM-YYYY"),        
+        fechaSesion: convertToUtcTime(fechaSesion).format("DD-MM-YYYY"),
+        idSesion,
         Objetivo: Objetivo,
         tipo: TipoSesion.descripcion,
         acciones:
