@@ -67,7 +67,8 @@ export const Sesiones = () => {
   const tableSettings = {
     origin: ORIGINS.SESIONES,
     defaultSort,
-    showNewButton: rol === ROLES.TEAM_LEADER ? true : false
+    showNewButton: rol === ROLES.TEAM_LEADER ? true : false,
+    noRecordsMessage: '¡Listo para comenzar! Espera tu próxima sesión de entrenamiento 🏃🏻🏃🏿‍♀️'
   }
 
   let nickname = "";

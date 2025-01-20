@@ -43,7 +43,8 @@ export const Alumnos = () => {
     const tableSettings = {
         origin: ORIGINS.USUARIOS,
         defaultSort,
-        showNewButton: rol === ROLES.TEAM_LEADER ? true : false
+        showNewButton: rol === ROLES.TEAM_LEADER ? true : false,
+        noRecordsMessage: "No hay alumnos registrados. Comienza agregando uno nuevo"
       }
 
     return (

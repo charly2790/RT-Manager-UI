@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider, Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -22,6 +22,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { mainTheme } from '../themes/mainTheme';
 import _ from 'lodash';
+import { EmptyMessage } from './Shared';
 
 const buttonMessage = {
     'SESIONES': 'Nueva Sesión',
@@ -43,6 +44,8 @@ export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
     const [sorting, setSorting] = useState([defaultSort]);
     const [filtering, setFiltering] = useState("");
     const navigate = useNavigate();
+
+    console.log('data-->', data);
 
 
     const table = useReactTable(
@@ -79,7 +82,10 @@ export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
 
     return (
         <ThemeProvider theme={mainTheme}>
-            <Paper sx={{ width: '100%', margin: 'auto', overflow: 'hidden' }}>
+            {
+                data.length === 0
+                ? (<EmptyMessage message={tableSettings.noRecordsMessage}/>)
+                :<Paper sx={{ width: '100%', margin: 'auto', overflow: 'hidden' }}>
                 <AppBar
                     position="static"
                     color='default'
@@ -169,6 +175,8 @@ export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
                     {buttons}
                 </ButtonGroup>
             </Paper>
+            }
+            
         </ThemeProvider>
     )
 }
