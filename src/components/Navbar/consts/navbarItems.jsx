@@ -10,20 +10,20 @@ export const navbarItems = [{
     route: 'alumnos',
     allowedRoles: ['EQUIPO_ADMIN']
 },
-{
+/* {
     id:1,
     icon:<SportsScoreIcon/>,
     label:'Carreras',
     route: 'calendario-carreras',
     allowedRoles: ['EQUIPO_ADMIN','EQUIPO_MEMBER']
-},
-{
+}, */
+/* {
     id:2,
     icon:<SettingsIcon/>,
     label:'Ajustes',
     route: 'settings',
     allowedRoles: ['EQUIPO_ADMIN']
-},
+}, */
 {
     id:3,
     icon:<WatchIcon/>,

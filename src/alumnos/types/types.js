@@ -1,15 +1,23 @@
 export const columns = [
     {
-        header: "email",
-        accessorKey: "email",
+        header: "Avatar",
+        accessorKey: "avatar",
     },
     {
-        header: "ID Suscripcion",
-        accessorKey: "idSuscripcion",
+        header: "Apodo",
+        accessorKey: "nickname",
     },
     {
-        header: "ID Equipo",
-        accessorKey: "idEquipo",
+        header: "Nombre completo",
+        accessorKey: "fullname",
+    },
+    {
+        header: "Estado",
+        accessorKey: "estado",
+    },
+    {
+        header: "Fecha de inicio",
+        accessorKey: "fechaInicio",
     },
     {
         header: "Acciones",
@@ -17,4 +25,4 @@ export const columns = [
     }
 ]
 
-export const defaultSort =  { id: "email", desc: true };
+export const defaultSort =  { id: "nickname", desc: false };
