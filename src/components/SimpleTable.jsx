@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider, Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -43,7 +43,14 @@ export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
 
     const [sorting, setSorting] = useState([defaultSort]);
     const [filtering, setFiltering] = useState("");
+    const [isTableEmpty, setIsTableEmpty] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (data.length === 0) {
+            setIsTableEmpty(true);
+        }
+    }, [])
 
     console.log('data-->', data);
 
@@ -82,10 +89,7 @@ export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
 
     return (
         <ThemeProvider theme={mainTheme}>
-            {
-                data.length === 0
-                ? (<EmptyMessage message={tableSettings.noRecordsMessage}/>)
-                :<Paper sx={{ width: '100%', margin: 'auto', overflow: 'hidden' }}>
+            <Paper sx={{ width: '100%', margin: 'auto', overflow: 'hidden' }}>
                 <AppBar
                     position="static"
                     color='default'
@@ -100,6 +104,7 @@ export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
                             <Grid item xs>
                                 <TextField
                                     fullWidth
+                                    disabled={isTableEmpty}
                                     placeholder={!_.isNil(origin) ? placeholderMessage[origin] : ''}
                                     id="standard-basic"
                                     inputProps={{
@@ -132,51 +137,55 @@ export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
                         </Grid>
                     </Toolbar>
                 </AppBar>
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            {
-                                table.getHeaderGroups().map(headerGroup => (
-                                    <TableRow key={headerGroup.id}>
+                {
+                    isTableEmpty
+                        ? (<EmptyMessage message={tableSettings.noRecordsMessage} />)
+                        : <>
+                            <TableContainer component={Paper}>
+                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                    <TableHead>
                                         {
-                                            headerGroup.headers.map(header => (
-                                                <TableCell key={header.id}
-                                                    onClick={header.column.getToggleSortingHandler()}
-                                                    sx={{ fontWeight: 'bold' }}
-                                                >
-                                                    {header.column.columnDef.header}
+                                            table.getHeaderGroups().map(headerGroup => (
+                                                <TableRow key={headerGroup.id}>
                                                     {
-                                                        { asc: '⬆️', desc: '⬇️' }[header.column.getIsSorted() ?? null]
+                                                        headerGroup.headers.map(header => (
+                                                            <TableCell key={header.id}
+                                                                onClick={header.column.getToggleSortingHandler()}
+                                                                sx={{ fontWeight: 'bold' }}
+                                                            >
+                                                                {header.column.columnDef.header}
+                                                                {
+                                                                    { asc: '⬆️', desc: '⬇️' }[header.column.getIsSorted() ?? null]
+                                                                }
+                                                            </TableCell>
+                                                        ))
                                                     }
-                                                </TableCell>
+                                                </TableRow>
                                             ))
                                         }
-                                    </TableRow>
-                                ))
-                            }
-                        </TableHead>
-                        <TableBody>
-                            {table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id}>
-                                    {row.getVisibleCells().map((cell, index) => (
-                                        <TableCell key={`${row.id}-${index}`}>
-                                            {/* {console.log(`cell`, cell)} */}
-                                            {/* {flexRender(cell.column.columnDef.cell, cell.getContext())}*/}
-                                            {cell.renderValue('cell')}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                    </TableHead>
+                                    <TableBody>
+                                        {table.getRowModel().rows.map((row) => (
+                                            <TableRow key={row.id}>
+                                                {row.getVisibleCells().map((cell, index) => (
+                                                    <TableCell key={`${row.id}-${index}`}>
+                                                        {/* {console.log(`cell`, cell)} */}
+                                                        {/* {flexRender(cell.column.columnDef.cell, cell.getContext())}*/}
+                                                        {cell.renderValue('cell')}
+                                                    </TableCell>
+                                                ))}
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
 
-                <ButtonGroup color="primary" aria-label="Medium-sized button group" sx={{ mt: 1, mb: 2 }}>
-                    {buttons}
-                </ButtonGroup>
+                            <ButtonGroup color="primary" aria-label="Medium-sized button group" sx={{ mt: 1, mb: 2 }}>
+                                {buttons}
+                            </ButtonGroup>
+                        </>
+                }
             </Paper>
-            }
-            
         </ThemeProvider>
     )
 }
