@@ -1,9 +1,7 @@
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { AuthContext } from '../../auth';
 import { Box, Grid, Typography, TextField, Select, MenuItem, InputLabel, FormControl, Button, IconButton } from '@mui/material'
 import { buildRequest } from '../../helpers';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { LoadingMessage } from '../../components';
+import { DateInput, LoadingMessage } from '../../components';
 import { methods } from '../../types';
 import { subDir } from '../types';
 import { useFetch } from '../../hooks'
@@ -101,32 +99,13 @@ export const SesionForm = ({ idSuscripcion, handleAddSesion, handleDeleteSesion 
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                        <Controller
-                                            control={control}
-                                            name="fechaSesion"
-                                            rules={{ required: 'La fecha es requerida' }}
-                                            render={({ field: { onChange, value }, fieldState: { error } }) => {
-                                                const dateValue = value ? dayjs.utc(value) : null
-                                                
-                                                return <DatePicker
-                                                    label="Fecha de la sesión"
-                                                    //disablePast
-                                                    value={dateValue}
-                                                    onChange={onChange}
-                                                    sx={{ width: '100%', mt: 1 }}
-                                                    renderInput={(params) =>
-                                                        <TextField
-                                                            {...params}
-                                                            fullWidth
-                                                            error={!!error}
-                                                            helperText={error ? error.message : null}
-                                                        />}
-                                                />
-                                            }}
-                                        />
-                                    </LocalizationProvider>
-                                </Grid>
+                                    <DateInput
+                                        control={control}
+                                        name="fechaSesion"
+                                        label="Fecha de la sesión"
+                                        styles={{ width: '100%', mt: 1 }}
+                                    />
+                                </Grid>                                
                                 <Grid item xs={12} sm={12}>
                                     <TextField
                                         error={errors.objetivo ? true : false}
