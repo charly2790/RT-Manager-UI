@@ -4,13 +4,13 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { InputLabel, TextField } from '@mui/material'
 import { TIMEZONES } from '../../helpers';
 import dayjs from 'dayjs';
-import plugin from 'dayjs/plugin/timezone';
 import React from 'react'
 import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 
 
 dayjs.extend(utc);
-dayjs.extend(plugin);
+dayjs.extend(timezone);
 dayjs.tz.setDefault(TIMEZONES.ARG);
 
 
@@ -27,13 +27,17 @@ export const DateInput = ({
     inputLabelStyles = {}
 }) => {
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs} >
+        <LocalizationProvider 
+            dateAdapter={AdapterDayjs} 
+            adapterLocale='es'
+            dateLibInstance={dayjs.tz.setDefault(TIMEZONES.ARG)}
+            >
             <Controller
                 control={control}
                 name={name}
                 rules={{ required: 'La fecha es requerida' }}
                 render={({ field: { onChange, value = defaultValue }, fieldState: { error } }) => {
-                    const dateValue = value ? dayjs(value).tz(TIMEZONES.ARG) : null
+                    const dateValue = value ? dayjs.tz(value, TIMEZONES.ARG) : null
 
                     return (
                         <>
@@ -45,8 +49,9 @@ export const DateInput = ({
                                 disablePast={disablePast}
                                 format={"DD/MM/YYYY"}
                                 value={dateValue}
+                                timezone={TIMEZONES.ARG}
                                 onChange={(newValue) => {
-                                    onChange(newValue ? newValue.tz(TIMEZONES.ARG).format() : null);
+                                    onChange(newValue ? newValue.tz(TIMEZONES.ARG, true).format() : null);
                                 }}
                                 sx={styles}
                                 renderInput={(params) =>
