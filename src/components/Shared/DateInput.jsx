@@ -36,14 +36,19 @@ export const DateInput = ({
                 control={control}
                 name={name}
                 rules={{ required: 'La fecha es requerida' }}
-                render={({ field: { onChange, value = defaultValue }, fieldState: { error } }) => {
-                    const dateValue = value ? dayjs.tz(value, TIMEZONES.ARG) : null
+                render={({ field: { onChange, value = defaultValue }, fieldState: { error } }) => {                       
+                    let dateValue;
+                    try {
+                        dateValue = value ? dayjs.tz(value, TIMEZONES.ARG) : null
+                    } catch (error) {
+                        console.log(error.message);
+                        dateValue = dayjs.tz(dayjs(),TIMEZONES.ARG)
+                    }
 
                     return (
                         <>
                             {showInputLabel && <InputLabel id={name} sx={inputLabelStyles}>{label}</InputLabel>}
-                            <DatePicker
-                                label={label}
+                            <DatePicker                                
                                 disabled={disabled}
                                 disableFuture={disableFuture}
                                 disablePast={disablePast}
@@ -55,8 +60,9 @@ export const DateInput = ({
                                 }}
                                 sx={styles}
                                 renderInput={(params) =>
-                                    <TextField
+                                    <TextField                                        
                                         {...params}
+                                        disabled={true}
                                         fullWidth
                                         error={!!error}
                                         helperText={error ? error.message : null}

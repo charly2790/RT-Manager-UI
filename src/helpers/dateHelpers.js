@@ -7,6 +7,7 @@ dayjs.extend(timezone);
 
 export const TIMEZONES = {
     ARG: 'America/Argentina/Buenos_Aires',
+    NZ: 'Pacific/Auckland'
 }
 
 export const convertToLocalTime = ( date ) => {

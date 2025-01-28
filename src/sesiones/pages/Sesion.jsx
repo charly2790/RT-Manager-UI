@@ -1,4 +1,4 @@
-import _, { isEmpty, set } from 'lodash';
+import _ from 'lodash';
 import 'dayjs/locale/es';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, Grow, InputAdornment, InputLabel, Link, Snackbar, TextField, ThemeProvider, Typography } from '@mui/material';
 import { AuthContext } from '../../auth';
@@ -7,7 +7,7 @@ import { convertToUtcTime } from '../../helpers';
 import { createTheme } from '@mui/material/styles';
 import { DataCell } from '../components';
 import { DialogTrainingShotsSwiper } from '../components/DialogTrainingShotsSwiper';
-import { FileInput, SelectInput, TimeInput } from '../../components';
+import { DateInput, FileInput, SelectInput, TimeInput } from '../../components';
 import { getShots } from '../helpers';
 import { mainTheme } from '../../themes/mainTheme';
 import { methods } from '../../types';
@@ -28,11 +28,10 @@ const theme = createTheme();
 export const Sesion = () => {
 
   const { state } = useLocation();
-  const { userLogged: { idUsuario, token, rol } } = useContext(AuthContext);
+  const { userLogged: { token, rol } } = useContext(AuthContext);
   const [readOnly, setReadOnly] = useState(true);
   const [showAdminFields, setShowAdminFields] = useState(false);
   const [haveMedia, setHaveMedia] = useState(false);
-  const [apiMessage, setApiMessage] = useState("");
   const [submitStatus, setSubmitStatus] = useState({
     onResponse: false,
     success: false,
@@ -52,20 +51,21 @@ export const Sesion = () => {
     getValues,
     formState: {
       errors,
-      isSubmitSuccessful,
+      //isSubmitSuccessful,
       isDirty,
       dirtyFields,
-      defaultValues
+      //defaultValues
     },
     control,
-    setValue
+    //setValue
   } = useForm({
     defaultValues: {
-      archivo: undefined,
+      //archivo: undefined,
       rpe: { value: 0, label: '0 - Nada en absoluto 😄' },
+      fechaEntrenamiento: dayjs(),
       ...Entrenamiento
     }
-  });  
+  });
 
   useEffect(() => {
     if (rol === ROLES.TEAM_LEADER || (rol === ROLES.TEAM_MEMBER && estadoSesion === SESSION_STATUS.VALIDATED)) {
@@ -91,22 +91,22 @@ export const Sesion = () => {
     }
   }, [Entrenamiento])
 
-  useEffect(()=>{
+  useEffect(() => {
     const timer = setTimeout(() => {
-      if(submitStatus.success){
+      if (submitStatus.success) {
         onNavigateBack();
-      }else{
+      } else {
         setSubmitStatus({
           onResponse: false,
           success: false,
           message: ""
         })
-      }      
+      }
     }, 3000);
 
     return () => clearTimeout(timer);
 
-  },[submitStatus.onResponse])
+  }, [submitStatus.onResponse])
 
 
   const onNavigateBack = () => {
@@ -131,16 +131,20 @@ export const Sesion = () => {
     try {
 
       const { idSesion } = sesion;
-      let updatedKeys = Object.keys(dirtyFields);
-      const isCreate = _.isEmpty(Entrenamiento);
+      const formValues = getValues();
+      let updatedKeys = Object.keys(formValues).filter(key => !_.isNil(formValues[key]))
+      const isCreate = _.isNil(Entrenamiento);
       const formData = new FormData();
 
-      if (validateMandatoryFields(getValues())) {
+      console.log('updatedKeys-->', updatedKeys);
+      console.log('getValues--->', Object.keys(getValues()));
+
+      /* if (validateMandatoryFields(getValues())) {        
         throw new Error('Faltan campos obligatorios');
-      }
+      } */
 
       if (!isCreate) {
-        updatedKeys = !isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];
+        updatedKeys = !_.isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];
       }
 
       formData.append('idSesion', idSesion);
@@ -173,15 +177,16 @@ export const Sesion = () => {
           onResponse: true,
           success: true,
           message
-        });        
+        });
       }
     } catch (error) {
+      console.log(error.message);
       const { response: { data: { message } } } = error;
       setSubmitStatus({
         onResponse: true,
         success: false,
         message
-      })      
+      })
     }
   }
   )
@@ -200,7 +205,7 @@ export const Sesion = () => {
       {
         <Snackbar
           open={submitStatus.onResponse}
-          autoHideDuration={2000}          
+          autoHideDuration={2000}
           message={submitStatus.message}
         />
       }
@@ -209,7 +214,7 @@ export const Sesion = () => {
           expandIcon={<ArrowDropDownIcon />}
         >
           <Typography component="h1" variant="h5">
-            {`${sesion.TipoSesion.descripcion} - ${convertToUtcTime(sesion.fechaSesion).format("dddd  DD [de] MMMM [del] YYYY")}`}
+            {`${sesion.TipoSesion && sesion.TipoSesion.descripcion ? sesion.TipoSesion.descripcion : ''} - ${convertToUtcTime(sesion.fechaSesion).format("dddd  DD [de] MMMM [del] YYYY")}`}
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -312,6 +317,36 @@ export const Sesion = () => {
               />
             </Grid>
           }
+          {
+            showAdminFields &&
+            <Grid item xs={12} md={6}>            
+              <InputLabel id="entrenamientoRealizado" sx={{ mt: 1 }}>{"Entrenamiento Realizado"}</InputLabel>
+              <TextField
+                multiline
+                disabled={readOnly}
+                rows={2}
+                required
+                id="entrenamientoRealizado"
+                name="entrenamientoRealizado"
+                autoComplete="family-name"
+                sx={styles.textfield}
+                {...register("entrenamientoRealizado")}
+              />
+              </Grid>            
+          }
+          <Grid item xs={12} md={6}>
+            <DateInput
+              control={control}
+              //defaultValue={dayjs()}
+              disabled={readOnly}
+              disableFuture={true}
+              inputLabelStyles={{ mt: 1 }}
+              label="Fecha de Entrenamiento"
+              name="fechaEntrenamiento"
+              showInputLabel={true}
+              styles={{ ...styles.textfield, }}
+            />
+          </Grid>
           <Grid item xs={12} md={6}>
             <InputLabel id="link" mt={2} sx={{ mt: 1 }}>{"Link"}</InputLabel>
             <TextField
@@ -370,7 +405,7 @@ export const Sesion = () => {
               styles={styles.textfield}
               label="RPE (Escala de esfuerzo percibido)"
               showInputLabel={true}
-              inputLabelStyles={{ mt: 2 }}
+              inputLabelStyles={{ mt: 1 }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -429,7 +464,7 @@ export const Sesion = () => {
               </Button>
             </Grid>
           </Grid>
-        </Grid>
+        </Grid>        
         <DialogTrainingShotsSwiper
           open={openDialog}
           onClose={handleCloseDialog}
