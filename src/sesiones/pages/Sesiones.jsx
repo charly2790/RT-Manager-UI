@@ -1,15 +1,14 @@
 import { AuthContext } from '../../auth/context/AuthContext';
 import { buildRequest, convertToUtcTime } from '../../helpers';
-import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
+import { Chip, Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { LoadingMessage, SimpleTable } from '../../components';
-import { methods, ROLES } from '../../types';
+import { methods, ROLES, SESSION_STATUS_COLORS } from '../../types';
 import { ORIGINS } from '../../types';
 import { subDir, columns, defaultSort } from '../types';
 import { useContext } from 'react'
 import { useFetch } from '../../hooks';
 import { useLocation, useNavigate } from 'react-router-dom'
-import dayjs from 'dayjs';
-import DoneIcon from '@mui/icons-material/Done';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 
 
 export const Sesiones = () => {
@@ -40,16 +39,16 @@ export const Sesiones = () => {
         TipoSesion, 
       } = sesion;
       return {        
-        estado: EstadoSesion.descripcion,        
-        fechaSesion: convertToUtcTime(fechaSesion).format("DD-MM-YYYY"),
+        estado: (<Chip label={EstadoSesion.descripcion} color={SESSION_STATUS_COLORS[EstadoSesion.descripcion]}/>),        
+        fechaSesion: convertToUtcTime(fechaSesion).format("DD/MM/YYYY"),
         idSesion,
         Objetivo: Objetivo,
-        tipo: TipoSesion.descripcion,
+        tipo: (<Chip label={TipoSesion.descripcion} color="info"/>),
         acciones:
           (
             <Tooltip title="Completar sesión">
               <IconButton aria-label="complete" onClick={() => navigate(`/sesiones/${sesion.idSesion}`, { state: { sesion } })}>
-                <DoneIcon />
+                <EditNoteIcon />
               </IconButton>
             </Tooltip>
           )

@@ -18,6 +18,14 @@ export const SESSION_STATUS = {
     REVIEWING: 'REVISANDO',
 }
 
+export const SESSION_STATUS_COLORS = {
+    PENDIENTE: 'warning',
+    ENVIADA: 'primary',
+    VENCIDA: 'error',
+    VALIDADA: 'success',
+    REVISANDO: 'info',    
+}
+
 export const ORIGINS = {
     SESIONES: 'SESIONES',
     USUARIOS: 'USUARIOS'
