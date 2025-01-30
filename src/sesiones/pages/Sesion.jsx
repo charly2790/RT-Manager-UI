@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import 'dayjs/locale/es';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Grid, Grow, InputAdornment, InputLabel, Link, Snackbar, TextField, ThemeProvider, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CircularProgress, Divider, Grid, Grow, InputAdornment, InputLabel, Link, Snackbar, TextField, ThemeProvider, Typography } from '@mui/material';
 import { AuthContext } from '../../auth';
 import { buildRequest } from '../../helpers';
 import { convertToUtcTime } from '../../helpers';
@@ -54,6 +54,7 @@ export const Sesion = () => {
       errors,
       isDirty,
       dirtyFields,
+      isSubmitting
     },
     control,
   } = useForm({
@@ -122,12 +123,12 @@ export const Sesion = () => {
 
   const onSubmit = handleSubmit(async (data) => {
 
-    try {      
+    try {
       const { idSesion } = sesion;
-      const formValues = getValues();     
-      let updatedKeys = Object.keys(formValues).filter( key => !isNilOrEmpty(formValues[key]));      
+      const formValues = getValues();
+      let updatedKeys = Object.keys(formValues).filter(key => !isNilOrEmpty(formValues[key]));
       const isCreate = _.isNil(Entrenamiento);
-      const formData = new FormData();      
+      const formData = new FormData();
 
       if (!isCreate) {
         updatedKeys = !_.isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];
@@ -439,14 +440,18 @@ export const Sesion = () => {
             </Grid>
             <Grid item xs={6} md={3} sx={styles.actionButtonContainer}>
               <Button
-                disabled={!isDirty}
+                disabled={!isDirty || isSubmitting}
                 variant='contained'
                 startIcon={<Save />}
-                sx={styles.actionButton}                
+                sx={styles.actionButton}
                 size='large'
                 type='submit'
               >
-                {"Guardar"}
+                {
+                  isSubmitting
+                    ? <CircularProgress size={24} />
+                    : 'Guardar'
+                }
               </Button>
             </Grid>
           </Grid>
@@ -469,7 +474,7 @@ export const Sesion = () => {
                 >
                   {getErrorMessagges(errors).join('\n')}
                 </Typography>
-                
+
               </>
               : null
           }
