@@ -9,12 +9,7 @@ export const columns = [
         const dateB = rowB.original[columnId].split("-").reverse().join("-");
         return dateA.localeCompare(dateB);
       }      
-    },
-    {
-      header: "Id Sesión",
-      accessorKey: "idSesion",
-    },
-    {
+    },{
       header: "Objetivo",
       accessorKey: "Objetivo",
     },
