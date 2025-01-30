@@ -4,7 +4,7 @@ import { Chip, Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { LoadingMessage, SimpleTable } from '../../components';
 import { methods, ROLES, SESSION_STATUS_COLORS } from '../../types';
 import { ORIGINS } from '../../types';
-import { subDir, columns, defaultSort } from '../types';
+import { subDir, columns, defaultSort, hiddenColumns } from '../types';
 import { useContext } from 'react'
 import { useFetch } from '../../hooks';
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -31,16 +31,16 @@ export const Sesiones = () => {
     sesiones = data.map(sesion => {
 
       let {
-        idSesion,      
-        Entrenamiento,   
+        idSesion,              
         EstadoSesion, 
         fechaSesion,         
         Objetivo,
         TipoSesion, 
       } = sesion;
       return {        
-        estado: (<Chip label={EstadoSesion.descripcion} color={SESSION_STATUS_COLORS[EstadoSesion.descripcion]}/>),        
-        fechaSesion: convertToUtcTime(fechaSesion).format("DD/MM/YYYY"),
+        estado: (<Chip label={EstadoSesion.descripcion} color={SESSION_STATUS_COLORS[EstadoSesion.descripcion]}/>),
+        estadoFilter: EstadoSesion.descripcion,
+        fechaSesion: convertToUtcTime(fechaSesion).format("DD-MM-YYYY"),
         idSesion,
         Objetivo: Objetivo,
         tipo: (<Chip label={TipoSesion.descripcion} color="info"/>),
@@ -97,6 +97,7 @@ export const Sesiones = () => {
                 origin={ORIGINS.SESIONES}
                 defaultSort={defaultSort}
                 tableSettings={tableSettings}
+                hiddenColumns={hiddenColumns}
                 />
         }
       </Grid>

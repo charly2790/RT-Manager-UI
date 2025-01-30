@@ -26,8 +26,16 @@ export const columns = [
       accessorKey: "estado",
     },{
       header: "Acciones",
-      accessorKey: "acciones"
+      accessorKey: "acciones",
+      show: false,
+    },{
+      header: "Filtro Estado",
+      accessorKey:"estadoFilter",      
     }
   ];
 
   export const defaultSort =  { id: "fechaSesion", desc: true };
+
+  export const hiddenColumns = {
+    estadoFilter: false,
+  }

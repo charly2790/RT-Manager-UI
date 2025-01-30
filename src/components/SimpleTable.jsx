@@ -34,7 +34,9 @@ const placeholderMessage = {
     'USUARIOS': 'Buscar por nombre, apellido o correo',
 }
 
-export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
+export const SimpleTable = ({ columns, data, formParams, tableSettings, hiddenColumns = {} }) => {
+
+    console.log('hiddenColumns', hiddenColumns);
 
     const {
         defaultSort,
@@ -44,7 +46,8 @@ export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
     const [sorting, setSorting] = useState([defaultSort]);
     const [filtering, setFiltering] = useState("");
     const [isTableEmpty, setIsTableEmpty] = useState(false);
-    const navigate = useNavigate();
+    const [columnVisibility, setColumnVisibility] = useState({...hiddenColumns})
+    const navigate = useNavigate();    
 
     useEffect(() => {
         if (data.length === 0) {
@@ -62,13 +65,15 @@ export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
             getSortedRowModel: getSortedRowModel(),
             getFilteredRowModel: getFilteredRowModel(),
             state: {
+                columnVisibility,
                 sorting,
                 globalFilter: filtering,
             },
+            onColumnVisibilityChange: setColumnVisibility,
             onSortingChange: setSorting,
             //Fin ordenamiento tabla
             onGlobalFilterChange: setFiltering,
-            initialState: {
+            initialState: {                
                 sorting: [
                     {
                         ...defaultSort
