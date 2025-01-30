@@ -1,8 +1,11 @@
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { Controller } from 'react-hook-form'
-import { convertToUtcTime } from '../../helpers'
+import { convertToLocalTime } from '../../helpers'
 import { LocalizationProvider, TimeField } from '@mui/x-date-pickers'
 import { InputAdornment, InputLabel } from '@mui/material'
+
+
+
 export const TimeInput = ({ 
     control, 
     defaultValue, 
@@ -20,7 +23,7 @@ export const TimeInput = ({
                 name={name}
                 rules={{ required: 'El tiempo total es requerido' }}
                 render={({ field: { onChange, value = defaultValue }, fieldState: { error } }) => {                    
-                    const dateValue = value ? convertToUtcTime(value) : null;                                   
+                    const dateValue = value ? convertToLocalTime(value) : null;                                   
 
                     return (
                         <>

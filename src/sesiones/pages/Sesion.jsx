@@ -6,9 +6,10 @@ import { buildRequest } from '../../helpers';
 import { convertToUtcTime } from '../../helpers';
 import { createTheme } from '@mui/material/styles';
 import { DataCell } from '../components';
-import { DialogTrainingShotsSwiper } from '../components/DialogTrainingShotsSwiper';
 import { DateInput, FileInput, SelectInput, TimeInput } from '../../components';
+import { DialogTrainingShotsSwiper } from '../components/DialogTrainingShotsSwiper';
 import { getShots } from '../helpers';
+import { isNilOrEmpty } from '../../helpers';
 import { mainTheme } from '../../themes/mainTheme';
 import { methods } from '../../types';
 import { ROLES, SESSION_STATUS } from '../../types';
@@ -51,17 +52,13 @@ export const Sesion = () => {
     getValues,
     formState: {
       errors,
-      //isSubmitSuccessful,
       isDirty,
       dirtyFields,
-      //defaultValues
     },
     control,
-    //setValue
   } = useForm({
     defaultValues: {
-      //archivo: undefined,
-      rpe: { value: 0, label: '0 - Nada en absoluto 😄' },
+      rpe: 0,
       fechaEntrenamiento: dayjs(),
       ...Entrenamiento
     }
@@ -113,35 +110,24 @@ export const Sesion = () => {
     navigate(-1)
   }
 
-  const validateMandatoryFields = (fields) => {
+  const getErrorMessagges = (errors) => {
+    let errorMessages = [];
 
-    const mandatoryKeys = ['archivos', 'link', 'comentario'];
-    let hasError = true;
+    for (let field in errors) {
+      errorMessages.push(errors[field].message);
+    }
 
-    mandatoryKeys.forEach(key => {
-      if (!_.isNil(fields[key])) {
-        hasError = false;
-      }
-    })
-    return hasError;
+    return errorMessages;
   }
 
   const onSubmit = handleSubmit(async (data) => {
 
-    try {
-
+    try {      
       const { idSesion } = sesion;
-      const formValues = getValues();
-      let updatedKeys = Object.keys(formValues).filter(key => !_.isNil(formValues[key]))
+      const formValues = getValues();     
+      let updatedKeys = Object.keys(formValues).filter( key => !isNilOrEmpty(formValues[key]));      
       const isCreate = _.isNil(Entrenamiento);
-      const formData = new FormData();
-
-      console.log('updatedKeys-->', updatedKeys);
-      console.log('getValues--->', Object.keys(getValues()));
-
-      /* if (validateMandatoryFields(getValues())) {        
-        throw new Error('Faltan campos obligatorios');
-      } */
+      const formData = new FormData();      
 
       if (!isCreate) {
         updatedKeys = !_.isEmpty(dirtyFields) ? Object.keys(dirtyFields) : [];
@@ -319,7 +305,7 @@ export const Sesion = () => {
           }
           {
             showAdminFields &&
-            <Grid item xs={12} md={6}>            
+            <Grid item xs={12} md={6}>
               <InputLabel id="entrenamientoRealizado" sx={{ mt: 1 }}>{"Entrenamiento Realizado"}</InputLabel>
               <TextField
                 multiline
@@ -332,12 +318,11 @@ export const Sesion = () => {
                 sx={styles.textfield}
                 {...register("entrenamientoRealizado")}
               />
-              </Grid>            
+            </Grid>
           }
           <Grid item xs={12} md={6}>
             <DateInput
               control={control}
-              //defaultValue={dayjs()}
               disabled={readOnly}
               disableFuture={true}
               inputLabelStyles={{ mt: 1 }}
@@ -345,6 +330,7 @@ export const Sesion = () => {
               name="fechaEntrenamiento"
               showInputLabel={true}
               styles={{ ...styles.textfield, }}
+              validationRules={{ required: 'La fecha de entrenamiento es requerida' }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -456,7 +442,7 @@ export const Sesion = () => {
                 disabled={!isDirty}
                 variant='contained'
                 startIcon={<Save />}
-                sx={styles.actionButton}
+                sx={styles.actionButton}                
                 size='large'
                 type='submit'
               >
@@ -464,7 +450,30 @@ export const Sesion = () => {
               </Button>
             </Grid>
           </Grid>
-        </Grid>        
+          {
+            !_.isNil(errors) && getErrorMessagges(errors).length > 0
+              ? <>
+                <Typography
+                  variant="body2"
+                  color="error" // Color de error predefinido de Material-UI
+                  sx={{
+                    backgroundColor: 'rgba(255, 0, 0, 0.1)', // Fondo claro
+                    border: '1px solid red', // Borde rojo
+                    borderRadius: '4px', // Bordes redondeados
+                    padding: '8px', // Espaciado interno
+                    fontWeight: 'bold', // Negrita
+                    marginTop: '16px', // Espaciado superior
+                    ml: 2,
+                    [theme.breakpoints.down('sm')]: { pr: 1 }
+                  }}
+                >
+                  {getErrorMessagges(errors).join('\n')}
+                </Typography>
+                
+              </>
+              : null
+          }
+        </Grid>
         <DialogTrainingShotsSwiper
           open={openDialog}
           onClose={handleCloseDialog}

@@ -50,10 +50,7 @@ export const SimpleTable = ({ columns, data, formParams, tableSettings }) => {
         if (data.length === 0) {
             setIsTableEmpty(true);
         }
-    }, [])
-
-    console.log('data-->', data);
-
+    }, [])    
 
     const table = useReactTable(
         {

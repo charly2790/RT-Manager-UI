@@ -24,7 +24,8 @@ export const DateInput = ({
     name,
     showInputLabel = false,
     styles,
-    inputLabelStyles = {}
+    inputLabelStyles = {},
+    validationRules = {}
 }) => {
     return (
         <LocalizationProvider 
@@ -35,7 +36,7 @@ export const DateInput = ({
             <Controller
                 control={control}
                 name={name}
-                rules={{ required: 'La fecha es requerida' }}
+                rules={validationRules}
                 render={({ field: { onChange, value = defaultValue }, fieldState: { error } }) => {                       
                     let dateValue;
                     try {

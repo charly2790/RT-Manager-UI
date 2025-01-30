@@ -10,7 +10,8 @@ export const SelectInput = ({
     label,    
     disabled = false,
     showInputLabel = false ,
-    inputLabelStyles = {}
+    inputLabelStyles = {},
+    validationRules = {}
     }) => {
     return (
         <>
@@ -18,7 +19,7 @@ export const SelectInput = ({
             <Controller
                 control={control}
                 name={name}
-                rules={{ required: 'El género es requerido' }}                
+                rules={validationRules}                
                 render={({ field:{ value, onChange} }) =>{                    
                     return <Select
                         label={showInputLabel ? '' : label}

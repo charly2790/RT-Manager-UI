@@ -1,5 +1,5 @@
-import { Button, Dialog, IconButton, ImageListItem, ImageListItemBar } from '@mui/material'
-import React, { useEffect, useRef, useState } from 'react'
+import { Dialog, IconButton, ImageListItem, ImageListItemBar } from '@mui/material'
+import React from 'react'
 import _ from 'lodash';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
@@ -13,9 +13,7 @@ import "swiper/css/pagination";
 
 export const DialogTrainingShotsSwiper = (props) => {
 
-    const { open, onClose, shots } = props;
-    
-    console.log('shots-->', shots);
+    const { open, onClose, shots } = props;    
 
     const handleClose = () => {
         onClose();
