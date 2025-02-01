@@ -23,7 +23,8 @@ export const TimeInput = ({
                 name={name}
                 rules={{ required: 'El tiempo total es requerido' }}
                 render={({ field: { onChange, value = defaultValue }, fieldState: { error } }) => {                    
-                    const dateValue = value ? convertToLocalTime(value) : null;                                   
+                    //const dateValue = value ? convertToLocalTime(value) : null;
+                    const dateValue = value ? dayjs.utc(value) : null
 
                     return (
                         <>
