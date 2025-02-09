@@ -15,7 +15,7 @@ export const SelectInput = ({
     }) => {
     return (
         <>
-            {showInputLabel && <InputLabel id={name} sx={inputLabelStyles}>{label}</InputLabel>}
+            {showInputLabel && <InputLabel id={name} sx={{...inputLabelStyles}}>{label}</InputLabel>}
             <Controller
                 control={control}
                 name={name}
