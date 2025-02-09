@@ -1,14 +1,17 @@
-import { Alumnos } from '../alumnos/pages/Alumnos'
+import React from 'react'
+import { Alumnos } from '../alumnos/pages'
 import { Carreras } from '../carreras'
 import { Dashboard } from '../components'
 import { LoginForm } from '../auth/pages/LoginForm'
+import { Performances } from '../performances/pages'
 import { PrivateRoutes } from './PrivateRoutes'
 import { Profile } from '../profile'
 import { PublicRoutes } from './PublicRoutes'
 import { Route, Routes } from 'react-router-dom'
 import { Sesion, Sesiones, SesionesAdmin } from '../sesiones'
 import { Settings } from '../ajustes'
-import React from 'react'
+
+
 
 
 export const AppRouter = () => {
@@ -45,9 +48,10 @@ export const AppRouter = () => {
             />} />
           <Route path='profile' element={
             <Profile />
-          }>
-
-          </Route>
+          }/>
+          <Route path='alumnos-performance' element={
+            <Performances/>
+          }/>
         </Route>
       </Routes >
     </>
