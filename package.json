@@ -18,6 +18,8 @@
     "@mui/material": "^5.15.10",
     "@mui/x-charts": "^7.25.0",
     "@mui/x-date-pickers": "^7.4.0",
+    "@tanstack/react-query": "^5.66.0",
+    "@tanstack/react-query-devtools": "^5.66.0",
     "@tanstack/react-table": "^8.16.0",
     "axios": "^1.6.8",
     "dayjs": "^1.11.11",
@@ -33,6 +35,7 @@
     "swiper": "^11.2.0"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.66.1",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react": "^4.2.1",
