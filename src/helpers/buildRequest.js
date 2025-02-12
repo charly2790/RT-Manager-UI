@@ -24,10 +24,7 @@ export const buildRequest = (
 
     if (method === 'post' || method === 'put' || method === 'patch') {
         data = contentType === 'application/x-www-form-urlencoded' ? qs.stringify(vars) : vars;
-    }
-
-    console.log('data: ', data);
-
+    }    
 
     return {
         method,
