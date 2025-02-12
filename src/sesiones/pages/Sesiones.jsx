@@ -19,7 +19,7 @@ export const Sesiones = () => {
 
   const alumno = state ? state.alumno : undefined;
 
-  const idSuscripcion = alumno ? alumno.Suscripcions[0].idSuscripcion : idSusc;
+  const idSuscripcion = alumno ? alumno.suscripciones[0].idSuscripcion : idSusc;
 
   const reqConfigs = buildRequest(subDir.sesionesEntrenamiento, methods.get, { idSuscripcion }, token);
 

@@ -30,9 +30,9 @@ export const Alumnos = () => {
 
         alumnosData = alumnos.map(alumno => {
 
-            const { Perfil = null, Suscripcions = null } = alumno;
+            const { Perfil = null, suscripciones = null } = alumno;
             const hasProfile = !_.isNil(Perfil);
-            const hasSuscription = !_.isNil(Suscripcions);            
+            const hasSuscription = !_.isNil(suscripciones);            
 
             return {
                 avatar:
@@ -43,8 +43,8 @@ export const Alumnos = () => {
                     </IconButton>),
                 nickname: hasProfile && !_.isNil(Perfil.apodo) ? Perfil.apodo : alumno.email,
                 fullname: hasProfile && !_.isNil(Perfil.nombreCompleto) ? Perfil.nombreCompleto : "",
-                estado: hasSuscription && Suscripcions[0].activo === true ? "ACTIVO" : "INACTIVO",
-                fechaInicio: hasSuscription ? convertToLocalTime(Suscripcions.fechaCreacion).format('DD/MM/YYYY') : "-",                
+                estado: hasSuscription && suscripciones[0].activo === true ? "ACTIVO" : "INACTIVO",
+                fechaInicio: hasSuscription ? convertToLocalTime(suscripciones.fechaCreacion).format('DD/MM/YYYY') : "-",                
                 Acciones:
                     (<IconButton aria-label="delete" onClick={() => navigate("/sesiones", { state: { alumno } })}>
                         <DirectionsRunIcon />

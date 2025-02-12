@@ -73,7 +73,7 @@ export const SesionesAdmin = () => {
             }}
           >
             <SesionForm
-              idSuscripcion={alumno.Suscripcions[0].idSuscripcion}
+              idSuscripcion={alumno.suscripciones[0].idSuscripcion}
               handleAddSesion={handleAddSesion}
               handleDeleteSesion={handleDeleteSesion} />
             <Box
