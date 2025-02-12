@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Drawer, Grid, Typography } from '@mui/material';
 import { Chart } from '../../components/Charts';
 import { FilterForm } from '../components/FilterForm';
@@ -6,12 +6,32 @@ import { mainTheme } from '../../themes/mainTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
 import { useRandom } from '../../hooks/useRandom';
+import _ from 'lodash';
+
+const getAlumnosOptions = (alumnosData) => {
+
+  if(alumnosData.length === 0) return [];
+
+  return alumnosData.map(alumno => {
+
+    const label = _.isNil(alumno.Perfil) ? alumno.email : alumno.Perfil.apodo;
+    const value = _.isNil(alumno.suscripciones) ? 99 : alumno.suscripciones[0].idSuscripcion
+
+    return {
+      label,
+      value
+    }
+  })
+
+}
 
 export const Performances = () => {
 
   const { getAlumnosQuery } = useRandom();
 
   const [open, setOpen] = useState(false);
+  const [alumnosOptions, setAlumnosOptions] = useState([]);
+
   const {
     control,
     getValues,
@@ -19,9 +39,16 @@ export const Performances = () => {
     register,
   } = useForm({
     defaultValues: {
-      alumno: { value: 'Carlos Barrionuevo', label: 'Carlos Barrionuevo' }
+      alumno: alumnosOptions.length > 0 ? alumnosOptions[0].value : 99999      
     }
   });
+
+  useEffect(() => {
+    if(!getAlumnosQuery.isFetching){
+      setAlumnosOptions(getAlumnosOptions(getAlumnosQuery.data.usuarios));
+    }
+  }, [getAlumnosQuery.data])
+
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -43,6 +70,7 @@ export const Performances = () => {
             onClose={toggleDrawer(false)}
           >
             <FilterForm
+              params={[getAlumnosQuery.isFetching ? [] : getAlumnosOptions(getAlumnosQuery.data.usuarios)]}
               register={register}
               control={control}
               onSubmit={onSubmit}
@@ -53,9 +81,9 @@ export const Performances = () => {
         <Chart type={'bar'} />
         <>
           {
-            getAlumnosQuery.isFetching 
-            ? <Typography variant='h4'>Cargando...</Typography>
-            : <Typography variant='h5'>{JSON.stringify(getAlumnosQuery.data)}</Typography>
+            getAlumnosQuery.isFetching
+              ? <Typography variant='h4'>Cargando...</Typography>
+              : <Typography variant='h5'>{JSON.stringify(getAlumnosQuery.data)}</Typography>
           }
         </>
       </ThemeProvider>

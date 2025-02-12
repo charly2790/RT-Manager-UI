@@ -5,17 +5,20 @@ import { ClearIcon } from '@mui/x-date-pickers'
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 export const FilterForm = ({
+    params,
     register,
     control,
     onSubmit,
     styles
 }) => {
-
+    
     const [optionSelected, setOptionSelected] = useState('web');
 
     const handleChange = (event, newOption) => {
         setOptionSelected(newOption);
     }
+
+    const [alumnosOptions] = params;
 
     return (
         <Box
@@ -35,12 +38,7 @@ export const FilterForm = ({
                         showInputLabel={true}
                         styles={{ width: '100%' }}
                         inputLabelStyles={{ fontWeight: 'bold' }}
-                        options={[
-                            { value: 'Carlos Barrionuevo', label: 'Carlos Barrionuevo' },
-                            { value: 'Rosana Garcia', label: 'Rosana Garcia' },
-                            { value: 'Florencia Martinez', label: 'Florencia Martinez' },
-                            { value: 'Alejandra Lanfranconi', label: 'Alejandra Lanfranconi' }
-                        ]}
+                        options={alumnosOptions}
                     />
                 </Grid>
                 <Grid container item xs={12} sx={{ justifyContent: 'center', mt: 4, mb: 2 }}>
