@@ -5,38 +5,22 @@ import { FilterForm } from '../components/FilterForm';
 import { mainTheme } from '../../themes/mainTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
-import { useRandom } from '../../hooks/useRandom';
 import _ from 'lodash';
+import { useAlumnosOptions } from '../../hooks';
 
-const getAlumnosOptions = (alumnosData) => {
-
-  if(alumnosData.length === 0) return [];
-
-  return alumnosData.map(alumno => {
-
-    const label = _.isNil(alumno.Perfil) ? alumno.email : alumno.Perfil.apodo;
-    const value = _.isNil(alumno.suscripciones) ? 99 : alumno.suscripciones[0].idSuscripcion
-
-    return {
-      label,
-      value
-    }
-  })
-
-}
 
 export const Performances = () => {
 
-  const { getAlumnosQuery } = useRandom();
 
-  const [open, setOpen] = useState(false);
-  const [alumnosOptions, setAlumnosOptions] = useState([]);
+  const [open, setOpen] = useState(false);  
+  const { alumnosOptions, isFetching } = useAlumnosOptions();
 
   const {
     control,
     getValues,
     handleSubmit,
     register,
+    reset,
   } = useForm({
     defaultValues: {
       alumno: alumnosOptions.length > 0 ? alumnosOptions[0].value : 99999      
@@ -44,12 +28,13 @@ export const Performances = () => {
   });
 
   useEffect(() => {
-    if(!getAlumnosQuery.isFetching){
-      setAlumnosOptions(getAlumnosOptions(getAlumnosQuery.data.usuarios));
-    }
-  }, [getAlumnosQuery.data])
-
-
+    if(!isFetching){
+      if(alumnosOptions.length > 0){
+        reset({ alumno: alumnosOptions[0].value})
+      }
+    }    
+  }, [alumnosOptions])
+  
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   }
@@ -70,7 +55,7 @@ export const Performances = () => {
             onClose={toggleDrawer(false)}
           >
             <FilterForm
-              params={[getAlumnosQuery.isFetching ? [] : getAlumnosOptions(getAlumnosQuery.data.usuarios)]}
+              params={[alumnosOptions.isFetching ? [] : alumnosOptions]}
               register={register}
               control={control}
               onSubmit={onSubmit}
@@ -81,9 +66,9 @@ export const Performances = () => {
         <Chart type={'bar'} />
         <>
           {
-            getAlumnosQuery.isFetching
+            isFetching
               ? <Typography variant='h4'>Cargando...</Typography>
-              : <Typography variant='h5'>{JSON.stringify(getAlumnosQuery.data)}</Typography>
+              : <Typography variant='h5'>{JSON.stringify(alumnosOptions)}</Typography>
           }
         </>
       </ThemeProvider>
