@@ -18,7 +18,7 @@ export const FilterForm = ({
         setOptionSelected(newOption);
     }
 
-    const [alumnosOptions] = params;
+    const [alumnosOptions, periodos] = params;
 
     return (
         <Box
@@ -64,11 +64,7 @@ export const FilterForm = ({
                                 showInputLabel={true}
                                 styles={{ width: '100%' }}
                                 inputLabelStyles={{ fontWeight: 'bold' }}
-                                options={[
-                                    { value: 2023, label: '2023' },
-                                    { value: 2024, label: '2024' },
-                                    { value: 2025, label: '2025' },
-                                ]}
+                                options={periodos}
                             />
                         </Grid>
                         : <>
