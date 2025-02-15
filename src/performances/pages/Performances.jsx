@@ -22,27 +22,31 @@ export const Performances = () => {
     control,
     getValues,
     handleSubmit,
-    register,
+    register,    
     reset,
   } = useForm({
     defaultValues: {
       alumno: alumnosOptions.length > 0 ? alumnosOptions[0].value : 99999,
-      periodo: dayjs().year,
+      periodo: dayjs().year(),
     }
   });
 
   useEffect(() => {
     if(!isFetching){
-      if(alumnosOptions.length > 0){
-        reset({ alumno: alumnosOptions[0].value})
+      if(alumnosOptions.length > 0){        
+        reset({ 
+          ...getValues(),
+          ['alumno']: alumnosOptions[0].value})        
       }
-    }    
+    }
   }, [alumnosOptions])
 
   useEffect(() => {
     if(!onFetching){
-      if(periodos.length > 0){
-        reset({ periodo: periodos[periodos.length-1].value})
+      if(periodos.length > 0){        
+        reset({ 
+          ...getValues(),
+          ['periodo']: periodos[periodos.length-1].value})        
       }
     }
   }, [periodos])
@@ -67,13 +71,15 @@ export const Performances = () => {
             anchor={'right'}
             onClose={toggleDrawer(false)}
           >
-            <FilterForm
-              params={[alumnosOptions.isFetching ? [] : alumnosOptions, onFetching ? [dayjs().year] : periodos]}
-              register={register}
-              control={control}
-              onSubmit={onSubmit}
-              styles={{ maxWidth: 480, mt: 10, padding: '0 5% 0 5%' }}
-            />
+            {
+              <FilterForm
+                params={[alumnosOptions.isFetching ? [] : alumnosOptions, onFetching ? [dayjs().year()] : periodos]}
+                register={register}
+                control={control}
+                onSubmit={onSubmit}
+                styles={{ maxWidth: 480, mt: 10, padding: '0 5% 0 5%' }}
+              />              
+            }
           </Drawer>
         </div>
         <Chart type={'bar'} />
