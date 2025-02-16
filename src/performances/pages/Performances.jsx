@@ -1,13 +1,13 @@
 import _ from 'lodash';
-import { useEffect, useState } from 'react'
+import dayjs from 'dayjs';
+import { useState } from 'react'
 import { Button, Drawer, Typography } from '@mui/material';
 import { Chart } from '../../components/Charts';
 import { FilterForm } from '../components/FilterForm';
 import { mainTheme } from '../../themes/mainTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
-import { useAlumnosOptions, usePeriodos } from '../../hooks';
-import dayjs from 'dayjs';
+import { useAlumnosOptions, usePeriodosOptions } from '../hooks';
 
 
 
@@ -15,9 +15,7 @@ export const Performances = () => {
 
 
   const [open, setOpen] = useState(false);  
-  const { alumnosOptions, isFetching } = useAlumnosOptions();
-  const { periodos, isFetching : onFetching } = usePeriodos();
-
+  
   const {
     control,
     getValues,
@@ -26,30 +24,13 @@ export const Performances = () => {
     reset,
   } = useForm({
     defaultValues: {
-      alumno: alumnosOptions.length > 0 ? alumnosOptions[0].value : 99999,
+      alumno: null,
       periodo: dayjs().year(),
     }
   });
-
-  useEffect(() => {
-    if(!isFetching){
-      if(alumnosOptions.length > 0){        
-        reset({ 
-          ...getValues(),
-          ['alumno']: alumnosOptions[0].value})        
-      }
-    }
-  }, [alumnosOptions])
-
-  useEffect(() => {
-    if(!onFetching){
-      if(periodos.length > 0){        
-        reset({ 
-          ...getValues(),
-          ['periodo']: periodos[periodos.length-1].value})        
-      }
-    }
-  }, [periodos])
+  
+  const { alumnosOptions, isFetching } = useAlumnosOptions({getValues, reset})
+  const { periodosOptions, isFetching : onFetching } = usePeriodosOptions({ getValues, reset });
   
   
   const toggleDrawer = (newOpen) => () => {
@@ -72,8 +53,8 @@ export const Performances = () => {
             onClose={toggleDrawer(false)}
           >
             {
-              <FilterForm
-                params={[alumnosOptions.isFetching ? [] : alumnosOptions, onFetching ? [dayjs().year()] : periodos]}
+              <FilterForm                
+                params={[ alumnosOptions, periodosOptions ]}
                 register={register}
                 control={control}
                 onSubmit={onSubmit}
@@ -92,7 +73,7 @@ export const Performances = () => {
           {
             onFetching
               ?<Typography variant='h4'>Cargando...</Typography>
-              :<Typography variant='h5'>{JSON.stringify(periodos)}</Typography>
+              :<Typography variant='h5'>{JSON.stringify(periodosOptions)}</Typography>
           }
         </>
       </ThemeProvider>
