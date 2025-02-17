@@ -8,7 +8,7 @@ export const BasicMenu = ({ anchorE1, open, handleClose, menuItems }) => {
         <div>            
             <Menu
                 id="basic-menu"
-                anchorEl={ anchorE1 }
+                //anchorEl={ anchorE1 }
                 open={ open }
                 onClose={ handleClose }                
             >
