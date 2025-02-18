@@ -2,14 +2,14 @@ import _ from 'lodash';
 import dayjs from 'dayjs';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { useState } from 'react'
-import { Box, Button, Chip, Drawer, Typography } from '@mui/material';
+import { Box, Button, Drawer, Typography } from '@mui/material';
 import { Chart } from '../../components/Charts';
 import { FilterForm } from '../components/FilterForm';
 import { mainTheme } from '../../themes/mainTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
 import { useAlumnosOptions, usePeriodosOptions } from '../hooks';
-import { getLabel } from '../helpers';
+import { Filters } from '../components';
 
 
 
@@ -44,20 +44,7 @@ export const Performances = () => {
 
   const handleDelete = (e) => {
     console.log('borraste--->', e);
-  }
-
-  const showFilters = () => {
-
-    const filters = getValues();
-
-    return Object.keys(filters).map(key => {
-      if (!_.isNil(filters[key])) {
-        const value = filters[key];
-        const label = key === 'alumno' ? getLabel(alumnosOptions, value) : value;
-        return <Chip key={key} label={label} variant="outlined" onDelete={handleDelete} />
-      }
-    })
-  }
+  }  
 
   return (
     <>
@@ -65,7 +52,11 @@ export const Performances = () => {
         <div>
           <Box>
             <Button onClick={toggleDrawer(true)} startIcon={<FilterListIcon />}>Filtros</Button>
-            {showFilters()}
+            <Filters
+              alumnos={alumnosOptions} 
+              filters={getValues()}
+              handleDelete={handleDelete}
+              />
           </Box>
           <Drawer
             open={open}
