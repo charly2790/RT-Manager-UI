@@ -9,16 +9,25 @@ export const FilterForm = ({
     register,
     control,
     onSubmit,
+    setValue,
     styles
 }) => {
-    
-    const [optionSelected, setOptionSelected] = useState('web');
+
+    const [optionSelected, setOptionSelected] = useState('periodo');
+    const [alumnosOptions, periodos] = params;
 
     const handleChange = (event, newOption) => {
+
+        const keysToClear = newOption === 'periodo'
+            ? ['fechaDesde', 'fechaHasta']
+            : ['periodo'];
+
+        keysToClear.forEach(key => {
+            setValue(key, undefined, { shouldValidate: false, shouldDirty: false });
+        })
+
         setOptionSelected(newOption);
     }
-
-    const [alumnosOptions, periodos] = params;
 
     return (
         <Box
@@ -89,26 +98,26 @@ export const FilterForm = ({
                         </>
                 }
 
-                <Grid container item xs={12} sx={{ justifyContent: 'flex-end', mt: 2 }}>                    
-                        <Button
-                            variant='contained'
-                            size='large'                            
-                            color='primary'
-                            sx={{width: '40%', mr: 2}}
-                            startIcon={<ClearIcon />}
-                        >
-                            Limpiar
-                        </Button>                                        
-                        <Button
-                            variant='contained'
-                            size='large'
-                            type='submit'
-                            color={"primary"}
-                            sx={{width: '40%'}}
-                            startIcon={<FilterAltIcon/>}
-                        >
-                            Filtrar
-                        </Button>                    
+                <Grid container item xs={12} sx={{ justifyContent: 'flex-end', mt: 2 }}>
+                    <Button
+                        variant='contained'
+                        size='large'
+                        color='primary'
+                        sx={{ width: '40%', mr: 2 }}
+                        startIcon={<ClearIcon />}
+                    >
+                        Limpiar
+                    </Button>
+                    <Button
+                        variant='contained'
+                        size='large'
+                        type='submit'
+                        color={"primary"}
+                        sx={{ width: '40%' }}
+                        startIcon={<FilterAltIcon />}
+                    >
+                        Filtrar
+                    </Button>
                 </Grid>
             </Grid>
         </Box>

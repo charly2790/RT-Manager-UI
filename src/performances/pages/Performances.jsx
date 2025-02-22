@@ -10,6 +10,8 @@ import { set, useForm } from 'react-hook-form';
 import { useAlumnosOptions, usePeriodosOptions } from '../hooks';
 import { FilterForm, Filters } from '../components';
 import { usePerformances } from '../hooks/usePerformances';
+import { getSeries } from '../helpers';
+import { xAxis } from '../types';
 
 
 
@@ -24,6 +26,7 @@ export const Performances = () => {
     handleSubmit,
     register,
     reset,
+    setValue,
   } = useForm({
     defaultValues: {
       alumno: null,
@@ -72,12 +75,13 @@ export const Performances = () => {
                 register={register}
                 control={control}
                 onSubmit={onSubmit}
+                setValue={setValue}
                 styles={{ maxWidth: 480, mt: 10, padding: '0 5% 0 5%' }}
               />
             }
           </Drawer>
         </div>
-        <Chart type={'bar'} />
+        <Chart type={'bar'} data={{ series: getSeries(data) }} options={{xAxis}}/>
         <>
           {
             isFetching
