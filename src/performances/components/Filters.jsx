@@ -13,7 +13,7 @@ export const Filters = ({
     return keys.map(key => {
         if (!_.isNil(filters[key])) {
             const value = filters[key];
-            const label = key === 'alumno' ? getLabel(alumnos, value) : value;
+            const label = key === 'alumno' && value !== 0 ? getLabel(alumnos, value) : value;
             return <Chip key={key} label={label} variant="outlined" onDelete={handleDelete} />
         }
     })
