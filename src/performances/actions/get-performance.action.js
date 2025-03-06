@@ -10,7 +10,9 @@ export const getPerformance = async (
   token,
   fechaDesde, 
   fechaHasta,    
-) => {  
+) => {
+  
+  if ( _.isNil(alumno) || alumno === 0) return {};
 
   const res = await makeRequest(
     `${subdir.performances}/${alumno}`, 
