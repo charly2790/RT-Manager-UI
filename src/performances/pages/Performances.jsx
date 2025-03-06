@@ -6,7 +6,7 @@ import { Box, Button, Drawer, Typography } from '@mui/material';
 import { Chart } from '../../components/Charts';
 import { mainTheme } from '../../themes/mainTheme';
 import { ThemeProvider } from '@mui/material/styles';
-import { set, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useAlumnosOptions, usePeriodosOptions } from '../hooks';
 import { FilterForm, Filters } from '../components';
 import { usePerformances } from '../hooks/usePerformances';
@@ -29,15 +29,17 @@ export const Performances = () => {
     setValue,
   } = useForm({
     defaultValues: {
-      alumno: null,
-      periodo: dayjs().year(),
+      alumno: 0,
+      //periodo: dayjs().year(),
+      periodo: 1800
     }
   });
 
   const { alumnosOptions, isFetching } = useAlumnosOptions({ getValues, reset })
   const { periodosOptions, isFetching: onFetching } = usePeriodosOptions({ getValues, reset });
-  const { data } = usePerformances(getValues())
-  
+
+  const performances = usePerformances(getValues());
+
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
     setRefresh(!refresh);
@@ -50,7 +52,7 @@ export const Performances = () => {
 
   const handleDelete = (e) => {
     console.log('borraste--->', e);
-  }  
+  }
 
   return (
     <>
@@ -59,10 +61,10 @@ export const Performances = () => {
           <Box>
             <Button onClick={toggleDrawer(true)} startIcon={<FilterListIcon />}>Filtros</Button>
             <Filters
-              alumnos={alumnosOptions} 
+              alumnos={alumnosOptions}
               filters={getValues()}
               handleDelete={handleDelete}
-              />
+            />
           </Box>
           <Drawer
             open={open}
@@ -81,22 +83,8 @@ export const Performances = () => {
             }
           </Drawer>
         </div>
-        <Chart type={'bar'} data={{ series: getSeries(data) }} options={{xAxis}}/>
-        <>
-          {
-            isFetching
-              ? <Typography variant='h4'>Cargando...</Typography>
-              : <Typography variant='h5'>{JSON.stringify(alumnosOptions)}</Typography>
-          }
-          {
-            onFetching
-              ? <Typography variant='h4'>Cargando...</Typography>
-              : <Typography variant='h5'>{JSON.stringify(periodosOptions)}</Typography>
-          }
-          {
-            <Typography variant='h5' sx={{fontWeight:"bold"}}>{JSON.stringify(data)}</Typography>
-          }
-        </>
+        <Chart type={'bar'} data={{ series: getSeries(performances.data) }} options={{ xAxis }} />
+        
       </ThemeProvider>
     </>
   )
