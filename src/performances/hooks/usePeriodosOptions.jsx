@@ -23,10 +23,10 @@ export const usePeriodosOptions = ({ getValues, reset }) => {
             const periodosResult = getPeriodos(dayjs(fechaFundacion).year())
             if (periodosResult.length > 0) {
                 setPeriodosOptions(periodosResult);
-                reset({
+                /* reset({
                     ...getValues(),
                     ['periodo']: periodosResult[periodosResult.length - 1].value
-                })
+                }) */
             }
         }
     }, [getEquipoQuery.data])

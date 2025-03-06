@@ -29,10 +29,10 @@ export const useAlumnosOptions = ({ getValues, reset }) => {
         if (!getAlumnosQuery.isFetching) {            
             const options = getAlumnosOptions(getAlumnosQuery.data.usuarios);            
             setAlumnosOptions(options);
-            reset({
+           /*  reset({
                 ...getValues(),
                 ['alumno']: options[0].value
-            })
+            }) */
         }
     }, [getAlumnosQuery.data])
 
