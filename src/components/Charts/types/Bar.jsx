@@ -3,6 +3,7 @@ import { Card, CardContent, Chip, Stack, Typography, useTheme } from '@mui/mater
 import React from 'react'
 import _ from 'lodash';
 import { xAxis } from '../../../performances/types';
+import { blueberryTwilightPalette, blueberryTwilightPaletteDark, blueberryTwilightPaletteLight, cheerfulFiestaPalette, mangoFusionPalette, mangoFusionPaletteDark, mangoFusionPaletteLight } from '@mui/x-charts';
 
 export const Bar = ({ data, options }) => {
 
@@ -28,7 +29,7 @@ export const Bar = ({ data, options }) => {
                             direction={"column"}
                             sx={{
                                 height: '30%',
-                                justifyContent:'center',
+                                justifyContent: 'center',
                                 alignItems: 'center',
                                 textAlign: 'center',
                                 color: (theme) => theme.palette.text.secondary
@@ -56,22 +57,47 @@ export const Bar = ({ data, options }) => {
                                 <Chip size="small" color="primary" variant="outlined" label="+5%" />
                             </Stack>
                             <BarChart
-                                borderRadius={8}
-                                colors={colorPalette}
+                                borderRadius={4}
+                                colors={blueberryTwilightPaletteLight}
                                 xAxis={[{
                                     scaleType: 'band',
-                                    categoryGapRatio: 0.5,
+                                    categoryGapRatio: 0.1,                                    
+                                    barGapRatio: -1,
                                     data: xAxis
                                 }]
                                 }
-                                series={series}
-                                height={250}
-                                margin={{ left: 50, right: 0, top: 20, bottom: 20 }}
+                                series={series.map(serie => ({
+                                    ...serie,                                                  
+                                }))}
+                                height={450}
+                                margin={{ left: 50, right: 0, top: 50, bottom: 20 }}
                                 grid={{ horizontal: true }}
                                 slotProps={{
-                                    legend: { hidden: false, }
+                                    //loadingOverlay: { message: 'Data should be available soon.' },
+                                    legend: { hidden: false, },
+                                    barLabel: {                                                                                                                                                                                                                                                             
+                                        sx: {                                            
+                                            fontSize: '1em',
+                                            fontWeight: 'bold',                                            
+                                            fill: '#FFFFFF',
+                                            border: '1px dotted black',
+                                            margin: '0 0 10% 0'                                            
+                                        }
+                                    },
+                                    bar:{
+                                        radius: 12,
+                                    }
+                                }}                                
+                                barLabel={(item, context) => {                                    
+                                    if(item.seriesId !== 'total') return null;
+                                    
+                                    // Solo mostramos los valores de la serie 'total'
+                                    const totalSerie = series.find(s => s.id === "total");
+                                    if (!totalSerie) return null;                                                                    
+                            
+                                    const index = item.dataIndex; // Obtener índice de la barra
+                                    return `${totalSerie.data[index]} kms`; // Mostrar el total correspondiente a esa posición
                                 }}
-
 
                             />
 
