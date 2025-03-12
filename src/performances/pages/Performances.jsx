@@ -78,6 +78,7 @@ export const Performances = () => {
                 control={control}
                 onSubmit={onSubmit}
                 setValue={setValue}
+                getValues={getValues}
                 styles={{ maxWidth: 480, mt: 10, padding: '0 5% 0 5%' }}
               />
             }

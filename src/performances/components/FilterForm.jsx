@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Snackbar, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import { DateInput, SelectInput } from '../../components'
 import { ClearIcon } from '@mui/x-date-pickers'
@@ -10,11 +10,13 @@ export const FilterForm = ({
     control,
     onSubmit,
     setValue,
+    getValues,
     styles
 }) => {
 
-    const [optionSelected, setOptionSelected] = useState('periodo');
+    const [optionSelected, setOptionSelected] = useState('periodo');    
     const [alumnosOptions, periodos] = params;
+    // const [onError, setOnError] = useState(false);
 
     const handleChange = (event, newOption) => {
 
@@ -29,13 +31,39 @@ export const FilterForm = ({
         setOptionSelected(newOption);
     }
 
+     const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        const keysToClear = optionSelected === 'periodo'
+        ? ['fechaDesde', 'fechaHasta']
+        : ['periodo'];        
+
+        keysToClear.forEach(key => {
+            setValue(key, undefined, { shouldValidate: false, shouldDirty: false });
+        });
+        
+        const { alumno, fechaDesde, fechaHasta, periodo } = getValues();        
+
+        if( !(alumno && alumno !== 0) || !( ( fechaDesde && fechaHasta ) || ( periodo && periodo !== 1800))) {
+            console.log('por favor completa todos los filtros');            
+            return;
+        }
+        onSubmit();
+    }     
+
     return (
         <Box
             component="form"
-            noValidate
-            onSubmit={onSubmit}
-            sx={{ ...styles }}
-        >
+            noValidate            
+            sx={{ ...styles }}            
+        >   
+            {/* {
+                onError && <Snackbar
+                open={open}
+                autoHideDuration={2000}                
+                message="Hay errores en el formulario"
+              />
+            } */}            
             <Typography variant='h5' sx={{ fontWeight: 'bold' }} gutterBottom>Filtros</Typography>
             <Divider />
             <Grid container spacing={2} alignItems="flex-start" sx={{ padding: "5% 0 0 0" }}>
@@ -105,7 +133,7 @@ export const FilterForm = ({
                         color='primary'
                         sx={{ width: '40%', mr: 2 }}
                         startIcon={<ClearIcon />}
-                    >
+                        >
                         Limpiar
                     </Button>
                     <Button
@@ -115,6 +143,7 @@ export const FilterForm = ({
                         color={"primary"}
                         sx={{ width: '40%' }}
                         startIcon={<FilterAltIcon />}
+                        onClick={handleSubmit}
                     >
                         Filtrar
                     </Button>
