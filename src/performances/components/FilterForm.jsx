@@ -1,12 +1,15 @@
-import { Box, Button, Divider, Grid, Snackbar, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
-import React, { useState } from 'react'
-import { DateInput, SelectInput } from '../../components'
+import { Alert, Box, Button, Divider, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { ClearIcon } from '@mui/x-date-pickers'
+import { DateInput, SelectInput } from '../../components'
+import { feedback } from '../types';
+import { useError } from '../hooks';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import React, { useState } from 'react'
+import dayjs from 'dayjs';
+
 
 export const FilterForm = ({
-    params,
-    register,
+    params,    
     control,
     onSubmit,
     setValue,
@@ -16,7 +19,8 @@ export const FilterForm = ({
 
     const [optionSelected, setOptionSelected] = useState('periodo');    
     const [alumnosOptions, periodos] = params;
-    // const [onError, setOnError] = useState(false);
+    const { onError, setOnError } = useError();
+   
 
     const handleChange = (event, newOption) => {
 
@@ -42,14 +46,39 @@ export const FilterForm = ({
             setValue(key, undefined, { shouldValidate: false, shouldDirty: false });
         });
         
-        const { alumno, fechaDesde, fechaHasta, periodo } = getValues();        
-
-        if( !(alumno && alumno !== 0) || !( ( fechaDesde && fechaHasta ) || ( periodo && periodo !== 1800))) {
-            console.log('por favor completa todos los filtros');            
+        const { alumno, fechaDesde, fechaHasta, periodo } = getValues();
+        
+        
+        if( !(alumno && alumno !== 0) || !( ( fechaDesde && fechaHasta ) || ( periodo && periodo !== 1800))) {            
+            setOnError({
+                status: true,
+                message: feedback.EMPTY_REQUIRED_FIELDS
+            });
+            return;
+        }                
+        
+        if(dayjs(fechaHasta).diff(dayjs(fechaDesde)) <= 0 ){
+            setOnError({
+                status: true,
+                message: feedback.DTSTART_GREATER_THAN_DTEND
+            })
+            return;
+        }        
+        
+        if(dayjs(fechaHasta).diff(dayjs(fechaDesde),'day') > 365){
+            setOnError({
+                status: true,
+                message: feedback.PERIOD_GREATER_THAN_ONE_YEAR
+            });
             return;
         }
+
+                
         onSubmit();
-    }     
+    }    
+    
+   
+    
 
     return (
         <Box
@@ -57,14 +86,10 @@ export const FilterForm = ({
             noValidate            
             sx={{ ...styles }}            
         >   
-            {/* {
-                onError && <Snackbar
-                open={open}
-                autoHideDuration={2000}                
-                message="Hay errores en el formulario"
-              />
-            } */}            
             <Typography variant='h5' sx={{ fontWeight: 'bold' }} gutterBottom>Filtros</Typography>
+            {
+                onError.status && <Alert severity="error">{onError.message}</Alert>
+            }            
             <Divider />
             <Grid container spacing={2} alignItems="flex-start" sx={{ padding: "5% 0 0 0" }}>
                 <Grid item xs={12}>
