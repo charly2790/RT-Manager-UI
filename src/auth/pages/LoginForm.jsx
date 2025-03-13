@@ -20,13 +20,13 @@ import React, { useContext, useEffect, useState } from 'react'
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import videoSource from '../media/sideVideov2.mp4';
 
 
 export const LoginForm = () => {
 
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
-  const [randomUrlImage, setRandomUrlImage] = useState('');
+  const { login } = useContext(AuthContext);  
   const [onError, setOnError] = useState({
     is: false,
     message: ''
@@ -55,13 +55,6 @@ export const LoginForm = () => {
     isSubmitSuccessful ? navigate("/") : null
   }, [isSubmitSuccessful])
 
-  useEffect(() => {
-    const params = { query: 'marathon' }
-    const reqConfigs = buildRequest(subdir.RANDOM_IMAGE, methods.get, params);
-    const result = Axios.request(reqConfigs).then(res => {      
-      setRandomUrlImage(res.data.url);
-    });
-  }, [])
 
   return (
     <ThemeProvider theme={mainTheme}>
@@ -73,12 +66,23 @@ export const LoginForm = () => {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: `url(${randomUrlImage})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            position: 'relative',
+            overflow: 'hidden',
           }}
         >
+          <Box
+            component="video"
+            src={videoSource}
+            autoPlay
+            muted
+            loop
+            sx={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
         </Grid>
         <Grid
           item
