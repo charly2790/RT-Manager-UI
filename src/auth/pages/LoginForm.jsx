@@ -20,7 +20,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import videoSource from '../media/sideVideov2.mp4';
+import videoSource from '../media/sideVideo.mp4'
 
 
 export const LoginForm = () => {
