@@ -57,7 +57,7 @@ export const FilterForm = ({
             return;
         }                
         
-        if(dayjs(fechaHasta).diff(dayjs(fechaDesde)) <= 0 ){
+        if( optionSelected === 'fecha' && dayjs(fechaHasta).diff(dayjs(fechaDesde)) <= 0 ){
             setOnError({
                 status: true,
                 message: feedback.DTSTART_GREATER_THAN_DTEND
@@ -65,7 +65,7 @@ export const FilterForm = ({
             return;
         }        
         
-        if(dayjs(fechaHasta).diff(dayjs(fechaDesde),'day') > 365){
+        if( optionSelected === 'fecha' && dayjs(fechaHasta).diff(dayjs(fechaDesde),'day') > 365){
             setOnError({
                 status: true,
                 message: feedback.PERIOD_GREATER_THAN_ONE_YEAR
