@@ -13,11 +13,11 @@ export const Styles = {
     },
     icons: {
         color: 'rgba(255,255,255,0.7)',
-        marginLeft:'10%'
+        marginLeft:'5%'
     },
     text: {
         '& span': {
-            marginLeft: '-10px',
+            marginLeft: '-10px',            
             fontWeight: '600',
             fontSize: '16px'
         }

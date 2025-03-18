@@ -12,24 +12,20 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-
 import { useNavigate } from 'react-router-dom';
-import { mainTheme } from '../../themes/mainTheme.js';
 import { dashboardTheme } from '../../themes/dashboardTheme.js';
 import { Styles } from './styles.js';
 import { AuthContext } from '../../auth';
 import { useContext } from 'react';
 import { availableMenus } from './helpers';
-import { Avatar, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Avatar, Menu, MenuItem } from '@mui/material';
 import { useState } from 'react';
+import { SimpleMenuOption } from './components/simpleMenuOption.jsx';
+import { ComplexMenuOption } from './components/complexMenuOption.jsx';
 
 const drawerWidth = 220;
 
-const settings = [ 'Profile', 'Account', 'Dashboard', 'Logout'];    
+const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -146,9 +142,9 @@ export const MiniDrawer = ({ handleDrawerClose, handleDrawerOpen, open }) => {
                                 RTM
                             </Typography>
                         </Box>
-                        <Box id="profilesettings" sx={{ display: 'flex', flexGrow: 0, width: '100%',justifyContent: 'flex-end' }}>
+                        <Box id="profilesettings" sx={{ display: 'flex', flexGrow: 0, width: '100%', justifyContent: 'flex-end' }}>
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src={ userLogged.perfil && userLogged.perfil.avatar } />
+                                <Avatar alt="Remy Sharp" src={userLogged.perfil && userLogged.perfil.avatar} />
                             </IconButton>
                             <Menu
                                 sx={{ mt: '45px' }}
@@ -181,26 +177,20 @@ export const MiniDrawer = ({ handleDrawerClose, handleDrawerOpen, open }) => {
                             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                         </IconButton>
                     </DrawerHeader>
-                    <Divider />
+                    <Divider />                    
                     <List>
                         {
-                            navbarItems.map((text, index) => (
-                                <ListItem
-                                    key={text.id}
-                                    onClick={() => navigate(text.route)}
-                                    disablePadding>
-                                    <ListItemButton>
-                                        <ListItemIcon sx={Styles.icons}>
-                                            {text.icon}
-                                        </ListItemIcon>
-                                        <ListItemText sx={Styles.text} primary={text.label} />
-                                    </ListItemButton>
-                                </ListItem>
-                            ))
+                            navbarItems.map((item, index) => {
+
+                                return item.nestedList.length === 0
+                                    ? <SimpleMenuOption item = { item } navigate = { navigate }/>
+                                    : <ComplexMenuOption item = { item } navigate = { navigate }/>
+                                
+                            })
                         }
                     </List>
                 </Drawer>
             </Box>
-        </ThemeProvider>
+        </ThemeProvider >
     );
 }
