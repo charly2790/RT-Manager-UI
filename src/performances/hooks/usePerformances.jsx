@@ -41,10 +41,16 @@ export const usePerformances = (filters) => {
     const getPerformanceQuery = useQuery({
         queryKey:["getPerformanceQuery", idEquipo, alumno, fechaDesde, fechaHasta],
         queryFn: () => getPerformance( idEquipo, alumno, token, fechaDesde, fechaHasta ),
-        staleTime: 1000*60*60 // 1 hora
+        staleTime: 1000*60*60
+    })
+    const getPerformanceByWeek = useQuery({
+      queryKey:["getPerformanceByWeekQuery", idEquipo, alumno, fechaDesde, fechaHasta],
+      queryFn: () => getPerformanceByWeek( idEquipo, alumno, fechaDesde, fechaHasta ),
+      staleTime: 1000*60*60
     })
 
-  return (
-    getPerformanceQuery
-  )
+  return {
+    getPerformanceQuery,
+    getPerformanceByWeek,
+  }
 }

@@ -10,14 +10,14 @@ export const getSeries = (data) => {
                 id: key,
                 label: key.replace('_', ' '),
                 data: data[key],
-                stack: key === 'total' ? 'none' : 'A',
+                stack: key === 'total' ? 'B' : 'A',
                 valueFormatter: (value) => `${value} kms`
             }
 
             if(key ==='total') {
                 serie.color = 'transparent'                
                 serie.showMark = false
-                serie.label = (location) => location === 'tooltip'?'Total ':''
+                serie.label = (location) => location === 'tooltip' ? 'Total ' : ''
             };
 
             return serie;

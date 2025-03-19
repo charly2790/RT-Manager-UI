@@ -49,7 +49,13 @@ export const AppRouter = () => {
           <Route path='profile' element={
             <Profile />
           }/>
-          <Route path='alumnos-performance' element={
+          <Route path='alumnos-performance-by-period' element={
+            <Performances/>
+          }/>
+          <Route path='alumnos-performance-by-week' element={
+            <Performances/>
+          }/>
+          <Route path='alumnos-performance-source' element={
             <Performances/>
           }/>
         </Route>

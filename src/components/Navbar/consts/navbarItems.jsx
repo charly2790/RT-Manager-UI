@@ -48,21 +48,21 @@ export const navbarItems = [{
             id: 5,
             icon: <CalendarMonthIcon/>,
             label: 'Kms periodo',
-            route: 'alumnos-performance',
+            route: 'alumnos-performance-by-period',            
             allowedRoles: ['EQUIPO_ADMIN'],
         },
         {
             id: 6,
             icon: <DateRangeIcon/>,
             label: 'Kms semana',
-            route: 'alumnos-performance',
+            route: 'alumnos-performance-by-week',
             allowedRoles: ['EQUIPO_ADMIN'],
         },
         {
             id: 7,
             icon: <DatasetIcon/>,
             label: 'Resumen',
-            route: 'alumnos-performance',
+            route: 'alumnos-performance-source',
             allowedRoles: ['EQUIPO_ADMIN'],
         }
     ]   
